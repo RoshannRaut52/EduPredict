@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard - EduPredict</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif;}
+    body { 
+      background: linear-gradient(135deg, #b3b4b5 100%); 
+      color: #141313; min-height: 100vh;
+      overflow-y: scroll;
+    }
+
+    .sticky-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 48px 15px 48px;
+      background: #000c;
+      backdrop-filter: blur(7px);
+      min-height: 75px;
+      box-shadow: 0 2px 20px #0001;
+    }
+    .profile-area {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #fff;
+    }
+    .profile-pic {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #fff;
+      cursor: pointer;
+      background: #f3f3f3;
+      box-shadow: 0 2px 10px #10ac8455;
+      transition: box-shadow 0.3s;
+    }
+    .profile-pic:hover {
+      box-shadow: 0 0 0 3px #10ac84;
+    }
+    .stud-details {
+      display: flex;
+      flex-direction: column;
+    }
+    .stud-name {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .college-row {
+      font-weight: 500;
+      font-size: 1.05rem;
+      text-shadow: 0 1px 5px #0a080892;
+      color: #f6fff6;
+    }
+    .edit-btn {
+      background: #10ac84;
+      padding: 12px 26px;
+      border-radius: 9px;
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .edit-btn:hover {
+      background: #1dd1a1;
+    }
+
+    main {
+      padding: 46px 14px 30px 14px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 40px;
+      min-height: 90vh;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+    .dashboard-side {
+      flex: 3 1 0%;
+      min-width: 0;
+      max-width: 920px;
+    }
+    .dashboard-content {
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 6px 32px #bbb6;
+      padding: 44px 38px 24px 38px;
+      border-radius: 22px;
+      margin-top: 24px;
+    }
+    .info-row {
+      display: flex;
+      gap: 34px;
+      margin-bottom: 23px;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 13px;
+      flex: 1 1 272px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.09);
+      padding: 25px 24px 25px 24px;
+      margin-bottom: 21px;
+    }
+    .card h3 {
+      font-size: 1.13rem;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 10px;
+    }
+    .card .value {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #10ac84;
+      margin-bottom: 5px;
+    }
+    .card .label {
+      color: #226;
+      font-size: 1rem;
+    }
+    .probability-chance {
+      background: rgba(255, 67, 81, 0.15);
+      color: #ee5253;
+      border-radius: 13px;
+      font-size: 1.23rem;
+      font-weight: 700;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 2px 9px #ee525322;
+      margin-top: 18px;
+      letter-spacing: 0.8px;
+    }
+
+    /* Notification/news side bar - sticky */
+    .notification-panel {
+      flex: 1 1 0%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 24px;
+      min-width: 280px;
+      max-width: 350px;
+      position: sticky;
+      top: 85px; /* just below sticky bar */
+      align-self: flex-start;
+      max-height: calc(100vh - 95px);
+      overflow-y: auto;
+      padding-right: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: #10ac84 transparent;
+    }
+    .notification-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+    .notification-panel::-webkit-scrollbar-thumb {
+      background-color: #10ac84;
+      border-radius: 10px;
+    }
+
+    .notification-box {
+      background: #e4edf985;
+      border-radius: 20px;
+      padding: 20px 16px;
+      box-shadow: 0 1px 8px rgba(39, 85, 160, 0.08);
+      margin-bottom: 0;
+      transition: box-shadow 0.2s;
+    }
+    .notification-box h2 {
+      font-size: 1.15em;
+      color: #2755a0;
+      margin-bottom: 10px;
+      letter-spacing: 0.8px;
+    }
+    .notification-box ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .notification-box ul li {
+      padding: 7px 0;
+      border-bottom: 1px solid #cfdbe7;
+      font-size: 0.97em;
+      transition: background 0.14s;
+      cursor: pointer;
+    }
+    .notification-box ul li:last-child {
+      border-bottom: none;
+    }
+    .notification-box ul li:hover {
+      background: #d0e7ff80;
+      border-radius: 7px;
+    }
+
+    /* New Widgets for suggested features */
+    .widget {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      padding: 25px 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 22px #a8b9d822;
+    }
+    .widget h2 {
+      font-weight: 700;
+      color: #244a91;
+      margin-bottom: 16px;
+      font-size: 1.25rem;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #10ac84;
+      padding-bottom: 8px;
+      max-width: max-content;
+    }
+    .overview-grid {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .overview-item {
+      background: #fff;
+      border-radius: 12px;
+      flex: 1 1 130px;
+      padding: 18px 15px;
+      text-align: center;
+      box-shadow: 0 1px 12px rgba(16, 172, 132, 0.2);
+      font-weight: 700;
+      color: #10ac84;
+      font-size: 1.9rem;
+      user-select: none;
+      transition: background-color 0.25s;
+    }
+    .overview-item span {
+      display: block;
+      font-weight: 500;
+      font-size: 0.85rem;
+      color: #333;
+      margin-top: 6px;
+      user-select: text;
+    }
+
+    /* Calendar styles */
+    .calendar {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px 24px;
+      box-shadow: 0 3px 15px rgba(100, 116, 139, 0.12);
+      margin-bottom: 24px;
+      font-size: 0.925rem;
+    }
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-weight: 700;
+      color: #244a91;
+      font-size: 1.15rem;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+    .calendar-day {
+      font-weight: 600;
+      color: #10ac84;
+      text-align: center;
+    }
+    .calendar-date {
+      text-align: center;
+      padding: 6px 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .calendar-date.today {
+      background: #10ac84;
+      color: white;
+      font-weight: 700;
+    }
+    .calendar-date:hover {
+      background: #1dd1a1;
+      color: white;
+    }
+
+    /* Quick actions */
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    .quick-action-btn {
+      flex: 1 1 120px;
+      background: #10ac84;
+      color: #fff;
+      border-radius: 14px;
+      padding: 16px 10px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.25s ease;
+      border: none;
+    }
+    .quick-action-btn:hover {
+      background: #1dd1a1;
+    }
+
+    /* Achievements */
+    .achievements {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-start;
+    }
+    .achievement-badge {
+      background: #10ac84;
+      color: white;
+      padding: 14px 18px;
+      border-radius: 22px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      user-select: none;
+      box-shadow: 0 3px 10px #10ac8490;
+      cursor: default;
+      transition: background 0.2s ease;
+    }
+    .achievement-badge:hover {
+      background: #1dd1a1;
+    }
+
+    /* Notes/To-dos */
+    .notes-box {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px 24px;
+      box-shadow: 0 6px 32px #bbb6;
+      margin-bottom: 24px;
+      min-height: 100px;
+      font-size: 0.95rem;
+      color: #444;
+      resize: vertical;
+      width: 100%;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    @media (max-width: 1200px) {
+      main { 
+        flex-direction: column; 
+        gap: 36px; 
+        align-items: stretch;
+      }
+      .dashboard-side, .notification-panel {
+        max-width: 100%;
+        position: relative; /* Remove sticky on small screens */
+        max-height: none;
+        overflow: visible;
+      }
+    }
+    @media (max-width: 900px) {
+      .dashboard-content {padding: 20px 2vw;}
+      .info-row { flex-direction: column; gap: 0;}
+      .notification-panel { flex-direction: row; gap: 14px; min-width: 0; max-width: 100%;}
+      .notification-box { flex: 1; min-width: 140px;}
+    }
+    @media (max-width: 700px) {
+      .sticky-bar { flex-direction: column; align-items: flex-start; gap: 14px; padding: 15px 20px; min-height: auto;}
+      .profile-area { gap: 16px;}
+    }
+    @media (max-width: 600px) {
+      main { padding: 0 3px; }
+      .dashboard-content { padding: 10px; }
+      .notification-panel { flex-direction: column; gap: 10px;}
+      .notification-box {padding: 14px 10px;}
+    }
+    footer {
+      margin: 36px auto 0 auto; 
+      padding: 24px;
+      width: 100%;
+      text-align: center; 
+      background: rgba(0,0,0,0.08); 
+      border-top: 1px solid #e2e6ec;
+      font-size: 0.98em;
+      color: #222a;
+      border-radius: 0 0 25px 25px;
+    }
+    .popup-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: none; justify-content: center; align-items: center; z-index: 3000;
+    }
+    .popup {
+      background: #fff;
+      border-radius: 15px;
+      padding: 40px 34px 28px;
+      box-shadow: 0 6px 32px #0005;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 320px;
+      width: 90%;
+    }
+    .popup h3 {
+      margin-bottom: 19px;
+      color: #141313;
+    }
+    .popup input[type="file"] {
+      margin-bottom: 20px;
+    }
+    .popup button {
+      background: #10ac84;
+      border: none;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.13s;
+      margin: 0 7px;
+    }
+    .popup button:hover {
+      background: #1dd1a1;
+    }
+  </style>
+</head>
+<body>
+  <header class="sticky-bar">
+    <div class="profile-area">
+      <img src="default-profile.png" alt="Profile Photo" id="profilePic" class="profile-pic" title="Change photo" />
+      <div class="stud-details">
+        <div class="stud-name" id="studentName">Student Name</div>
+        <div class="college-row">
+          <span class="college-name" id="collegeName">College Name</span>
+        </div>
+      </div>
+    </div>
+    <button class="edit-btn" onclick="alert('Profile edit coming soon!')">✏️ Edit Profile</button>
+  </header>
+
+  <!-- Profile photo change popup -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup">
+      <h3>Change Profile Photo</h3>
+      <input type="file" id="photoUpload" accept="image/*" />
+      <div>
+        <button onclick="handleProfileChange()">Upload</button>
+        <button onclick="closePopup()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="dashboard-side">
+      <div class="dashboard-content">
+
+        <!-- At a glance overview -->
+        <div class="widget">
+          <h2>Overview at a Glance</h2>
+          <div class="overview-grid">
+            <div class="overview-item">
+              <div id="attendanceValue">93%</div>
+              <span>Attendance</span>
+            </div>
+            <div class="overview-item">
+              <div id="cgpaValue">9.4</div>
+              <span>Current CGPA</span>
+            </div>
+            <div class="overview-item">
+              <div>5</div>
+              <span>Assignments Submitted</span>
+            </div>
+            <div class="overview-item">
+              <div>2</div>
+              <span>Achievements</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar / Schedule -->
+        <div class="widget calendar">
+          <div class="calendar-header">
+            <span>Oct 2025</span>
+            <span>Today: 12</span>
+          </div>
+          <div class="calendar-grid">
+            <div class="calendar-day">Sun</div>
+            <div class="calendar-day">Mon</div>
+            <div class="calendar-day">Tue</div>
+            <div class="calendar-day">Wed</div>
+            <div class="calendar-day">Thu</div>
+            <div class="calendar-day">Fri</div>
+            <div class="calendar-day">Sat</div>
+            <!-- Example dates - highlight today's date -->
+            <div class="calendar-date">28</div>
+            <div class="calendar-date">29</div>
+            <div class="calendar-date">30</div>
+            <div class="calendar-date">1</div>
+            <div class="calendar-date">2</div>
+            <div class="calendar-date">3</div>
+            <div class="calendar-date">4</div>
+            <div class="calendar-date">5</div>
+            <div class="calendar-date">6</div>
+            <div class="calendar-date">7</div>
+            <div class="calendar-date">8</div>
+            <div class="calendar-date">9</div>
+            <div class="calendar-date today">10</div>
+            <div class="calendar-date">11</div>
+            <div class="calendar-date">12</div>
+            <div class="calendar-date">13</div>
+            <div class="calendar-date">14</div>
+            <div class="calendar-date">15</div>
+            <div class="calendar-date">16</div>
+            <div class="calendar-date">17</div>
+            <div class="calendar-date">18</div>
+            <div class="calendar-date">19</div>
+            <div class="calendar-date">20</div>
+            <div class="calendar-date">21</div>
+            <div class="calendar-date">22</div>
+            <div class="calendar-date">23</div>
+            <div class="calendar-date">24</div>
+            <div class="calendar-date">25</div>
+            <div class="calendar-date">26</div>
+            <div class="calendar-date">27</div>
+            <div class="calendar-date">28</div>
+            <div class="calendar-date">29</div>
+            <div class="calendar-date">30</div>
+            <div class="calendar-date">31</div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="widget quick-actions">
+          <button class="quick-action-btn" onclick="alert('Download Hall Ticket')">Download Hall Ticket</button>
+          <button class="quick-action-btn" onclick="alert('Register for Exam')">Register for Exam</button>
+          <button class="quick-action-btn" onclick="alert('View Results')">View Results</button>
+          <button class="quick-action-btn" onclick="alert('Edit Profile')">Edit Profile</button>
+        </div>
+
+        <!-- Achievements badges -->
+        <div class="widget">
+          <h2>Achievements & Rewards</h2>
+          <div class="achievements">
+            <div class="achievement-badge">Top Performer</div>
+            <div class="achievement-badge">Math Olympiad Winner</div>
+            <div class="achievement-badge">100% Attendance</div>
+          </div>
+        </div>
+
+        <!-- Notes / To-dos -->
+        <div class="widget">
+          <h2>Notes / To-dos</h2>
+          <textarea class="notes-box" placeholder="Write your study goals or reminders here..."></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <aside class="notification-panel" aria-label="College news and events">
+      <div class="notification-box">
+        <h2>College News</h2>
+        <ul>
+          <li>Orientation Day next Monday</li>
+          <li>Seminar: AI & Education</li>
+        </ul>
+      </div>
+      <div class="notification-box">
+        <h2>Upcoming Events</h2>
+        <ul>
+          <li>Cultural Fest - Oct 25</li>
+          <li>Sports Week - Nov 3-7</li>
+        </ul>
+      </div>
+      <div class="notification-box">
+        <h2>Important Notices</h2>
+        <ul>
+          <li>Exam forms due Oct 20</li>
+          <li>Library closed Sunday</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+  <footer>
+    &copy; 2025 EduPredict. All rights reserved.
+  </footer>
+
+  <script>
+    // Populate student info
+    document.getElementById('studentName').textContent = "Ritika Mehta";
+    document.getElementById('collegeName').textContent = "Government College of Engineering, Karad";
+
+    // Profile image popup logic
+    const profilePic = document.getElementById('profilePic');
+    const popupOverlay = document.getElementById('popupOverlay');
+    const photoUpload = document.getElementById('photoUpload');
+
+    profilePic.addEventListener('click', () => {
+      popupOverlay.style.display = 'flex';
+    });
+
+    function closePopup() {
+      popupOverlay.style.display = 'none';
+      photoUpload.value = null;
+    }
+    window.closePopup = closePopup;
+
+    window.handleProfileChange = function() {
+      const file = photoUpload.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          profilePic.src = e.target.result;
+          closePopup();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert('Please select an image file.');
+      }
+    };
+  </script>
+</body>
+</html>
