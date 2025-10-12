@@ -55,8 +55,21 @@ document.getElementById('studentLoginForm')?.addEventListener('submit', async fu
     const data = await res.json();
 
     if (res.ok) {
-      localStorage.setItem('studentData', JSON.stringify(data));
-      window.location.href = 'studenthomepage.html';
+      // ✅ Save complete student info for dashboard
+      const studentData = {
+        name: data.student.name || "Student",
+        email: data.student.email,
+        department: data.student.department || "N/A",
+        year: data.student.year || "N/A",
+        rollno: data.student.rollno || "N/A",
+        academicStatus: data.student.academicStatus || "Good Standing",
+        attendance: data.student.attendance || "85%",
+        prediction: data.student.prediction || "Likely to Graduate"
+      };
+
+      localStorage.setItem('studentData', JSON.stringify(studentData));
+
+      window.location.href = 'studenthomepage.html'; // ✅ Redirect to dashboard
     } else {
       errorMsg.textContent = data.message || 'Login failed';
     }
