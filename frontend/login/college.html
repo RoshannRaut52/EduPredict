@@ -159,7 +159,7 @@
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem('collegeData', JSON.stringify(data));
-        window.location.href = '../collegehomepage.html';
+        window.location.href = '../dashboard/college.html';
       } else {
         errorMsg.textContent = data.error || 'Login failed';
       }
