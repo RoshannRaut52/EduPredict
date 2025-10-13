@@ -181,7 +181,7 @@
       </form>
 
       <div class="login-links">
-        <a href="parent-register.html">Create Account</a> |
+        <a href="parent.html">Create Account</a> |
         <a href="parent-forgot-password.html">Forgot Password?</a>
       </div>
 
@@ -217,11 +217,11 @@
         messageDiv.classList.add("success");
         
         // ✅ Store parent data
-        localStorage.setItem("parentData", JSON.stringify(data.parent));
+        localStorage.setItem("parent", JSON.stringify(data.parent));
         
         // ✅ Redirect to dashboard page
         setTimeout(() => {
-          window.location.href = "parent-dashboard.html";
+          window.location.href = "parent.html";
         }, 1500);
       } else {
         messageDiv.textContent = data.message || "Invalid email or password.";

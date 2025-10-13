@@ -192,7 +192,7 @@ document.getElementById('parentLoginForm')?.addEventListener('submit', async fun
         student_name: data.parent.student_name || "N/A"
       };
 
-      localStorage.setItem('parentData', JSON.stringify(parentData));
+      localStorage.setItem('parent', JSON.stringify(parentData));
 
       window.location.href = 'parent.html'; // ✅ Redirect to parent dashboard
     } else {
