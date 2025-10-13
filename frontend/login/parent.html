@@ -190,46 +190,50 @@
   </main>
 
   <script>
-    const form = document.getElementById("parentLoginForm");
-    const messageDiv = document.getElementById("message");
+  const form = document.getElementById("parentLoginForm");
+  const messageDiv = document.getElementById("message");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      messageDiv.textContent = "";
-      messageDiv.className = "message";
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    messageDiv.textContent = "";
+    messageDiv.className = "message";
 
-      const formData = {
-        email: document.getElementById("email").value.trim(),
-        password: document.getElementById("password").value
-      };
+    const formData = {
+      email: document.getElementById("email").value.trim(),
+      password: document.getElementById("password").value
+    };
 
-      try {
-        const res = await fetch("https://edupredict-l9eg.onrender.com/login/parent", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData)
-        });
+    try {
+      const res = await fetch("https://edupredict-l9eg.onrender.com/login/parent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (res.ok) {
-          messageDiv.textContent = data.message;
-          messageDiv.classList.add("success");
-          
-          localStorage.setItem("parent", JSON.stringify(data.parent));
-          
-          setTimeout(() => {
-            window.location.href = "/parent/dashboard";
-          }, 1500);
-        } else {
-          messageDiv.textContent = data.message;
-          messageDiv.classList.add("error");
-        }
-      } catch (err) {
-        messageDiv.textContent = "⚠️ Connection error. Please try again.";
+      if (res.ok) {
+        messageDiv.textContent = data.message || "Login successful!";
+        messageDiv.classList.add("success");
+        
+        // ✅ Store parent data
+        localStorage.setItem("parentData", JSON.stringify(data.parent));
+        
+        // ✅ Redirect to dashboard page
+        setTimeout(() => {
+          window.location.href = "parent-dashboard.html";
+        }, 1500);
+      } else {
+        messageDiv.textContent = data.message || "Invalid email or password.";
         messageDiv.classList.add("error");
       }
-    });
-  </script>
+    } catch (err) {
+      console.error(err);
+      messageDiv.textContent = "⚠️ Connection error. Please try again.";
+      messageDiv.classList.add("error");
+    }
+  });
+</script>
+
 </body>
 </html>
