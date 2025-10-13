@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard | EduPredict</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ====== (CSS Unchanged) ====== */
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif;}
+body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; display:flex; transition: filter 0.3s ease; padding-top:0; }
+
+/* Top Task Bar */
+.top-bar {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:50px;
+  background:#555;
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  z-index:2000;
+  border-radius:0 0 10px 10px;
+}
+.top-bar-brand { font-weight:700; font-size:1.2rem; color:white; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+
+/* Sidebar */
+.sidebar { width:250px; background:#777; color:#fff; display:flex; flex-direction:column; align-items:center; padding:40px 0; box-shadow:2px 0 8px rgba(0,0,0,0.1); position:fixed; top:50px; bottom:0; left:0; }
+.profile-pic {
+  display:flex; align-items:center; justify-content:center; font-size:60px; background:#555; color:white; border-radius:50%; width:140px; height:140px; border:3px solid #fff; margin-bottom:15px;
+}
+.teacher-info { text-align:center; margin-bottom:20px; }
+.teacher-info h3 { font-size:1.1rem; margin-bottom:3px; color:#fff; }
+.teacher-info p { font-size:0.9rem; color:#fff; margin-bottom:2px; }
+.teacher-info .dept { font-style:italic; color:#fff; }
+.black-line { width:80%; height:2px; background:#555; margin-bottom:20px; }
+.menu { width:100%; list-style:none; }
+.menu li a { display:flex; align-items:center; gap:15px; padding:12px 25px; color:#fff; text-decoration:none; font-weight:500; transition:0.3s; font-size:0.95rem;}
+.menu li a:hover { background: rgba(255,255,255,0.1); border-radius:8px; }
+
+/* Main Content */
+.content { flex:1; padding:30px 30px 30px 280px; transition: flex 0.3s ease, margin-right 0.3s ease; position:relative; z-index:1; margin-top:70px; }
+.content.shrink { flex:0.65; }
+.content h1, .content h2 { color:#222; margin-bottom:20px; }
+
+/* Search Bar */
+.search-bar input { width:60%; padding:8px 12px; border-radius:6px; border:1px solid #ccc; font-size:0.9rem; outline:none; margin-bottom:20px;}
+.search-bar input:focus { border-color:#555; box-shadow:0 0 5px rgba(0,0,0,0.2); }
+
+/* Departments */
+.departments { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:20px; }
+@keyframes float { 0% {transform:translateY(0);} 50% {transform:translateY(-8px);} 100% {transform:translateY(0);} }
+.department-card { border-radius:12px; padding:60px 20px; min-height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; animation:float 3s ease-in-out infinite; color:#333; font-weight:600; border:2px solid rgba(0,0,0,0.1); cursor:pointer;}
+.department-card span { font-size:28px; }
+.department-card h3 { font-size:1rem; text-align:center; }
+.dept-it { background: linear-gradient(135deg,#b0b0b0,#d0d0d0);}
+.dept-entc { background: linear-gradient(135deg,#c0c0c0,#e0e0e0);}
+.dept-mech { background: linear-gradient(135deg,#d0d0d0,#f0f0f0);}
+.dept-civil { background: linear-gradient(135deg,#a0a0a0,#c0c0c0); }
+
+/* Floating Button */
+.floating-btn { position:fixed; top:90px; right:20px; width:50px; height:50px; border-radius:50%; background:#555; color:white; font-size:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:1000; transition:all 0.3s;}
+.floating-btn.active { width:40px; height:40px; font-size:18px; border-radius:6px; justify-content:center; align-items:center;}
+.floating-btn:hover { background:#333; }
+
+/* Right Panel */
+.right-panel { position:fixed; top:50px; right:-350px; width:350px; height:calc(100% - 50px); background:#f0f0f0; box-shadow:-4px 0 12px rgba(0,0,0,0.2); padding:20px; overflow-y:auto; transition:right 0.3s ease; z-index:999;}
+.right-panel.active { right:0; }
+.top-options { display:flex; gap:15px; justify-content:center; margin-bottom:20px; }
+.top-options div { flex:1; background:#d0d0d0; text-align:center; padding:10px 0; border-radius:10px; cursor:pointer; font-weight:600; color:#555; transition:0.3s; }
+.top-options div:hover { background:#b0b0b0; }
+.right-item { background:#e0e0e0; padding:12px 15px; border-radius:8px; margin-bottom:12px; cursor:pointer; color:#555; font-weight:600; transition:0.3s;}
+.right-item:hover { background:#c0c0c0; }
+
+/* Modal Background */
+.modal-bg { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); backdrop-filter:blur(3px); z-index:1500; justify-content:center; align-items:center; overflow-y:auto; }
+
+/* Modal Box */
+.modal { background:#fff; padding:20px; border-radius:10px; max-width:90%; max-height:90%; overflow-y:auto; z-index:1600; }
+
+/* Year selection container */
+.year-selection { display:flex; flex-direction:column; gap:15px; margin-top:10px;}
+.year-card { padding:15px; background:#d0d0d0; border-radius:10px; cursor:pointer; font-weight:600; text-align:center; transition:0.3s; color:#555; }
+.year-card:hover { background:#b0b0b0; }
+
+/* Calendar */
+.calendarTable { width:100%; border-collapse:collapse; margin-top:15px;}
+.calendarTable th, .calendarTable td { border:1px solid #ccc; padding:8px; text-align:center;}
+.calendarTable th { background:#555; color:white;}
+.today { background:#555; color:white; border-radius:50%; }
+.event-day { background:#f87171; color:white; border-radius:50%; }
+
+/* Help Modal */
+.help-container h2 { margin-bottom:10px; }
+.help-container p { margin-bottom:8px; }
+
+/* Blur effect */
+.blur { filter: blur(4px); transition: filter 0.3s ease; }
+
+/* Responsive */
+@media(max-width:768px){
+  body { flex-direction:column; padding-top:150px; }
+  .sidebar { width:100%; flex-direction:row; overflow-x:auto; padding:15px 10px; top:auto; position:relative;}
+  .sidebar .menu { display:flex; flex-direction:row; }
+  .menu li a { padding:10px 15px; font-size:14px; }
+  .teacher-info { display:none; }
+  .departments { grid-template-columns:1fr 1fr; }
+  .search-bar input { width:80%; }
+  .right-panel { width:100%; height:auto; top:auto; position:relative; }
+  .floating-btn { top:auto; bottom:20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Task Bar -->
+<div class="top-bar">
+  <div class="top-bar-brand">EduPredict</div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="profile-pic">👩‍🏫</div>
+  <div class="teacher-info">
+    <h3>Prof. John Dark</h3>
+    <p>John@edupredict.in</p>
+    <p class="dept">Department: Computer Science</p>
+  </div>
+  <div class="black-line"></div>
+  <ul class="menu">
+    <li><a href="#">🏠 Dashboard</a></li>
+    <li><a href="#">📝 Exam</a></li>
+    <li><a href="#">📚 Courses</a></li>
+    <li><a href="#">👩‍🎓 Students</a></li>
+    <li><a href="#">📄 Homework</a></li>
+    <li><a href="#">✅ Attendance</a></li>
+    <li><a href="#">🛠 Duties</a></li>
+    <li><a href="#">⭐ Grading</a></li>
+    <li><a href="#">🎓 Alumni</a></li>
+  </ul>
+</div>
+
+<!-- Main Content -->
+<div class="content" id="mainContent">
+  <h1>Welcome, Prof. John Dark</h1>
+  <div class="search-bar">
+    <input type="text" placeholder="Search Departments...">
+  </div>
+  <h2>Departments Teaching In</h2>
+  <div class="departments">
+    <div class="department-card dept-it" data-dept="IT"><span>💻</span><h3>IT</h3></div>
+    <div class="department-card dept-entc" data-dept="ENTC"><span>📡</span><h3>ENTC</h3></div>
+    <div class="department-card dept-mech" data-dept="Mechanical"><span>⚙</span><h3>Mechanical</h3></div>
+    <div class="department-card dept-civil" data-dept="Civil"><span>🏗</span><h3>Civil</h3></div>
+  </div>
+</div>
+
+<!-- Floating Button -->
+<div class="floating-btn" id="toggleBtn">☰</div>
+
+<!-- Right Panel -->
+<div class="right-panel" id="rightPanel">
+  <div class="top-options">
+    <div id="notifBtn">🔔 Notifications</div>
+    <div id="helpBtn">❓ Help</div>
+  </div>
+  <div class="right-item" id="academicBtn">🎓 Academic Year</div>
+  <div class="right-item" id="eventsBtn">📅 Events</div>
+</div>
+
+<!-- Modal Background -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="notifModal">
+    <h2>Notifications</h2>
+    <ul>
+      <li>📝 Exam schedule for IT department released.</li>
+      <li>📚 New course materials uploaded for ENTC.</li>
+      <li>⚙ Mechanical lab maintenance on 15th Oct.</li>
+      <li>🏗 Civil department seminar on 20th Oct.</li>
+      <li>💻 IT department workshop registration open.</li>
+    </ul>
+  </div>
+
+  <div class="modal" id="academicModal" style="display:none;">
+    <h2>Academic Year - Current Month</h2>
+    <table class="calendarTable" id="academicCalendar"></table>
+  </div>
+
+  <div class="modal" id="eventsModal" style="display:none;">
+    <h2>Events Calendar</h2>
+    <table class="calendarTable" id="eventsCalendar"></table>
+    <div id="eventsList" style="margin-top:10px;"></div>
+  </div>
+
+  <div class="modal" id="yearModal" style="display:none;">
+    <h2 id="deptTitle">Select Year</h2>
+    <div class="year-selection" id="yearSelectionContainer"></div>
+  </div>
+
+  <div class="modal" id="helpModal" style="display:none;">
+    <div class="help-container">
+      <h2>Contact HOD</h2>
+      <p>Email: hod@edupredict.in</p>
+      <p>Phone: +91 9876543210</p>
+      <p>Office: Room 101, Admin Block</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// === Right Panel Toggle ===
+const toggleBtn = document.getElementById('toggleBtn');
+const rightPanel = document.getElementById('rightPanel');
+const mainContent = document.getElementById('mainContent');
+toggleBtn.addEventListener('click', () => {
+  rightPanel.classList.toggle('active');
+  mainContent.classList.toggle('shrink');
+  toggleBtn.textContent = rightPanel.classList.contains('active') ? '⋮' : '☰';
+});
+
+// === Modal Control ===
+const modalBg = document.getElementById('modalBg');
+const notifBtn = document.getElementById('notifBtn');
+const helpBtn = document.getElementById('helpBtn');
+const eventsBtn = document.getElementById('eventsBtn');
+const academicBtn = document.getElementById('academicBtn');
+const notifModal = document.getElementById('notifModal');
+const academicModal = document.getElementById('academicModal');
+const eventsModal = document.getElementById('eventsModal');
+const yearModal = document.getElementById('yearModal');
+const helpModal = document.getElementById('helpModal');
+const deptTitle = document.getElementById('deptTitle');
+
+function hideAllModals() {
+  [notifModal, academicModal, eventsModal, yearModal, helpModal].forEach(m => m.style.display = 'none');
+}
+
+function showModal(modal){
+  hideAllModals();
+  modal.style.display='block';
+  modalBg.style.display='flex';
+  mainContent.classList.add('blur');
+}
+
+notifBtn.onclick = () => showModal(notifModal);
+helpBtn.onclick = () => showModal(helpModal);
+academicBtn.onclick = () => { showModal(academicModal); renderCalendar('academicCalendar'); };
+eventsBtn.onclick = () => { showModal(eventsModal); renderCalendar('eventsCalendar', true); };
+
+modalBg.onclick = (e) => {
+  if (e.target === modalBg) {
+    modalBg.style.display = 'none';
+    mainContent.classList.remove('blur');
+  }
+};
+
+// === Department & Year Selection ===
+const deptYears = { "IT": ["1","2","4"], "ENTC": ["2","4"], "Mechanical": ["1","3","4"], "Civil": ["3","4"] };
+
+document.querySelectorAll('.department-card').forEach(card=>{
+  card.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const dept = card.getAttribute('data-dept');
+    hideAllModals();
+    deptTitle.textContent = `${dept} - Select Year`;
+    yearModal.style.display='block';
+    modalBg.style.display='flex';
+    mainContent.classList.add('blur');
+    const container = document.getElementById('yearSelectionContainer');
+    container.innerHTML='';
+    deptYears[dept].forEach(y=>{
+      const div = document.createElement('div');
+      div.className='year-card';
+      div.textContent=`${y}${getOrdinal(y)} Year`;
+      div.onclick=()=>window.location.href=`students.html?dept=${dept}&year=${y}`;
+      container.appendChild(div);
+    });
+  });
+});
+
+function getOrdinal(n){ return n==="1"?"st":n==="2"?"nd":n==="3"?"rd":"th"; }
+
+// === Calendar & Events ===
+const eventsData = {
+  "2025-10-15":["Mechanical Lab Maintenance"],
+  "2025-10-20":["Civil Seminar"],
+  "2025-10-22":["ENTC Project Presentation"],
+  "2025-10-25":["IT Workshop Registration"]
+};
+
+function renderCalendar(id, isEvent=false){
+  const today=new Date();
+  const month=today.getMonth();
+  const year=today.getFullYear();
+  const dayNow=today.getDate();
+  const firstDay=new Date(year,month,1).getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+
+  let html=`<tr><th colspan="7">${today.toLocaleString('default',{month:'long'})} ${year}</th></tr>`;
+  html+='<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr><tr>';
+  for(let i=0;i<firstDay;i++) html+='<td></td>';
+
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    let cls='';
+    if(!isEvent && d===dayNow) cls='today';
+    if(isEvent && eventsData[dateStr]) cls='event-day';
+    html+=`<td class="${cls}">${d}</td>`;
+    if((d+firstDay)%7===0) html+='</tr><tr>';
+  }
+  html+='</tr>';
+  document.getElementById(id).innerHTML=html;
+
+  if(isEvent){
+    const list=document.getElementById('eventsList');
+    list.innerHTML='';
+    for(let date in eventsData){
+      const d=new Date(date);
+      list.innerHTML+=`<p><strong>${d.toDateString()}:</strong> ${eventsData[date].join(', ')}</p>`;
+    }
+  }
+}
+</script>
+
+</body>
+</html>
