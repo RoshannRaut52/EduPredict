@@ -255,11 +255,11 @@
 
   <script>
     // ✅ Load parent & student data from localStorage
-    const parentData = JSON.parse(localStorage.getItem('parentData'));
+    const parentData = JSON.parse(localStorage.getItem('parent'));
 
     if (!parentData) {
       alert("⚠️ No parent data found. Please log in again.");
-      window.location.href = "parent-login.html";
+      window.location.href = "parent.html";
     } else {
       document.getElementById("parentName").textContent = parentData.name || "Parent";
 
@@ -304,8 +304,8 @@
 
     // ✅ Logout function
     function logout() {
-      localStorage.removeItem("parentData");
-      window.location.href = "parent-login.html";
+      localStorage.removeItem("parent");
+      window.location.href = "parent.html";
     }
 
     // Logout link in header
