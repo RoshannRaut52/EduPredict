@@ -107,11 +107,6 @@ app.post('/api/college/login', async (req, res) => {
 // ====================================================
 
 // 🟢 Register
-const express = require('express');
-const bcrypt = require('bcrypt');
-const pool = require('./db'); // modify path as needed
-
-app.use(express.json());
 
 // Student Registration Route
 app.post('/register/student', async (req, res) => {
