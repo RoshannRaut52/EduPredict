@@ -2,7 +2,6 @@
 const backendUrl = 'https://edupredict-l9eg.onrender.com';
 
 
-
 // ==============================
 // 🔹 College Login
 // ==============================
@@ -37,9 +36,8 @@ document.getElementById('collegeLoginForm')?.addEventListener('submit', async fu
 });
 
 
-
 // ==============================
-// 🔹 Student Login - ENHANCED FOR DASHBOARD
+// 🔹 Student Login
 // ==============================
 document.getElementById('studentLoginForm')?.addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -59,45 +57,16 @@ document.getElementById('studentLoginForm')?.addEventListener('submit', async fu
     const data = await res.json();
 
     if (res.ok) {
-      // ✅ Save complete student info for dashboard with all required fields
+      // ✅ Save complete student info for dashboard
       const studentData = {
-        id: data.student.id,
         name: data.student.name || "Student",
         email: data.student.email,
-        college: data.student.college_name || data.student.college || "College Name",
         department: data.student.department || "N/A",
         year: data.student.year || "N/A",
         rollno: data.student.rollno || "N/A",
-        rollNo: data.student.rollno || "N/A", // Alternative naming
-        attendance: data.student.attendance || "85%",
-        cgpa: data.student.cgpa || "N/A",
-        assignmentsSubmitted: data.student.assignments_submitted || data.student.assignmentsSubmitted || "0",
-        achievementsCount: data.student.achievements?.length || "3",
         academicStatus: data.student.academicStatus || "Good Standing",
-        prediction: data.student.dropout_prediction || data.student.prediction || "Low Dropout Risk - Excellent Performance!",
-        
-        // Additional dashboard data
-        achievements: data.student.achievements || [
-          "Top Performer",
-          "100% Attendance", 
-          "Math Olympiad Winner"
-        ],
-        collegeNews: data.student.collegeNews || [
-          "Orientation Day next Monday",
-          "Seminar: AI & Education on Oct 18",
-          "New Library Resources Available"
-        ],
-        upcomingEvents: data.student.upcomingEvents || [
-          "Cultural Fest - Oct 25-27",
-          "Sports Week - Nov 3-7",
-          "Tech Symposium - Nov 15"
-        ],
-        importantNotices: data.student.importantNotices || [
-          "Exam forms due Oct 20",
-          "Library closed on Sunday",
-          "Fee payment deadline: Oct 30"
-        ],
-        profilePic: data.student.profilePic || null
+        attendance: data.student.attendance || "85%",
+        prediction: data.student.prediction || "Likely to Graduate"
       };
 
       localStorage.setItem('studentData', JSON.stringify(studentData));
@@ -111,7 +80,6 @@ document.getElementById('studentLoginForm')?.addEventListener('submit', async fu
     errorMsg.textContent = 'Error connecting to server.';
   }
 });
-
 
 
 // ==============================
@@ -154,7 +122,6 @@ document.getElementById('studentRegisterForm')?.addEventListener('submit', async
 });
 
 
-
 // ==============================
 // 🔹 Parent Registration (NEW)
 // ==============================
@@ -193,7 +160,6 @@ document.getElementById('parentRegisterForm')?.addEventListener('submit', async 
     errorMsg.textContent = 'Error connecting to server.';
   }
 });
-
 
 
 // ==============================
@@ -239,155 +205,23 @@ document.getElementById('parentLoginForm')?.addEventListener('submit', async fun
 });
 
 
-// ==============================
-// 🎯 NEW: FETCH STUDENT DASHBOARD DATA (OPTIONAL - FOR DYNAMIC UPDATES)
-// ==============================
-/**
- * Fetches complete student dashboard data from backend
- * Can be called after login or on dashboard page load
- */
-async function fetchStudentDashboardData(studentId) {
+// python file prediction backend
+
+// Node.js/Express endpoint
+router.post(`${backendUrl}/api/admin/run-predictions`, authenticateAdmin, async (req, res) => {
   try {
-    const res = await fetch(`${backendUrl}/api/student/dashboard/${studentId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      // Update localStorage with fresh data
-      const existingData = JSON.parse(localStorage.getItem('studentData')) || {};
-      
-      const updatedStudentData = {
-        ...existingData,
-        id: data.id,
-        name: data.name || existingData.name || "Student",
-        email: data.email || existingData.email,
-        college: data.college || data.college_name || existingData.college || "College Name",
-        department: data.department || existingData.department || "N/A",
-        year: data.year || existingData.year || "N/A",
-        rollno: data.rollno || data.rollNo || existingData.rollno || "N/A",
-        rollNo: data.rollno || data.rollNo || existingData.rollNo || "N/A",
-        attendance: data.attendance || existingData.attendance || "85%",
-        cgpa: data.cgpa || existingData.cgpa || "N/A",
-        assignmentsSubmitted: data.assignments_submitted || data.assignmentsSubmitted || existingData.assignmentsSubmitted || "0",
-        achievementsCount: data.achievements?.length || existingData.achievementsCount || "3",
-        prediction: data.dropout_prediction || data.prediction || existingData.prediction || "Low Dropout Risk",
-        achievements: data.achievements || existingData.achievements || ["Top Performer"],
-        collegeNews: data.collegeNews || existingData.collegeNews || ["No news available"],
-        upcomingEvents: data.upcomingEvents || existingData.upcomingEvents || ["No events scheduled"],
-        importantNotices: data.importantNotices || existingData.importantNotices || ["No notices"],
-        profilePic: data.profilePic || existingData.profilePic || null
-      };
-
-      localStorage.setItem('studentData', JSON.stringify(updatedStudentData));
-      return updatedStudentData;
-    } else {
-      console.error('Failed to fetch dashboard data:', data.message);
-      return null;
-    }
-  } catch (error) {
-    console.error('Dashboard fetch error:', error);
-    return null;
-  }
-}
-
-
-// ==============================
-// 🎯 NEW: UPDATE STUDENT PROFILE
-// ==============================
-/**
- * Updates student profile information
- */
-async function updateStudentProfile(studentId, updates) {
-  try {
-    const res = await fetch(`${backendUrl}/api/student/profile/${studentId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates)
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      // Update localStorage with new data
-      const existingData = JSON.parse(localStorage.getItem('studentData')) || {};
-      const updatedData = { ...existingData, ...data.student };
-      localStorage.setItem('studentData', JSON.stringify(updatedData));
-      
-      return { success: true, data: data.student };
-    } else {
-      return { success: false, message: data.message };
-    }
-  } catch (error) {
-    console.error('Profile update error:', error);
-    return { success: false, message: 'Error connecting to server.' };
-  }
-}
-
-
-// ==============================
-// 🎯 NEW: GET STUDENT ACADEMIC DATA
-// ==============================
-/**
- * Fetches student academic performance data
- */
-async function getStudentAcademics(studentId) {
-  try {
-    const res = await fetch(`${backendUrl}/api/student/academics/${studentId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      return { success: true, data };
-    } else {
-      return { success: false, message: data.message };
-    }
-  } catch (error) {
-    console.error('Academics fetch error:', error);
-    return { success: false, message: 'Error connecting to server.' };
-  }
-}
-
-
-// ==============================
-// 🎯 NEW: REFRESH DASHBOARD DATA
-// ==============================
-/**
- * Call this function on dashboard page load to refresh data
- * Usage: Add this to your student dashboard HTML page
- */
-window.addEventListener('DOMContentLoaded', async function() {
-  // Only run on student dashboard page
-  if (window.location.pathname.includes('student.html') || 
-      window.location.pathname.includes('dashboard')) {
+    const { exec } = require('child_process');
     
-    const studentData = JSON.parse(localStorage.getItem('studentData'));
-    
-    if (studentData && studentData.id) {
-      // Fetch fresh data from backend
-      const freshData = await fetchStudentDashboardData(studentData.id);
-      
-      if (freshData) {
-        console.log('✅ Dashboard data refreshed from backend');
-        // Trigger a custom event to notify dashboard to reload
-        window.dispatchEvent(new CustomEvent('dashboardDataUpdated', { detail: freshData }));
-      } else {
-        console.log('ℹ️ Using cached dashboard data');
+    exec('python3 predict_dropout.py', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error}`);
+        return res.status(500).json({ error: 'Prediction failed' });
       }
-    }
+      
+      console.log(stdout);
+      res.json({ message: 'Predictions completed successfully', output: stdout });
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to run predictions' });
   }
 });
-
-
-// ==============================
-// 🎯 EXPORT FUNCTIONS FOR USE IN OTHER FILES
-// ==============================
-// Make these functions globally available
-window.fetchStudentDashboardData = fetchStudentDashboardData;
-window.updateStudentProfile = updateStudentProfile;
-window.getStudentAcademics = getStudentAcademics;
