@@ -236,6 +236,20 @@
 
     // Logout link in header
     document.getElementById("logout").addEventListener("click", logout);
+
+    // fetching for ml model
+
+    // Fetch student with prediction
+const res = await fetch(`${backendUrl}/api/student/profile`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+const student = await res.json();
+
+// Display risk level
+document.getElementById('riskLevel').textContent = student.prediction || 'Not calculated';
+document.getElementById('confidence').textContent = `${student.confidence}%` || 'N/A';
+document.getElementById('recommendation').textContent = student.recommendation || '';
+
   </script>
 </body>
 </html>
