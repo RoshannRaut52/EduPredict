@@ -205,53 +205,7 @@
     &copy; 2025 EduPredict. All rights reserved.
   </footer>
 
-  <script>
-    const form = document.getElementById("studentLoginForm");
-    const msg = document.getElementById("statusMsg");
-    const backendUrl = 'https://edupredict-l9eg.onrender.com';  // ✅ Add backend URL
+  <script src="../src/api.js"></script>
 
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      msg.textContent = "⏳ Logging in...";
-      msg.className = "message";
-
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());  // ✅ Convert FormData to object
-
-      try {
-        const res = await fetch(`${backendUrl}/login/student`, {  // ✅ Use template literal with backendUrl
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },  // ✅ Add JSON header
-          body: JSON.stringify(data)  // ✅ Send as JSON
-        });
-        
-        const result = await res.json();
-
-        if (res.ok) {
-          msg.textContent = result.message || "✅ Login successful!";
-          msg.classList.add("success");
-          
-          // ✅ Store student data in localStorage
-          if (result.student) {
-            localStorage.setItem('studentData', JSON.stringify(result.student));
-          }
-          
-          form.reset();
-          
-          // ✅ Redirect to student dashboard
-          setTimeout(() => {
-            window.location.href = "../dashboard/student.html";
-          }, 1500);
-        } else {
-          msg.textContent = result.message || "❌ Login failed";
-          msg.classList.add("error");
-        }
-      } catch (err) {
-        console.error('Error:', err);
-        msg.textContent = "❌ Cannot connect to server. Please try again.";
-        msg.classList.add("error");
-      }
-    };
-  </script>
 </body>
 </html>

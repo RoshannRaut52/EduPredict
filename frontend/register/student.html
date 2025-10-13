@@ -197,46 +197,8 @@
     &copy; 2025 EduPredict. All rights reserved.
   </footer>
 
- <script>
-  const form = document.getElementById("studentRegisterForm");
-  const msg = document.getElementById("statusMsg");
-  const backendUrl = 'https://edupredict-l9eg.onrender.com';
+ <script src="../src/api.js"></script>
 
-  form.onsubmit = async (e) => {
-    e.preventDefault();
-    msg.textContent = "⏳ Processing...";
-    msg.className = "message";
-
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());  // ✅ Convert FormData to plain object
-
-    try {
-      const res = await fetch(`${backendUrl}/register/student`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },  // ✅ Add JSON header
-        body: JSON.stringify(data)  // ✅ Send as JSON string, not FormData
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        msg.textContent = result.message || "✅ Registration successful!";
-        msg.classList.add("success");
-        form.reset();
-        setTimeout(() => {
-          window.location.href = "studentlogin.html";  // ✅ Redirect to login page
-        }, 2000);
-      } else {
-        msg.textContent = result.message || "❌ Registration failed";
-        msg.classList.add("error");
-      }
-    } catch (err) {
-      console.error('Error:', err);
-      msg.textContent = "❌ Cannot connect to server. Please try again.";
-      msg.classList.add("error");
-    }
-  };
-</script>
 
 </body>
 </html>
