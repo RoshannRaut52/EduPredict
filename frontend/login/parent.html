@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Parent Login | EduPredict</title>
   <style>
-    /* ====== Reuse Student Login Page Theme ====== */
     * {
       margin: 0;
       padding: 0;
@@ -148,22 +147,14 @@
       text-decoration: underline;
     }
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 0.9rem;
-      color: #eee;
-      background: #000;
-    }
-
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media(max-width:600px) {
-      .login-container {
-        padding: 25px;
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   </style>
@@ -172,10 +163,7 @@
   <header>
     <div class="logo">EduPredict</div>
     <div class="top-right">
-      <a href="../index.html">Home</a>
-      <a href="../about.html">About</a>
-      <a href="../help.html">Help</a>
-      <a href="../contact.html">Contact</a>
+      <a href="index.html">Home</a>
     </div>
   </header>
 
@@ -184,10 +172,10 @@
       <h2>👪 Parent Login</h2>
       <form id="parentLoginForm">
         <label>Parent Email</label>
-        <input type="email" name="parent_email" placeholder="Enter parent's email" required>
+        <input type="email" name="email" id="email" placeholder="Enter your email" required>
 
         <label>Password</label>
-        <input type="password" name="password" placeholder="Enter password" required>
+        <input type="password" name="password" id="password" placeholder="Enter your password" required>
 
         <button type="submit">Login</button>
       </form>
@@ -197,47 +185,51 @@
         <a href="parent-forgot-password.html">Forgot Password?</a>
       </div>
 
-      <div class="message" id="statusMsg"></div>
+      <div class="message" id="message"></div>
     </div>
   </main>
 
-  <footer>
-    &copy; 2025 EduPredict. All rights reserved.
-  </footer>
-
   <script>
     const form = document.getElementById("parentLoginForm");
-    const msg = document.getElementById("statusMsg");
+    const messageDiv = document.getElementById("message");
 
-    form.onsubmit = async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      msg.textContent = "⏳ Logging in...";
-      msg.className = "message";
+      messageDiv.textContent = "";
+      messageDiv.className = "message";
 
-      const formData = new FormData(form);
+      const formData = {
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value
+      };
 
       try {
         const res = await fetch("/login/parent", {
           method: "POST",
-          body: formData
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData)
         });
+
         const data = await res.json();
 
         if (res.ok) {
-          msg.textContent = data.message;
-          msg.classList.add("success");
-          form.reset();
-          // Redirect after successful login
-          setTimeout(() => { window.location.href = "/parent/dashboard"; }, 1500);
+          messageDiv.textContent = data.message;
+          messageDiv.classList.add("success");
+          
+          localStorage.setItem("parent", JSON.stringify(data.parent));
+          
+          setTimeout(() => {
+            window.location.href = "/parent/dashboard";
+          }, 1500);
         } else {
-          msg.textContent = data.message;
-          msg.classList.add("error");
+          messageDiv.textContent = data.message;
+          messageDiv.classList.add("error");
         }
       } catch (err) {
-        msg.textContent = "❌ Something went wrong. Please try again.";
-        msg.classList.add("error");
+        messageDiv.textContent = "⚠️ Connection error. Please try again.";
+        messageDiv.classList.add("error");
       }
-    };
+    });
   </script>
 </body>
 </html>
