@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parent Dashboard | ABC Engineering College</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+    body { background:linear-gradient(135deg,#e0e0e0,#cfd8dc); min-height:100vh; display:flex; flex-direction:column; color:#0a0808; }
+    header { display:flex; justify-content:space-between; align-items:center; padding:15px 50px; background:#000; color:#fff; position:sticky; top:0; z-index:1000; }
+    .brand { display:flex; align-items:center; gap:15px; }
+    .brand img { width:50px; height:50px; border-radius:10px; border:2px solid #f2f2f2; background:#f2f2f2; padding:2px; }
+    .brand h1 { font-size:1.6rem; font-weight:600; color:#f2f2f2; }
+    .header-right a { background:#10ac84; color:#f2f2f2; padding:8px 16px; border-radius:8px; font-weight:600; text-decoration:none; margin-left:15px; transition:0.3s; cursor:pointer; }
+    .header-right a:hover { background:#1dd1a1; }
+    .dashboard { display:flex; max-width:1200px; margin:30px auto; width:95%; gap:20px; }
+    .parent-sidebar { flex:0 0 250px; background:#1a1a1a; color:#f2f2f2; min-height:calc(100vh - 80px); padding:30px 20px; border-radius:12px; display:flex; flex-direction:column; align-items:center; box-shadow:0 5px 15px rgba(0,0,0,0.3); }
+
+    .parent-logo {
+      width:100px; height:100px; border-radius:50%;
+      background:#10ac84; color:#f2f2f2; font-size:3rem; font-weight:700;
+      display:flex; align-items:center; justify-content:center;
+      border:2px solid #f2f2f2; margin-bottom:15px;
+    }
+
+    .parent-sidebar h2 { font-size:1.4rem; margin-bottom:5px; color:#10ac84; }
+    .parent-sidebar p { font-weight:600; font-size:0.95rem; margin-bottom:8px; color:#f2f2f2; text-align:center; }
+
+    .main-content { flex:1; }
+    .welcome-banner { font-size:1.8rem; font-weight:600; color:#004aad; background:#e0e0e0; padding:20px; border-radius:12px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.2); margin-bottom:20px; }
+    
+    .tabs { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+    .tab { flex:1; text-align:center; background:#d6d6d6; padding:12px 0; border-radius:12px; font-weight:600; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.2); transition:0.3s; }
+    .tab.active { background:#10ac84; color:#f2f2f2; }
+    
+    .tab-content { display:none; background:#e0e0e0; padding:25px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.2); margin-bottom:20px; }
+    .tab-content.active { display:block; }
+    .tab-content h2 { color:#000; border-bottom:2px solid #10ac84; padding-bottom:8px; margin-bottom:15px; }
+
+    .notif { background:#555; color:#f2f2f2; padding:12px; margin:10px 0; border-radius:8px; font-weight:600; }
+    footer { text-align:center; padding:20px; font-size:0.9rem; color:#f2f2f2; background:#000; margin-top:auto; }
+
+    .student-info { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
+    .student-info .info-card { background:#d6d6d6; padding:15px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.15); }
+    .student-info .info-card h3 { margin-bottom:10px; color:#10ac84; }
+    .student-info .info-card p { font-weight:500; font-size:0.95rem; }
+
+    .chart-container { width:100%; max-width:700px; height:300px; margin:0 auto 20px auto; }
+
+    .feedback-section { margin-top:20px; background:#d6d6d6; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.15); }
+    .feedback-section textarea { width:100%; min-height:100px; border-radius:8px; border:1px solid #999; padding:10px; resize:vertical; font-size:1rem; margin-bottom:10px; background:#f2f2f2; }
+    .feedback-section button { background:#10ac84; color:#f2f2f2; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600; }
+    .feedback-section button:hover { background:#1dd1a1; }
+
+    @media(max-width:900px){
+      .dashboard{flex-direction:column;}
+      .parent-sidebar{width:100%;min-height:auto;margin-bottom:20px;}
+      .student-info{grid-template-columns:1fr;}
+      .chart-container{height:250px;}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="../static/images/college-logo.png" alt="College Logo">
+    <h1>ABC Engineering College</h1>
+  </div>
+  <div class="header-right">
+    <a id="dashboardBtn">Parent Dashboard</a>
+    <a id="logoutBtn">Logout</a>
+  </div>
+</header>
+
+<div class="dashboard">
+  <div class="parent-sidebar">
+    <div class="parent-logo">P</div>
+    <h2>Ramesh Patil</h2>
+    <p>ramesh@example.com</p>
+    <p>+91 9876543210</p>
+  </div>
+
+  <div class="main-content">
+    <div class="welcome-banner">
+      Welcome, <span>Ramesh Patil</span> 👋
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="student">Student Info</div>
+      <div class="tab" data-tab="attendance">Attendance</div>
+      <div class="tab" data-tab="cgpa">Academic Progress</div>
+      <div class="tab" data-tab="assignments">Assignments</div>
+      <div class="tab" data-tab="notifications">Notifications</div>
+      <div class="tab" data-tab="feedback">Feedback</div>
+    </div>
+
+    <div class="tab-content active" id="student">
+      <h2>🎓 Student Information</h2>
+      <div class="student-info">
+        <div class="info-card"><h3>Name</h3><p>Aditi Patil</p></div>
+        <div class="info-card"><h3>Email</h3><p>aditi@student.edu</p></div>
+        <div class="info-card"><h3>Roll Number</h3><p>12345</p></div>
+        <div class="info-card"><h3>Current Year</h3><p>2nd Year</p></div>
+        <div class="info-card"><h3>Department</h3><p>Information Technology</p></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="attendance">
+      <h2>📅 Attendance (Subject-wise)</h2>
+      <div class="chart-container">
+        <canvas id="attendanceChart"></canvas>
+      </div>
+      <div id="attendance-alerts"></div>
+    </div>
+
+    <div class="tab-content" id="cgpa">
+      <h2>📊 Academic Progress</h2>
+      <div class="chart-container">
+        <canvas id="cgpaChart"></canvas>
+      </div>
+    </div>
+
+    <div class="tab-content" id="assignments">
+      <h2>📝 Assignments</h2>
+      <table style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background:#10ac84; color:#f2f2f2;">
+            <th style="padding:10px; border:1px solid #999;">Subject</th>
+            <th style="padding:10px; border:1px solid #999;">Title</th>
+            <th style="padding:10px; border:1px solid #999;">Due Date</th>
+            <th style="padding:10px; border:1px solid #999;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:10px; border:1px solid #999;">Math</td><td style="padding:10px; border:1px solid #999;">Algebra Homework</td><td style="padding:10px; border:1px solid #999;">15 Oct 2025</td><td style="padding:10px; border:1px solid #999;">✅ Submitted</td></tr>
+          <tr><td style="padding:10px; border:1px solid #999;">Science</td><td style="padding:10px; border:1px solid #999;">Lab Report</td><td style="padding:10px; border:1px solid #999;">18 Oct 2025</td><td style="padding:10px; border:1px solid #999;">❌ Pending</td></tr>
+          <tr><td style="padding:10px; border:1px solid #999;">English</td><td style="padding:10px; border:1px solid #999;">Essay on Shakespeare</td><td style="padding:10px; border:1px solid #999;">20 Oct 2025</td><td style="padding:10px; border:1px solid #999;">❌ Pending</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-content" id="notifications">
+      <h2>🔔 Notifications</h2>
+      <div class="notif">📅 Parent-Teacher Meeting: <b>20 Oct 2025</b></div>
+      <div class="notif">✅ Mid-term results are now available.</div>
+      <div class="notif">⚠ Attendance alert: below 80% in September.</div>
+    </div>
+
+    <div class="tab-content" id="feedback">
+      <h2>📝 Feedback</h2>
+      <div class="feedback-section">
+        <textarea placeholder="Write your feedback here..."></textarea>
+        <button onclick="submitFeedback()">Submit Feedback</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2025 ABC Engineering College. All rights reserved.</footer>
+
+<script>
+  // Tab switching
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.tab-content');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.tab;
+      contents.forEach(c => c.classList.remove('active'));
+      document.getElementById(target).classList.add('active');
+    });
+  });
+
+  // Attendance Chart
+  const subjects = ['Math', 'Science', 'English', 'History', 'Computer'];
+  const attendance = [90, 85, 72, 80, 68];
+  const teachers = ['Mr. Sharma', 'Ms. Verma', 'Mr. Joshi', 'Mrs. Iyer', 'Mr. Khan'];
+
+  new Chart(document.getElementById('attendanceChart'), {
+    type: 'bar',
+    data: {
+      labels: subjects,
+      datasets: [{
+        label: 'Attendance %',
+        data: attendance,
+        backgroundColor: ['#2196f3', '#42a5f5', '#64b5f6', '#1565c0', '#00bcd4'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Percentage (%)' } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  const alertDiv = document.getElementById('attendance-alerts');
+  attendance.forEach((percent, i) => {
+    if (percent < 75) {
+      const alertMsg = document.createElement('p');
+      alertMsg.classList.add('notif');
+      alertMsg.textContent = `⚠ Low attendance in ${subjects[i]} (${percent}%) - Teacher: ${teachers[i]}`;
+      alertDiv.appendChild(alertMsg);
+    }
+  });
+
+  // CGPA Chart
+  const cgpaData = [7.8, 8.1, 8.5, 8.7];
+  new Chart(document.getElementById('cgpaChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+      datasets: [{
+        label: 'CGPA',
+        data: cgpaData,
+        backgroundColor: ['#2196f3', '#42a5f5', '#64b5f6', '#1565c0'],
+        borderRadius: 8
+      }]
+    },
+    options: { scales: { y: { beginAtZero: true, max: 10 } }, plugins: { legend: { display: false } } }
+  });
+
+  // Feedback submission
+  function submitFeedback() {
+    const text = document.querySelector('.feedback-section textarea').value.trim();
+    if (text) {
+      alert('Feedback submitted successfully! ✅');
+      document.querySelector('.feedback-section textarea').value = '';
+    } else {
+      alert('Please write some feedback before submitting. ⚠');
+    }
+  }
+
+  // Header buttons
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    window.location.href = 'index.html';
+  });
+  document.getElementById('dashboardBtn').addEventListener('click', () => {
+    alert('You are already on Parent Dashboard');
+  });
+</script>
+
+</body>
+</html>
