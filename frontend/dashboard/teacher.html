@@ -6,14 +6,13 @@
 <title>Teacher Dashboard | EduPredict</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* ====== (CSS Unchanged) ====== */
 * { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif;}
-body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; display:flex; transition: filter 0.3s ease; padding-top:0; }
+body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; display:flex; transition: filter 0.3s ease; padding-top:80px; }
 
 /* Top Task Bar */
 .top-bar {
   position:fixed;
-  top:0;
+  top:20px;
   left:0;
   width:100%;
   height:50px;
@@ -25,13 +24,38 @@ body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; disp
   z-index:2000;
   border-radius:0 0 10px 10px;
 }
-.top-bar-brand { font-weight:700; font-size:1.2rem; color:white; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+.top-bar-brand {
+  font-weight:700;
+  font-size:1.2rem;
+  color:white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
 
 /* Sidebar */
-.sidebar { width:250px; background:#777; color:#fff; display:flex; flex-direction:column; align-items:center; padding:40px 0; box-shadow:2px 0 8px rgba(0,0,0,0.1); position:fixed; top:50px; bottom:0; left:0; }
-.profile-pic {
-  display:flex; align-items:center; justify-content:center; font-size:60px; background:#555; color:white; border-radius:50%; width:140px; height:140px; border:3px solid #fff; margin-bottom:15px;
+.sidebar {
+  width:250px; 
+  background:#777; 
+  color:#fff; 
+  display:flex; 
+  flex-direction:column; 
+  align-items:center; 
+  padding:40px 0; 
+  box-shadow:2px 0 8px rgba(0,0,0,0.1); 
+  position:fixed; 
+  top:80px; 
+  bottom:0; 
+  left:0;
+  z-index:1601; 
 }
+.profile-pic {
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  overflow:hidden;
+  border:3px solid #fff;
+  margin-bottom:15px;
+}
+.profile-pic img { width:100%; height:100%; object-fit:cover; }
 .teacher-info { text-align:center; margin-bottom:20px; }
 .teacher-info h3 { font-size:1.1rem; margin-bottom:3px; color:#fff; }
 .teacher-info p { font-size:0.9rem; color:#fff; margin-bottom:2px; }
@@ -39,11 +63,11 @@ body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; disp
 .black-line { width:80%; height:2px; background:#555; margin-bottom:20px; }
 .menu { width:100%; list-style:none; }
 .menu li a { display:flex; align-items:center; gap:15px; padding:12px 25px; color:#fff; text-decoration:none; font-weight:500; transition:0.3s; font-size:0.95rem;}
-.menu li a:hover { background: rgba(255,255,255,0.1); border-radius:8px; }
+.menu li a:hover { background: rgba(255,255,255,0.1); border-radius:8px; cursor:pointer; }
 
 /* Main Content */
-.content { flex:1; padding:30px 30px 30px 280px; transition: flex 0.3s ease, margin-right 0.3s ease; position:relative; z-index:1; margin-top:70px; }
-.content.shrink { flex:0.65; }
+.content { flex:1; padding:30px 30px 30px 280px; transition: flex 0.3s ease, margin-right 0.3s ease; position:relative; z-index:1;}
+.content.shrink { flex:0.65; } 
 .content h1, .content h2 { color:#222; margin-bottom:20px; }
 
 /* Search Bar */
@@ -53,7 +77,22 @@ body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; disp
 /* Departments */
 .departments { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:20px; }
 @keyframes float { 0% {transform:translateY(0);} 50% {transform:translateY(-8px);} 100% {transform:translateY(0);} }
-.department-card { border-radius:12px; padding:60px 20px; min-height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; animation:float 3s ease-in-out infinite; color:#333; font-weight:600; border:2px solid rgba(0,0,0,0.1); cursor:pointer;}
+
+.department-card {
+  border-radius:12px;
+  padding:60px 20px; 
+  min-height:220px;  
+  display:flex; 
+  flex-direction:column; 
+  align-items:center; 
+  justify-content:center;
+  gap:10px;
+  animation:float 3s ease-in-out infinite;
+  color:#333;
+  font-weight:600;
+  border:2px solid rgba(0,0,0,0.1);
+  cursor:pointer;
+}
 .department-card span { font-size:28px; }
 .department-card h3 { font-size:1rem; text-align:center; }
 .dept-it { background: linear-gradient(135deg,#b0b0b0,#d0d0d0);}
@@ -67,7 +106,7 @@ body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; disp
 .floating-btn:hover { background:#333; }
 
 /* Right Panel */
-.right-panel { position:fixed; top:50px; right:-350px; width:350px; height:calc(100% - 50px); background:#f0f0f0; box-shadow:-4px 0 12px rgba(0,0,0,0.2); padding:20px; overflow-y:auto; transition:right 0.3s ease; z-index:999;}
+.right-panel { position:fixed; top:80px; right:-350px; width:350px; height:calc(100% - 80px); background:#f0f0f0; box-shadow:-4px 0 12px rgba(0,0,0,0.2); padding:20px; overflow-y:auto; transition:right 0.3s ease; z-index:999;}
 .right-panel.active { right:0; }
 .top-options { display:flex; gap:15px; justify-content:center; margin-bottom:20px; }
 .top-options div { flex:1; background:#d0d0d0; text-align:center; padding:10px 0; border-radius:10px; cursor:pointer; font-weight:600; color:#555; transition:0.3s; }
@@ -76,15 +115,45 @@ body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; disp
 .right-item:hover { background:#c0c0c0; }
 
 /* Modal Background */
-.modal-bg { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); backdrop-filter:blur(3px); z-index:1500; justify-content:center; align-items:center; overflow-y:auto; }
+.modal-bg {
+  display:none;
+  position:fixed;
+  top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.3);
+  backdrop-filter:blur(3px);
+  z-index:1500;
+  justify-content:center;
+  align-items:center;
+  overflow-y:auto;
+  pointer-events:none;
+}
+
+/* Show Modal */
+.modal-bg.show { display:flex; pointer-events:all; }
 
 /* Modal Box */
-.modal { background:#fff; padding:20px; border-radius:10px; max-width:90%; max-height:90%; overflow-y:auto; z-index:1600; }
+.modal {
+  background:#f2f2f2;  
+  padding:25px 30px;
+  border-radius:12px;
+  max-width:600px;
+  width:90%;
+  max-height:80%;
+  overflow-y:auto;
+  z-index:1600;
+  box-shadow:0 6px 20px rgba(0,0,0,0.25);
+  border:4px solid #555; 
+}
 
 /* Year selection container */
 .year-selection { display:flex; flex-direction:column; gap:15px; margin-top:10px;}
 .year-card { padding:15px; background:#d0d0d0; border-radius:10px; cursor:pointer; font-weight:600; text-align:center; transition:0.3s; color:#555; }
 .year-card:hover { background:#b0b0b0; }
+
+/* Attendance Year Cards */
+.attendance-year-selection { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+.attendance-year { padding:12px; background:#d0d0d0; border-radius:8px; cursor:pointer; text-align:center; font-weight:600; transition:0.3s; color:#555; }
+.attendance-year:hover { background:#b0b0b0; }
 
 /* Calendar */
 .calendarTable { width:100%; border-collapse:collapse; margin-top:15px;}
@@ -112,6 +181,7 @@ body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; disp
   .right-panel { width:100%; height:auto; top:auto; position:relative; }
   .floating-btn { top:auto; bottom:20px; }
 }
+.color-dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:5px; }
 </style>
 </head>
 <body>
@@ -123,29 +193,28 @@ body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; disp
 
 <!-- Sidebar -->
 <div class="sidebar">
-  <div class="profile-pic">👩‍🏫</div>
+  <div class="profile-pic">
+    <img src="https://img.freepik.com/free-photo/portrait-teacher_23-2150766552.jpg" alt="Teacher Profile">
+  </div>
   <div class="teacher-info">
-    <h3>Prof. John Dark</h3>
-    <p>John@edupredict.in</p>
+    <h3>Prof. Vaishnavi Sakunde</h3>
+    <p>vaishnavi.sakunde@edupredict.in</p>
     <p class="dept">Department: Computer Science</p>
   </div>
   <div class="black-line"></div>
   <ul class="menu">
-    <li><a href="#">🏠 Dashboard</a></li>
-    <li><a href="#">📝 Exam</a></li>
-    <li><a href="#">📚 Courses</a></li>
-    <li><a href="#">👩‍🎓 Students</a></li>
-    <li><a href="#">📄 Homework</a></li>
-    <li><a href="#">✅ Attendance</a></li>
-    <li><a href="#">🛠 Duties</a></li>
-    <li><a href="#">⭐ Grading</a></li>
-    <li><a href="#">🎓 Alumni</a></li>
+    <li><a href="#" id="examMenu">📝 Exam</a></li>
+    <li><a href="#" id="coursesMenu">📚 Courses</a></li>
+    <li><a href="#" id="studentsMenu">👩‍🎓 Students</a></li>
+    <li><a href="#" id="homeworkMenu">📄 Homework</a></li>
+    <li><a href="#" id="attendanceMenu">✅ Attendance</a></li>
+    <li><a href="#" id="dutiesMenu">🛠 Duties</a></li>
   </ul>
 </div>
 
 <!-- Main Content -->
 <div class="content" id="mainContent">
-  <h1>Welcome, Prof. John Dark</h1>
+  <h1>Welcome, Prof. Vaishnavi Sakunde</h1>
   <div class="search-bar">
     <input type="text" placeholder="Search Departments...">
   </div>
@@ -208,10 +277,16 @@ body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; disp
       <p>Office: Room 101, Admin Block</p>
     </div>
   </div>
+
+  <div class="modal" id="examModal" style="display:none;"></div>
+  <div class="modal" id="coursesModal" style="display:none;"></div>
+  <div class="modal" id="studentsModalDynamic" style="display:none;"></div>
+  <div class="modal" id="homeworkModal" style="display:none;"></div>
+  <div class="modal" id="attendanceModal" style="display:none;"></div>
+  <div class="modal" id="dutiesModal" style="display:none;"></div>
 </div>
 
 <script>
-// === Right Panel Toggle ===
 const toggleBtn = document.getElementById('toggleBtn');
 const rightPanel = document.getElementById('rightPanel');
 const mainContent = document.getElementById('mainContent');
@@ -221,7 +296,6 @@ toggleBtn.addEventListener('click', () => {
   toggleBtn.textContent = rightPanel.classList.contains('active') ? '⋮' : '☰';
 });
 
-// === Modal Control ===
 const modalBg = document.getElementById('modalBg');
 const notifBtn = document.getElementById('notifBtn');
 const helpBtn = document.getElementById('helpBtn');
@@ -234,96 +308,42 @@ const yearModal = document.getElementById('yearModal');
 const helpModal = document.getElementById('helpModal');
 const deptTitle = document.getElementById('deptTitle');
 
-function hideAllModals() {
-  [notifModal, academicModal, eventsModal, yearModal, helpModal].forEach(m => m.style.display = 'none');
-}
-
-function showModal(modal){
-  hideAllModals();
-  modal.style.display='block';
-  modalBg.style.display='flex';
-  mainContent.classList.add('blur');
-}
-
-notifBtn.onclick = () => showModal(notifModal);
-helpBtn.onclick = () => showModal(helpModal);
-academicBtn.onclick = () => { showModal(academicModal); renderCalendar('academicCalendar'); };
-eventsBtn.onclick = () => { showModal(eventsModal); renderCalendar('eventsCalendar', true); };
-
-modalBg.onclick = (e) => {
-  if (e.target === modalBg) {
-    modalBg.style.display = 'none';
-    mainContent.classList.remove('blur');
-  }
+const dynamicModals = {
+  exam: document.getElementById('examModal'),
+  courses: document.getElementById('coursesModal'),
+  students: document.getElementById('studentsModalDynamic'),
+  homework: document.getElementById('homeworkModal'),
+  attendance: document.getElementById('attendanceModal'),
+  duties: document.getElementById('dutiesModal')
 };
 
-// === Department & Year Selection ===
-const deptYears = { "IT": ["1","2","4"], "ENTC": ["2","4"], "Mechanical": ["1","3","4"], "Civil": ["3","4"] };
-
-document.querySelectorAll('.department-card').forEach(card=>{
-  card.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    const dept = card.getAttribute('data-dept');
+// Unified modal functions
+function showModalUnified(modal){
     hideAllModals();
-    deptTitle.textContent = `${dept} - Select Year`;
-    yearModal.style.display='block';
-    modalBg.style.display='flex';
+    modal.style.display='block';
+    modalBg.classList.add('show');
     mainContent.classList.add('blur');
-    const container = document.getElementById('yearSelectionContainer');
-    container.innerHTML='';
-    deptYears[dept].forEach(y=>{
-      const div = document.createElement('div');
-      div.className='year-card';
-      div.textContent=`${y}${getOrdinal(y)} Year`;
-      div.onclick=()=>window.location.href=`students.html?dept=${dept}&year=${y}`;
-      container.appendChild(div);
-    });
-  });
-});
+}
+function hideAllModals(){
+    modalBg.classList.remove('show');
+    mainContent.classList.remove('blur');
+    [notifModal, academicModal, eventsModal, yearModal, helpModal,
+      dynamicModals.exam, dynamicModals.courses, dynamicModals.students,
+      dynamicModals.homework, dynamicModals.attendance, dynamicModals.duties].forEach(m=>m.style.display='none');
+}
 
-function getOrdinal(n){ return n==="1"?"st":n==="2"?"nd":n==="3"?"rd":"th"; }
+notifBtn.onclick = () => showModalUnified(notifModal);
+helpBtn.onclick = () => showModalUnified(helpModal);
+academicBtn.onclick = () => { showModalUnified(academicModal); renderCalendar('academicCalendar'); };
+eventsBtn.onclick = () => { showModalUnified(eventsModal); renderCalendar('eventsCalendar', true); };
 
-// === Calendar & Events ===
-const eventsData = {
-  "2025-10-15":["Mechanical Lab Maintenance"],
-  "2025-10-20":["Civil Seminar"],
-  "2025-10-22":["ENTC Project Presentation"],
-  "2025-10-25":["IT Workshop Registration"]
+modalBg.onclick = (e) => { 
+  if(e.target === modalBg) hideAllModals(); 
 };
 
-function renderCalendar(id, isEvent=false){
-  const today=new Date();
-  const month=today.getMonth();
-  const year=today.getFullYear();
-  const dayNow=today.getDate();
-  const firstDay=new Date(year,month,1).getDay();
-  const daysInMonth=new Date(year,month+1,0).getDate();
-
-  let html=`<tr><th colspan="7">${today.toLocaleString('default',{month:'long'})} ${year}</th></tr>`;
-  html+='<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr><tr>';
-  for(let i=0;i<firstDay;i++) html+='<td></td>';
-
-  for(let d=1;d<=daysInMonth;d++){
-    const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    let cls='';
-    if(!isEvent && d===dayNow) cls='today';
-    if(isEvent && eventsData[dateStr]) cls='event-day';
-    html+=`<td class="${cls}">${d}</td>`;
-    if((d+firstDay)%7===0) html+='</tr><tr>';
-  }
-  html+='</tr>';
-  document.getElementById(id).innerHTML=html;
-
-  if(isEvent){
-    const list=document.getElementById('eventsList');
-    list.innerHTML='';
-    for(let date in eventsData){
-      const d=new Date(date);
-      list.innerHTML+=`<p><strong>${d.toDateString()}:</strong> ${eventsData[date].join(', ')}</p>`;
-    }
-  }
-}
-</script>
-
-</body>
-</html>
+// Attendance Data
+const attendanceData = {
+  "IT": { "1": "70%", "2": "68%", "3": "75%", "4": "72%" },
+  "ENTC": { "1": "60%", "2": "65%", "3": "63%", "4": "67%" },
+  "Mechanical": { "1": "73%", "2": "70%", "3": "69%", "4": "71%" }
+};
