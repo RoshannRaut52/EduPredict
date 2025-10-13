@@ -203,3 +203,25 @@ document.getElementById('parentLoginForm')?.addEventListener('submit', async fun
     errorMsg.textContent = 'Error connecting to server.';
   }
 });
+
+
+// python file prediction backend
+
+// Node.js/Express endpoint
+router.post(`${backendUrl}/api/admin/run-predictions`, authenticateAdmin, async (req, res) => {
+  try {
+    const { exec } = require('child_process');
+    
+    exec('python3 predict_dropout.py', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error}`);
+        return res.status(500).json({ error: 'Prediction failed' });
+      }
+      
+      console.log(stdout);
+      res.json({ message: 'Predictions completed successfully', output: stdout });
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to run predictions' });
+  }
+});
