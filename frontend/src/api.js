@@ -1,6 +1,7 @@
 // src/auth.js
 const backendUrl = 'https://edupredict-l9eg.onrender.com';
 
+
 // ==============================
 // 🔹 College Login
 // ==============================
@@ -24,7 +25,7 @@ document.getElementById('collegeLoginForm')?.addEventListener('submit', async fu
 
     if (res.ok) {
       localStorage.setItem('collegeData', JSON.stringify(data));
-      window.location.href = 'collegehomepage.html';
+      window.location.href = 'college.html';
     } else {
       errorMsg.textContent = data.error || 'Login failed';
     }
@@ -33,6 +34,7 @@ document.getElementById('collegeLoginForm')?.addEventListener('submit', async fu
     errorMsg.textContent = 'Error connecting to server.';
   }
 });
+
 
 // ==============================
 // 🔹 Student Login
@@ -69,7 +71,7 @@ document.getElementById('studentLoginForm')?.addEventListener('submit', async fu
 
       localStorage.setItem('studentData', JSON.stringify(studentData));
 
-      window.location.href = 'studenthomepage.html'; // ✅ Redirect to dashboard
+      window.location.href = 'student.html'; // ✅ Redirect to dashboard
     } else {
       errorMsg.textContent = data.message || 'Login failed';
     }
@@ -78,6 +80,7 @@ document.getElementById('studentLoginForm')?.addEventListener('submit', async fu
     errorMsg.textContent = 'Error connecting to server.';
   }
 });
+
 
 // ==============================
 // 🔹 Student Registration
@@ -108,12 +111,95 @@ document.getElementById('studentRegisterForm')?.addEventListener('submit', async
 
     if (res.ok) {
       alert('✅ Registration successful! You can now login.');
-      window.location.href = 'studentlogin.html';
+      window.location.href = 'student.html';
     } else {
       errorMsg.textContent = data.message || 'Registration failed';
     }
   } catch (error) {
     console.error('Student registration error:', error);
+    errorMsg.textContent = 'Error connecting to server.';
+  }
+});
+
+
+// ==============================
+// 🔹 Parent Registration (NEW)
+// ==============================
+document.getElementById('parentRegisterForm')?.addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById('parentName').value.trim();
+  const email = document.getElementById('parentRegEmail').value.trim();
+  const phone = document.getElementById('parentPhone').value.trim();
+  const student_email = document.getElementById('parentStudentEmail').value.trim();
+  const relationship = document.getElementById('parentRelationship').value.trim();
+  const password = document.getElementById('parentRegPassword').value;
+  const confirm_password = document.getElementById('parentConfirmPassword').value;
+  const errorMsg = document.getElementById('parentRegErrorMessage');
+  errorMsg.textContent = '';
+
+  try {
+    const res = await fetch(`${backendUrl}/register/parent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name, email, phone, student_email, relationship, password, confirm_password
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert('✅ Parent registration successful! You can now login.');
+      window.location.href = 'parent.html';
+    } else {
+      errorMsg.textContent = data.message || 'Registration failed';
+    }
+  } catch (error) {
+    console.error('Parent registration error:', error);
+    errorMsg.textContent = 'Error connecting to server.';
+  }
+});
+
+
+// ==============================
+// 🔹 Parent Login (NEW)
+// ==============================
+document.getElementById('parentLoginForm')?.addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('parentEmail').value.trim();
+  const password = document.getElementById('parentPassword').value;
+  const errorMsg = document.getElementById('parentErrorMessage');
+  errorMsg.textContent = '';
+
+  try {
+    const res = await fetch(`${backendUrl}/login/parent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      // ✅ Save parent info for dashboard
+      const parentData = {
+        name: data.parent.name || "Parent",
+        email: data.parent.email,
+        phone: data.parent.phone || "N/A",
+        relationship: data.parent.relationship || "Guardian",
+        student_name: data.parent.student_name || "N/A"
+      };
+
+      localStorage.setItem('parentData', JSON.stringify(parentData));
+
+      window.location.href = 'parent.html'; // ✅ Redirect to parent dashboard
+    } else {
+      errorMsg.textContent = data.message || 'Login failed';
+    }
+  } catch (error) {
+    console.error('Parent login error:', error);
     errorMsg.textContent = 'Error connecting to server.';
   }
 });
