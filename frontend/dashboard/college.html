@@ -563,6 +563,154 @@
       }
       list.setAttribute('aria-hidden', isVisible);
     }
+
+    //new
+
+    // dashboard/college.html - updated script section
+const backendUrl = 'https://edupredict-l9eg.onrender.com';
+
+// Check if user is logged in
+const token = localStorage.getItem('collegeToken');
+
+if (!token || !collegeData) {
+  alert('Please login first');
+  window.location.href = '../login/college.html';
+}
+
+// Fetch latest dashboard data from backend
+async function loadDashboardData() {
+  try {
+    const res = await fetch(`${backendUrl}/api/college/dashboard`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        alert('Session expired. Please login again.');
+        localStorage.clear();
+        window.location.href = '../login/college.html';
+        return;
+      }
+      throw new Error('Failed to fetch dashboard data');
+    }
+
+    const data = await res.json();
+    
+    // Update localStorage with fresh data
+    collegeData = {
+      ...data.college,
+      ...data.statistics
+    };
+    localStorage.setItem('collegeData', JSON.stringify(collegeData));
+    
+    // Update UI
+    updateDashboard(collegeData, data.departments);
+    
+  } catch (error) {
+    console.error('Error loading dashboard:', error);
+    alert('Failed to load dashboard data');
+  }
+}
+
+// Update dashboard UI with data
+function updateDashboard(data, departments) {
+  // Update college name and logo
+  document.getElementById('collegeName').textContent = data.name || 'College Name';
+  
+  // Update chart legend numbers
+  document.getElementById('totalStudents').textContent = data.total_students || 0;
+  document.getElementById('atRiskStudents').textContent = data.at_risk_students || 0;
+  document.getElementById('dropoutStudents').textContent = data.dropout_students || 0;
+  document.getElementById('savedStudents').textContent = data.saved_students || 0;
+  
+  // Update notifications
+  document.getElementById('toParents').textContent = data.notifications_to_parents || 0;
+  document.getElementById('toTeachers').textContent = data.notifications_to_teachers || 0;
+  
+  // Update summary cards
+  document.getElementById('summaryTotalStudents').textContent = data.total_students || 0;
+  document.getElementById('summaryAtRiskStudents').textContent = data.at_risk_students || 0;
+  document.getElementById('summaryDropoutStudents').textContent = data.dropout_students || 0;
+  document.getElementById('summarySavedStudents').textContent = data.saved_students || 0;
+  
+  // Update chart
+  updateChart(data);
+  
+  // Render departments (if provided)
+  if (departments && departments.length > 0) {
+    renderDepartments(departments);
+  }
+}
+
+// Update Chart.js chart
+function updateChart(data) {
+  const ctx = document.getElementById('studentChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Total Students', 'At Risk', 'Dropout', 'Saved'],
+      datasets: [{
+        data: [
+          data.total_students || 0,
+          data.at_risk_students || 0,
+          data.dropout_students || 0,
+          data.saved_students || 0
+        ],
+        backgroundColor: ['#2e86de', '#ee5253', '#ff9f43', '#10ac84'],
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: true }
+      }
+    }
+  });
+}
+
+// Render departments dynamically from backend
+function renderDepartments(departments) {
+  const container = document.querySelector('.departments');
+  const heading = container.querySelector('h2');
+  
+  // Clear existing departments (except heading)
+  container.querySelectorAll('.department, .year-list').forEach(el => el.remove());
+  
+  departments.forEach(dept => {
+    const deptDiv = document.createElement('div');
+    deptDiv.className = 'department';
+    deptDiv.innerHTML = `
+      💻 ${dept.department_name} (${dept.student_count} students, ${dept.at_risk_count} at risk)
+      <span>▼</span>
+    `;
+    deptDiv.onclick = () => toggleYears(`dept-${dept.department_code}`);
+    
+    const yearList = document.createElement('div');
+    yearList.className = 'year-list';
+    yearList.id = `dept-${dept.department_code}`;
+    yearList.innerHTML = `
+      <a href="students.html?dept=${dept.department_code}&year=1">1st Year</a>
+      <a href="students.html?dept=${dept.department_code}&year=2">2nd Year</a>
+      <a href="students.html?dept=${dept.department_code}&year=3">3rd Year</a>
+      <a href="students.html?dept=${dept.department_code}&year=4">4th Year</a>
+    `;
+    
+    container.appendChild(deptDiv);
+    container.appendChild(yearList);
+  });
+}
+
+// Load dashboard data on page load
+window.onload = loadDashboardData;
+
+// Refresh data every 5 minutes
+setInterval(loadDashboardData, 5 * 60 * 1000);
+
   </script>
 </body>
 </html>
