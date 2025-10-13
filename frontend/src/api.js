@@ -92,6 +92,7 @@ document.getElementById('studentRegisterForm')?.addEventListener('submit', async
   const email = document.getElementById('studentRegEmail').value.trim();
   const contact = document.getElementById('studentContact').value.trim();
   const college_code = document.getElementById('studentCollegeCode').value.trim();
+  const roll_no = document.getElementById('studentRollNo').value.trim(); // <-- NEW
   const course = document.getElementById('studentCourse').value.trim();
   const password = document.getElementById('studentRegPassword').value;
   const confirm_password = document.getElementById('studentConfirmPassword').value;
@@ -103,7 +104,14 @@ document.getElementById('studentRegisterForm')?.addEventListener('submit', async
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name, email, contact, college_code, course, password, confirm_password
+        roll_no,                  // <-- Include in payload!
+        name,
+        email,
+        contact,
+        college_code,
+        course,
+        password,
+        confirm_password
       })
     });
 
@@ -120,6 +128,7 @@ document.getElementById('studentRegisterForm')?.addEventListener('submit', async
     errorMsg.textContent = 'Error connecting to server.';
   }
 });
+
 
 
 // ==============================
