@@ -1,774 +1,944 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Student Dashboard - EduPredict</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif;}
-    body { 
-      background: linear-gradient(135deg, #b3b4b5 100%); 
-      color: #141313; min-height: 100vh;
-      overflow-y: scroll;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Dashboard - EduPredict</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif;}
+body {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: #141313; min-height: 100vh;
+overflow-y: scroll;
+}
 
-    .sticky-bar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 48px 15px 48px;
-      background: #000c;
-      backdrop-filter: blur(7px);
-      min-height: 75px;
-      box-shadow: 0 2px 20px #0001;
-    }
-    .profile-area {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      color: #fff;
-    }
-    .profile-pic {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #fff;
-      cursor: pointer;
-      background: #f3f3f3;
-      box-shadow: 0 2px 10px #10ac8455;
-      transition: box-shadow 0.3s;
-    }
-    .profile-pic:hover {
-      box-shadow: 0 0 0 3px #10ac84;
-    }
-    .stud-details {
-      display: flex;
-      flex-direction: column;
-    }
-    .stud-name {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #fff;
-    }
-    .college-row {
-      font-weight: 500;
-      font-size: 1.05rem;
-      text-shadow: 0 1px 5px #0a080892;
-      color: #f6fff6;
-    }
-    .edit-btn {
-      background: #10ac84;
-      padding: 12px 26px;
-      border-radius: 9px;
-      color: #fff;
-      font-weight: 600;
-      border: none;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.18s;
-    }
-    .edit-btn:hover {
-      background: #1dd1a1;
-    }
+.sticky-bar {
+position: sticky;
+top: 0;
+z-index: 10;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 15px 48px 15px 48px;
+background: #000c;
+backdrop-filter: blur(7px);
+min-height: 75px;
+box-shadow: 0 2px 20px #0001;
+}
+.profile-area {
+display: flex;
+align-items: center;
+gap: 16px;
+color: #fff;
+}
+.profile-pic {
+width: 54px;
+height: 54px;
+border-radius: 50%;
+object-fit: cover;
+border: 3px solid #fff;
+cursor: pointer;
+background: #f3f3f3;
+box-shadow: 0 2px 10px #10ac8455;
+transition: box-shadow 0.3s;
+}
+.profile-pic:hover {
+box-shadow: 0 0 0 3px #10ac84;
+}
+.stud-details {
+display: flex;
+flex-direction: column;
+}
+.stud-name {
+font-size: 1.6rem;
+font-weight: 700;
+color: #fff;
+}
+.college-row {
+font-weight: 500;
+font-size: 1.05rem;
+text-shadow: 0 1px 5px #0a080892;
+color: #f6fff6;
+}
+.edit-btn {
+background: #10ac84;
+padding: 12px 26px;
+border-radius: 9px;
+color: #fff;
+font-weight: 600;
+border: none;
+font-size: 1rem;
+cursor: pointer;
+transition: background 0.18s;
+}
+.edit-btn:hover {
+background: #1dd1a1;
+}
 
-    main {
-      padding: 46px 14px 30px 14px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 40px;
-      min-height: 90vh;
-      width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
-      flex-wrap: wrap;
-    }
-    .dashboard-side {
-      flex: 3 1 0%;
-      min-width: 0;
-      max-width: 920px;
-    }
-    .dashboard-content {
-      background: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 6px 32px #bbb6;
-      padding: 44px 38px 24px 38px;
-      border-radius: 22px;
-      margin-top: 24px;
-    }
-    .info-row {
-      display: flex;
-      gap: 34px;
-      margin-bottom: 23px;
-      flex-wrap: wrap;
-      align-items: stretch;
-    }
-    .card {
-      background: rgba(255, 255, 255, 0.18);
-      border-radius: 13px;
-      flex: 1 1 272px;
-      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.09);
-      padding: 25px 24px 25px 24px;
-      margin-bottom: 21px;
-    }
-    .card h3 {
-      font-size: 1.13rem;
-      font-weight: 700;
-      color: #222;
-      margin-bottom: 10px;
-    }
-    .card .value {
-      font-size: 1.7rem;
-      font-weight: 700;
-      color: #10ac84;
-      margin-bottom: 5px;
-    }
-    .card .label {
-      color: #226;
-      font-size: 1rem;
-    }
-    .probability-chance {
-      background: rgba(16, 172, 132, 0.15);
-      color: #10ac84;
-      border-radius: 13px;
-      font-size: 1.23rem;
-      font-weight: 700;
-      padding: 25px;
-      text-align: center;
-      box-shadow: 0 2px 9px #10ac8422;
-      margin-top: 18px;
-      letter-spacing: 0.8px;
-    }
+main {
+padding: 46px 14px 30px 14px;
+display: flex;
+justify-content: center;
+align-items: flex-start;
+gap: 40px;
+min-height: 90vh;
+width: 100%;
+max-width: 1400px;
+margin: 0 auto;
+flex-wrap: wrap;
+}
+.dashboard-side {
+flex: 3 1 0%;
+min-width: 0;
+max-width: 920px;
+}
+.dashboard-content {
+background: rgba(255, 255, 255, 0.95);
+box-shadow: 0 6px 32px #0006;
+padding: 44px 38px 24px 38px;
+border-radius: 22px;
+margin-top: 24px;
+}
+.info-row {
+display: flex;
+gap: 34px;
+margin-bottom: 23px;
+flex-wrap: wrap;
+align-items: stretch;
+}
+.card {
+background: rgba(255, 255, 255, 0.9);
+border-radius: 13px;
+flex: 1 1 272px;
+box-shadow: 0 2px 16px rgba(0, 0, 0, 0.09);
+padding: 25px 24px 25px 24px;
+margin-bottom: 21px;
+border: 2px solid #f0f0f0;
+transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+transform: translateY(-5px);
+box-shadow: 0 4px 20px rgba(16, 172, 132, 0.3);
+}
+.card h3 {
+font-size: 1.13rem;
+font-weight: 700;
+color: #222;
+margin-bottom: 10px;
+}
+.card .value {
+font-size: 1.7rem;
+font-weight: 700;
+color: #10ac84;
+margin-bottom: 5px;
+}
+.card .label {
+color: #226;
+font-size: 1rem;
+}
+.probability-chance {
+background: linear-gradient(135deg, rgba(16, 172, 132, 0.95), rgba(29, 209, 161, 0.95));
+color: #fff;
+border-radius: 13px;
+font-size: 1.23rem;
+font-weight: 700;
+padding: 25px;
+text-align: center;
+box-shadow: 0 4px 15px #10ac8444;
+margin-top: 18px;
+letter-spacing: 0.8px;
+}
 
-    /* Notification/news side bar - sticky */
-    .notification-panel {
-      flex: 1 1 0%;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      margin-top: 24px;
-      min-width: 280px;
-      max-width: 350px;
-      position: sticky;
-      top: 85px;
-      align-self: flex-start;
-      max-height: calc(100vh - 95px);
-      overflow-y: auto;
-      padding-right: 10px;
-      scrollbar-width: thin;
-      scrollbar-color: #10ac84 transparent;
-    }
-    .notification-panel::-webkit-scrollbar {
-      width: 8px;
-    }
-    .notification-panel::-webkit-scrollbar-thumb {
-      background-color: #10ac84;
-      border-radius: 10px;
-    }
+/* Notification/news side bar - sticky */
+.notification-panel {
+flex: 1 1 0%;
+display: flex;
+flex-direction: column;
+gap: 18px;
+margin-top: 24px;
+min-width: 280px;
+max-width: 350px;
+position: sticky;
+top: 85px;
+align-self: flex-start;
+max-height: calc(100vh - 95px);
+overflow-y: auto;
+padding-right: 10px;
+scrollbar-width: thin;
+scrollbar-color: #10ac84 transparent;
+}
+.notification-panel::-webkit-scrollbar {
+width: 8px;
+}
+.notification-panel::-webkit-scrollbar-thumb {
+background-color: #10ac84;
+border-radius: 10px;
+}
 
-    .notification-box {
-      background: #e4edf985;
-      border-radius: 20px;
-      padding: 20px 16px;
-      box-shadow: 0 1px 8px rgba(39, 85, 160, 0.08);
-      margin-bottom: 0;
-      transition: box-shadow 0.2s;
-    }
-    .notification-box h2 {
-      font-size: 1.15em;
-      color: #2755a0;
-      margin-bottom: 10px;
-      letter-spacing: 0.8px;
-    }
-    .notification-box ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .notification-box ul li {
-      padding: 7px 0;
-      border-bottom: 1px solid #cfdbe7;
-      font-size: 0.97em;
-      transition: background 0.14s;
-      cursor: pointer;
-    }
-    .notification-box ul li:last-child {
-      border-bottom: none;
-    }
-    .notification-box ul li:hover {
-      background: #d0e7ff80;
-      border-radius: 7px;
-    }
+.notification-box {
+background: rgba(255, 255, 255, 0.95);
+border-radius: 20px;
+padding: 20px 16px;
+box-shadow: 0 4px 12px rgba(39, 85, 160, 0.15);
+margin-bottom: 0;
+transition: box-shadow 0.2s;
+}
+.notification-box:hover {
+box-shadow: 0 6px 18px rgba(39, 85, 160, 0.25);
+}
+.notification-box h2 {
+font-size: 1.15em;
+color: #2755a0;
+margin-bottom: 10px;
+letter-spacing: 0.8px;
+}
+.notification-box ul {
+list-style: none;
+padding: 0;
+margin: 0;
+}
+.notification-box ul li {
+padding: 7px 0;
+border-bottom: 1px solid #cfdbe7;
+font-size: 0.97em;
+transition: background 0.14s;
+cursor: pointer;
+}
+.notification-box ul li:last-child {
+border-bottom: none;
+}
+.notification-box ul li:hover {
+background: #d0e7ff80;
+border-radius: 7px;
+}
 
-    /* New Widgets for suggested features */
-    .widget {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 18px;
-      padding: 25px 20px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 22px #a8b9d822;
-    }
-    .widget h2 {
-      font-weight: 700;
-      color: #244a91;
-      margin-bottom: 16px;
-      font-size: 1.25rem;
-      letter-spacing: 1px;
-      border-bottom: 2px solid #10ac84;
-      padding-bottom: 8px;
-      max-width: max-content;
-    }
-    .overview-grid {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-    }
-    .overview-item {
-      background: #fff;
-      border-radius: 12px;
-      flex: 1 1 130px;
-      padding: 18px 15px;
-      text-align: center;
-      box-shadow: 0 1px 12px rgba(16, 172, 132, 0.2);
-      font-weight: 700;
-      color: #10ac84;
-      font-size: 1.9rem;
-      user-select: none;
-      transition: background-color 0.25s;
-    }
-    .overview-item span {
-      display: block;
-      font-weight: 500;
-      font-size: 0.85rem;
-      color: #333;
-      margin-top: 6px;
-      user-select: text;
-    }
+/* New Widgets for suggested features */
+.widget {
+background: rgba(255, 255, 255, 0.9);
+border-radius: 18px;
+padding: 25px 20px;
+margin-bottom: 24px;
+box-shadow: 0 4px 22px #a8b9d822;
+border: 2px solid #f0f0f0;
+}
+.widget h2 {
+font-weight: 700;
+color: #244a91;
+margin-bottom: 16px;
+font-size: 1.25rem;
+letter-spacing: 1px;
+border-bottom: 2px solid #10ac84;
+padding-bottom: 8px;
+max-width: max-content;
+}
+.overview-grid {
+display: flex;
+gap: 18px;
+flex-wrap: wrap;
+}
+.overview-item {
+background: linear-gradient(135deg, #10ac84, #1dd1a1);
+border-radius: 12px;
+flex: 1 1 130px;
+padding: 18px 15px;
+text-align: center;
+box-shadow: 0 3px 15px rgba(16, 172, 132, 0.3);
+font-weight: 700;
+color: #fff;
+font-size: 1.9rem;
+user-select: none;
+transition: transform 0.25s, box-shadow 0.25s;
+}
+.overview-item:hover {
+transform: translateY(-5px);
+box-shadow: 0 6px 20px rgba(16, 172, 132, 0.5);
+}
+.overview-item span {
+display: block;
+font-weight: 500;
+font-size: 0.85rem;
+color: #fff;
+margin-top: 6px;
+user-select: text;
+}
 
-    /* Calendar styles */
-    .calendar {
-      background: #fff;
-      border-radius: 18px;
-      padding: 20px 24px;
-      box-shadow: 0 3px 15px rgba(100, 116, 139, 0.12);
-      margin-bottom: 24px;
-      font-size: 0.925rem;
-    }
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      font-weight: 700;
-      color: #244a91;
-      font-size: 1.15rem;
-    }
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 10px;
-    }
-    .calendar-day {
-      font-weight: 600;
-      color: #10ac84;
-      text-align: center;
-    }
-    .calendar-date {
-      text-align: center;
-      padding: 6px 8px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .calendar-date.today {
-      background: #10ac84;
-      color: white;
-      font-weight: 700;
-    }
-    .calendar-date:hover {
-      background: #1dd1a1;
-      color: white;
-    }
+/* Calendar styles */
+.calendar {
+background: #fff;
+border-radius: 18px;
+padding: 20px 24px;
+box-shadow: 0 3px 15px rgba(100, 116, 139, 0.12);
+margin-bottom: 24px;
+font-size: 0.925rem;
+}
+.calendar-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 12px;
+font-weight: 700;
+color: #244a91;
+font-size: 1.15rem;
+}
+.calendar-grid {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 10px;
+}
+.calendar-day {
+font-weight: 600;
+color: #10ac84;
+text-align: center;
+}
+.calendar-date {
+text-align: center;
+padding: 6px 8px;
+border-radius: 50%;
+cursor: pointer;
+transition: background-color 0.3s;
+}
+.calendar-date.today {
+background: #10ac84;
+color: white;
+font-weight: 700;
+}
+.calendar-date:hover {
+background: #1dd1a1;
+color: white;
+}
 
-    /* Quick actions */
-    .quick-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-      margin-bottom: 24px;
-    }
-    .quick-action-btn {
-      flex: 1 1 120px;
-      background: #10ac84;
-      color: #fff;
-      border-radius: 14px;
-      padding: 16px 10px;
-      font-weight: 700;
-      text-align: center;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.25s ease;
-      border: none;
-    }
-    .quick-action-btn:hover {
-      background: #1dd1a1;
-    }
+/* Quick actions */
+.quick-actions {
+display: flex;
+flex-wrap: wrap;
+gap: 18px;
+margin-bottom: 24px;
+}
+.quick-action-btn {
+flex: 1 1 120px;
+background: #10ac84;
+color: #fff;
+border-radius: 14px;
+padding: 16px 10px;
+font-weight: 700;
+text-align: center;
+cursor: pointer;
+user-select: none;
+transition: all 0.25s ease;
+border: none;
+}
+.quick-action-btn:hover {
+background: #1dd1a1;
+transform: translateY(-3px);
+box-shadow: 0 5px 15px rgba(16, 172, 132, 0.4);
+}
 
-    /* Achievements */
-    .achievements {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: flex-start;
-    }
-    .achievement-badge {
-      background: #10ac84;
-      color: white;
-      padding: 14px 18px;
-      border-radius: 22px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      user-select: none;
-      box-shadow: 0 3px 10px #10ac8490;
-      cursor: default;
-      transition: background 0.2s ease;
-    }
-    .achievement-badge:hover {
-      background: #1dd1a1;
-    }
+/* Achievements */
+.achievements {
+display: flex;
+flex-wrap: wrap;
+gap: 12px;
+justify-content: flex-start;
+}
+.achievement-badge {
+background: linear-gradient(135deg, #10ac84, #1dd1a1);
+color: white;
+padding: 14px 18px;
+border-radius: 22px;
+font-weight: 600;
+font-size: 0.95rem;
+user-select: none;
+box-shadow: 0 3px 10px #10ac8490;
+cursor: default;
+transition: transform 0.2s ease;
+}
+.achievement-badge:hover {
+transform: scale(1.05);
+}
 
-    /* Notes/To-dos */
-    .notes-box {
-      background: #fff;
-      border-radius: 18px;
-      padding: 20px 24px;
-      box-shadow: 0 6px 32px #bbb6;
-      margin-bottom: 24px;
-      min-height: 100px;
-      font-size: 0.95rem;
-      color: #444;
-      resize: vertical;
-      width: 100%;
-      font-family: 'Poppins', sans-serif;
-      border: 1px solid #ddd;
-    }
+/* Notes/To-dos */
+.notes-box {
+background: #fff;
+border-radius: 18px;
+padding: 20px 24px;
+box-shadow: 0 2px 8px #bbb3;
+margin-bottom: 24px;
+min-height: 100px;
+font-size: 0.95rem;
+color: #444;
+resize: vertical;
+width: 100%;
+font-family: 'Poppins', sans-serif;
+border: 1px solid #ddd;
+}
 
-    @media (max-width: 1200px) {
-      main { 
-        flex-direction: column; 
-        gap: 36px; 
-        align-items: stretch;
-      }
-      .dashboard-side, .notification-panel {
-        max-width: 100%;
-        position: relative;
-        max-height: none;
-        overflow: visible;
-      }
-    }
-    @media (max-width: 900px) {
-      .dashboard-content {padding: 20px 2vw;}
-      .info-row { flex-direction: column; gap: 0;}
-      .notification-panel { flex-direction: row; gap: 14px; min-width: 0; max-width: 100%;}
-      .notification-box { flex: 1; min-width: 140px;}
-    }
-    @media (max-width: 700px) {
-      .sticky-bar { flex-direction: column; align-items: flex-start; gap: 14px; padding: 15px 20px; min-height: auto;}
-      .profile-area { gap: 16px;}
-    }
-    @media (max-width: 600px) {
-      main { padding: 0 3px; }
-      .dashboard-content { padding: 10px; }
-      .notification-panel { flex-direction: column; gap: 10px;}
-      .notification-box {padding: 14px 10px;}
-    }
-    footer {
-      margin: 36px auto 0 auto; 
-      padding: 24px;
-      width: 100%;
-      text-align: center; 
-      background: rgba(0,0,0,0.08); 
-      border-top: 1px solid #e2e6ec;
-      font-size: 0.98em;
-      color: #222a;
-      border-radius: 0 0 25px 25px;
-    }
-    .popup-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-      display: none; justify-content: center; align-items: center; z-index: 3000;
-    }
-    .popup {
-      background: #fff;
-      border-radius: 15px;
-      padding: 40px 34px 28px;
-      box-shadow: 0 6px 32px #0005;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 320px;
-      width: 90%;
-    }
-    .popup h3 {
-      margin-bottom: 19px;
-      color: #141313;
-    }
-    .popup input[type="file"] {
-      margin-bottom: 20px;
-    }
-    .popup button {
-      background: #10ac84;
-      border: none;
-      color: #fff;
-      padding: 12px 28px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.13s;
-      margin: 0 7px;
-    }
-    .popup button:hover {
-      background: #1dd1a1;
-    }
-  </style>
+/* Chart container */
+.chart-container {
+background: #fff;
+border-radius: 15px;
+padding: 20px;
+margin-bottom: 20px;
+box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 1200px) {
+main {
+flex-direction: column;
+gap: 36px;
+align-items: stretch;
+}
+.dashboard-side, .notification-panel {
+max-width: 100%;
+position: relative;
+max-height: none;
+overflow: visible;
+}
+}
+@media (max-width: 900px) {
+.dashboard-content {padding: 20px 2vw;}
+.info-row { flex-direction: column; gap: 0;}
+.notification-panel { flex-direction: row; gap: 14px; min-width: 0; max-width: 100%;}
+.notification-box { flex: 1; min-width: 140px;}
+}
+@media (max-width: 700px) {
+.sticky-bar { flex-direction: column; align-items: flex-start; gap: 14px; padding: 15px 20px; min-height: auto;}
+.profile-area { gap: 16px;}
+}
+@media (max-width: 600px) {
+main { padding: 0 3px; }
+.dashboard-content { padding: 10px; }
+.notification-panel { flex-direction: column; gap: 10px;}
+.notification-box {padding: 14px 10px;}
+}
+footer {
+margin: 36px auto 0 auto;
+padding: 24px;
+width: 100%;
+text-align: center;
+background: rgba(0,0,0,0.08);
+border-top: 1px solid #e2e6ec;
+font-size: 0.98em;
+color: #222a;
+border-radius: 0 0 25px 25px;
+}
+.popup-overlay {
+position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+display: none; justify-content: center; align-items: center; z-index: 3000;
+}
+.popup {
+background: #fff;
+border-radius: 15px;
+padding: 40px 34px 28px;
+box-shadow: 0 6px 32px #0005;
+display: flex;
+flex-direction: column;
+align-items: center;
+max-width: 320px;
+width: 90%;
+}
+.popup h3 {
+margin-bottom: 19px;
+color: #141313;
+}
+.popup input[type="file"] {
+margin-bottom: 20px;
+}
+.popup button {
+background: #10ac84;
+border: none;
+color: #fff;
+padding: 12px 28px;
+border-radius: 8px;
+font-weight: 600;
+cursor: pointer;
+transition: background 0.13s;
+margin: 0 7px;
+}
+.popup button:hover {
+background: #1dd1a1;
+}
+</style>
 </head>
 <body>
-  <header class="sticky-bar">
-    <div class="profile-area">
-      <img src="https://ui-avatars.com/api/?name=Ritika+Mehta&background=10ac84&color=fff&size=128" alt="Profile Photo" id="profilePic" class="profile-pic" title="Change photo" />
-      <div class="stud-details">
-        <div class="stud-name" id="studentName">Loading...</div>
-        <div class="college-row">
-          <span class="college-name" id="collegeName">Loading...</span>
-        </div>
-      </div>
-    </div>
-    <button class="edit-btn" onclick="editProfile()">✏ Edit Profile</button>
-  </header>
+<header class="sticky-bar">
+<div class="profile-area">
+<img src="https://ui-avatars.com/api/?name=Ritika+Mehta&background=10ac84&color=fff&size=128" alt="Profile Photo" id="profilePic" class="profile-pic" title="Change photo" />
+<div class="stud-details">
+<div class="stud-name" id="studentName">Ritika Mehta</div>
+<div class="college-row">
+<span class="college-name" id="collegeName">Government College of Engineering, Karad</span>
+</div>
+</div>
+</div>
+<button class="edit-btn" onclick="editProfile()">✏ Edit Profile</button>
+</header>
 
-  <!-- Profile photo change popup -->
-  <div class="popup-overlay" id="popupOverlay">
-    <div class="popup">
-      <h3>Change Profile Photo</h3>
-      <input type="file" id="photoUpload" accept="image/*" />
-      <div>
-        <button onclick="handleProfileChange()">Upload</button>
-        <button onclick="closePopup()">Cancel</button>
-      </div>
-    </div>
-  </div>
+<!-- Profile photo change popup -->
+<div class="popup-overlay" id="popupOverlay">
+<div class="popup">
+<h3>Change Profile Photo</h3>
+<input type="file" id="photoUpload" accept="image/*" />
+<div>
+<button onclick="handleProfileChange()">Upload</button>
+<button onclick="closePopup()">Cancel</button>
+</div>
+</div>
+</div>
 
-  <main>
-    <div class="dashboard-side">
-      <div class="dashboard-content">
+<main>
+<div class="dashboard-side">
+<div class="dashboard-content">
 
-        <!-- At a glance overview -->
-        <div class="widget">
-          <h2>Overview at a Glance</h2>
-          <div class="overview-grid">
-            <div class="overview-item">
-              <div id="attendanceValue">--</div>
-              <span>Attendance</span>
-            </div>
-            <div class="overview-item">
-              <div id="cgpaValue">--</div>
-              <span>Current CGPA</span>
-            </div>
-            <div class="overview-item">
-              <div id="assignmentsValue">--</div>
-              <span>Assignments Submitted</span>
-            </div>
-            <div class="overview-item">
-              <div id="achievementsCount">--</div>
-              <span>Achievements</span>
-            </div>
-          </div>
-        </div>
+<!-- At a glance overview -->
+<div class="widget">
+<h2>Overview at a Glance</h2>
+<div class="overview-grid">
+<div class="overview-item">
+<div id="attendanceValue">93%</div>
+<span>Attendance</span>
+</div>
+<div class="overview-item">
+<div id="cgpaValue">9.4</div>
+<span>Current CGPA</span>
+</div>
+<div class="overview-item">
+<div id="assignmentsValue">15</div>
+<span>Assignments Submitted</span>
+</div>
+<div class="overview-item">
+<div id="achievementsCount">5</div>
+<span>Achievements</span>
+</div>
+</div>
+</div>
 
-        <!-- Student Details -->
-        <div class="widget">
-          <h2>Student Information</h2>
-          <div class="info-row">
-            <div class="card">
-              <h3>Email</h3>
-              <div class="value" id="studentEmail" style="font-size: 1rem; color: #333;">--</div>
-            </div>
-            <div class="card">
-              <h3>Department</h3>
-              <div class="value" id="studentDepartment" style="font-size: 1.2rem;">--</div>
-            </div>
-            <div class="card">
-              <h3>Year</h3>
-              <div class="value" id="studentYear">--</div>
-            </div>
-            <div class="card">
-              <h3>Roll Number</h3>
-              <div class="value" id="studentRollNo" style="font-size: 1.2rem;">--</div>
-            </div>
-          </div>
-        </div>
+<!-- Student Details -->
+<div class="widget">
+<h2>Student Information</h2>
+<div class="info-row">
+<div class="card">
+<h3>Email</h3>
+<div class="value" id="studentEmail" style="font-size: 1rem; color: #333;">ritika.mehta@gcek.edu.in</div>
+</div>
+<div class="card">
+<h3>Department</h3>
+<div class="value" id="studentDepartment" style="font-size: 1.2rem;">Computer Science</div>
+</div>
+<div class="card">
+<h3>Year</h3>
+<div class="value" id="studentYear">3rd Year</div>
+</div>
+<div class="card">
+<h3>Roll Number</h3>
+<div class="value" id="studentRollNo" style="font-size: 1.2rem;">CS21045</div>
+</div>
+</div>
+</div>
 
-        <!-- Prediction -->
-        <div class="widget">
-          <h2>Academic Status</h2>
-          <div class="probability-chance" id="predictionResult">
-            ✅ Low Dropout Risk - Excellent Performance!
-          </div>
-        </div>
+<!-- Attendance Chart -->
+<div class="widget">
+<h2>Subject-wise Attendance</h2>
+<div class="chart-container">
+<canvas id="attendanceChart"></canvas>
+</div>
+</div>
 
-        <!-- Calendar / Schedule -->
-        <div class="widget calendar">
-          <div class="calendar-header">
-            <span id="calendarMonth">Oct 2025</span>
-            <span id="calendarToday">Today: 13</span>
-          </div>
-          <div class="calendar-grid" id="calendarGrid">
-            <div class="calendar-day">Sun</div>
-            <div class="calendar-day">Mon</div>
-            <div class="calendar-day">Tue</div>
-            <div class="calendar-day">Wed</div>
-            <div class="calendar-day">Thu</div>
-            <div class="calendar-day">Fri</div>
-            <div class="calendar-day">Sat</div>
-          </div>
-        </div>
+<!-- CGPA Progress -->
+<div class="widget">
+<h2>Academic Progress (CGPA)</h2>
+<div class="chart-container">
+<canvas id="cgpaChart"></canvas>
+</div>
+</div>
 
-        <!-- Quick actions -->
-        <div class="widget quick-actions">
-          <button class="quick-action-btn" onclick="alert('Download Hall Ticket')">Download Hall Ticket</button>
-          <button class="quick-action-btn" onclick="alert('Register for Exam')">Register for Exam</button>
-          <button class="quick-action-btn" onclick="alert('View Results')">View Results</button>
-          <button class="quick-action-btn" onclick="editProfile()">Edit Profile</button>
-        </div>
+<!-- Prediction -->
+<div class="widget">
+<h2>Dropout Risk Assessment</h2>
+<div class="probability-chance" id="predictionResult">
+✅ Low Dropout Risk - Excellent Performance!
+</div>
+<p style="margin-top: 15px; color: #555; line-height: 1.6;">
+Based on your outstanding attendance (93%), exceptional CGPA (9.4), and consistent assignment submissions, 
+you demonstrate excellent academic standing. Keep up the great work!
+</p>
+</div>
 
-        <!-- Achievements badges -->
-        <div class="widget">
-          <h2>Achievements & Rewards</h2>
-          <div class="achievements" id="achievementsList">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
+<!-- Calendar / Schedule -->
+<div class="widget calendar">
+<div class="calendar-header">
+<span id="calendarMonth">Oct 2025</span>
+<span id="calendarToday">Today: 14</span>
+</div>
+<div class="calendar-grid" id="calendarGrid">
+<div class="calendar-day">Sun</div>
+<div class="calendar-day">Mon</div>
+<div class="calendar-day">Tue</div>
+<div class="calendar-day">Wed</div>
+<div class="calendar-day">Thu</div>
+<div class="calendar-day">Fri</div>
+<div class="calendar-day">Sat</div>
+</div>
+</div>
 
-        <!-- Notes / To-dos -->
-        <div class="widget">
-          <h2>Notes / To-dos</h2>
-          <textarea class="notes-box" id="studentNotes" placeholder="Write your study goals or reminders here..."></textarea>
-          <button class="quick-action-btn" onclick="saveNotes()" style="width: 100%; margin-top: 10px;">💾 Save Notes</button>
-        </div>
+<!-- Quick actions -->
+<div class="widget">
+<h2>Quick Actions</h2>
+<div class="quick-actions">
+<button class="quick-action-btn" onclick="alert('Download Hall Ticket')">📄 Hall Ticket</button>
+<button class="quick-action-btn" onclick="alert('Register for Exam')">📝 Exam Registration</button>
+<button class="quick-action-btn" onclick="alert('View Results')">📊 View Results</button>
+<button class="quick-action-btn" onclick="editProfile()">✏ Edit Profile</button>
+</div>
+</div>
 
-      </div>
-    </div>
+<!-- Achievements badges -->
+<div class="widget">
+<h2>Achievements & Rewards</h2>
+<div class="achievements" id="achievementsList">
+<div class="achievement-badge">🏆 Top Performer</div>
+<div class="achievement-badge">📅 100% Attendance</div>
+<div class="achievement-badge">🧮 Math Olympiad Winner</div>
+<div class="achievement-badge">💡 Best Project Award</div>
+<div class="achievement-badge">💻 Coding Competition Winner</div>
+</div>
+</div>
 
-    <aside class="notification-panel" aria-label="College news and events">
-      <div class="notification-box">
-        <h2>College News</h2>
-        <ul id="collegeNews"></ul>
-      </div>
-      <div class="notification-box">
-        <h2>Upcoming Events</h2>
-        <ul id="upcomingEvents"></ul>
-      </div>
-      <div class="notification-box">
-        <h2>Important Notices</h2>
-        <ul id="importantNotices"></ul>
-      </div>
-    </aside>
-  </main>
-  <footer>
-    &copy; 2025 EduPredict. All rights reserved.
-  </footer>
+<!-- Notes / To-dos -->
+<div class="widget">
+<h2>Notes / To-dos</h2>
+<textarea class="notes-box" id="studentNotes" placeholder="Write your study goals or reminders here..."></textarea>
+<button class="quick-action-btn" onclick="saveNotes()" style="width: 100%; margin-top: 10px;">💾 Save Notes</button>
+</div>
 
-  <script>
-    // ==============================
-    // 🎯 SAMPLE STUDENT DATA
-    // ==============================
-    const sampleStudentData = {
-      name: "Ritika Mehta",
-      college: "Government College of Engineering, Karad",
-      email: "ritika.mehta@gcek.edu.in",
-      department: "Computer Science",
-      year: "3rd Year",
-      rollNo: "CS21045",
-      attendance: "93%",
-      cgpa: "9.4",
-      assignmentsSubmitted: "15",
-      achievementsCount: "5",
-      prediction: "Low Dropout Risk - Excellent Performance!",
-      achievements: [
-        "Top Performer",
-        "100% Attendance",
-        "Math Olympiad Winner",
-        "Best Project Award",
-        "Coding Competition Winner"
-      ],
-      collegeNews: [
-        "Orientation Day next Monday",
-        "Seminar: AI & Education on Oct 18",
-        "New Library Resources Available",
-        "Campus WiFi Upgrade Completed"
-      ],
-      upcomingEvents: [
-        "Cultural Fest - Oct 25-27",
-        "Sports Week - Nov 3-7",
-        "Tech Symposium - Nov 15",
-        "Annual Day - Dec 10"
-      ],
-      importantNotices: [
-        "Exam forms due Oct 20",
-        "Library closed on Sunday",
-        "Fee payment deadline: Oct 30",
-        "Scholarship forms available"
-      ]
-    };
+</div>
+</div>
 
-    // ==============================
-    // 🔄 LOAD DATA ON PAGE LOAD
-    // ==============================
-    document.addEventListener('DOMContentLoaded', () => {
-      loadStudentData();
-      generateCalendar();
-      loadNotes();
-    });
+<aside class="notification-panel" aria-label="College news and events">
+<div class="notification-box">
+<h2>📰 College News</h2>
+<ul id="collegeNews">
+<li>Orientation Day next Monday</li>
+<li>Seminar: AI & Education on Oct 18</li>
+<li>New Library Resources Available</li>
+<li>Campus WiFi Upgrade Completed</li>
+</ul>
+</div>
+<div class="notification-box">
+<h2>📅 Upcoming Events</h2>
+<ul id="upcomingEvents">
+<li>Cultural Fest - Oct 25-27</li>
+<li>Sports Week - Nov 3-7</li>
+<li>Tech Symposium - Nov 15</li>
+<li>Annual Day - Dec 10</li>
+</ul>
+</div>
+<div class="notification-box">
+<h2>⚠ Important Notices</h2>
+<ul id="importantNotices">
+<li>Exam forms due Oct 20</li>
+<li>Library closed on Sunday</li>
+<li>Fee payment deadline: Oct 30</li>
+<li>Scholarship forms available</li>
+</ul>
+</div>
+</aside>
+</main>
+<footer>
+&copy; 2025 EduPredict. All rights reserved.
+</footer>
 
-    // ==============================
-    // 📊 POPULATE DASHBOARD
-    // ==============================
-    function loadStudentData() {
-      // Check if data exists in localStorage, otherwise use sample data
-      let studentData = localStorage.getItem('studentData');
-      
-      if (studentData) {
-        studentData = JSON.parse(studentData);
-      } else {
-        studentData = sampleStudentData;
-        // Save sample data to localStorage
-        localStorage.setItem('studentData', JSON.stringify(studentData));
-      }
+<script>
+// ==============================
+// 🎯 STUDENT DATA
+// ==============================
+const sampleStudentData = {
+name: "Aditi Patil",
+college: "Government College of Engineering, Karad",
+email: "aditi@student.edu",
+department: "Information Technology",
+year: "2nd Year",
+rollNo: "12345",
+attendance: "93%",
+cgpa: "9.4",
+assignmentsSubmitted: "15",
+achievementsCount: "5",
+prediction: "Low Dropout Risk - Excellent Performance!",
+achievements: [
+"Top Performer",
+"100% Attendance",
+"Math Olympiad Winner",
+"Best Project Award",
+"Coding Competition Winner"
+],
+collegeNews: [
+"Orientation Day next Monday",
+"Seminar: AI & Education on Oct 18",
+"New Library Resources Available",
+"Campus WiFi Upgrade Completed"
+],
+upcomingEvents: [
+"Cultural Fest - Oct 25-27",
+"Sports Week - Nov 3-7",
+"Tech Symposium - Nov 15",
+"Annual Day - Dec 10"
+],
+importantNotices: [
+"Exam forms due Oct 20",
+"Library closed on Sunday",
+"Fee payment deadline: Oct 30",
+"Scholarship forms available"
+]
+};
 
-      // Populate header
-      document.getElementById('studentName').textContent = studentData.name;
-      document.getElementById('collegeName').textContent = studentData.college;
-
-      // Update profile picture
-      const profilePic = document.getElementById('profilePic');
-      if (studentData.profilePic) {
-        profilePic.src = studentData.profilePic;
-      }
-
-      // Populate overview cards
-      document.getElementById('attendanceValue').textContent = studentData.attendance;
-      document.getElementById('cgpaValue').textContent = studentData.cgpa;
-      document.getElementById('assignmentsValue').textContent = studentData.assignmentsSubmitted;
-      document.getElementById('achievementsCount').textContent = studentData.achievementsCount;
-
-      // Populate student information
-      document.getElementById('studentEmail').textContent = studentData.email;
-      document.getElementById('studentDepartment').textContent = studentData.department;
-      document.getElementById('studentYear').textContent = studentData.year;
-      document.getElementById('studentRollNo').textContent = studentData.rollNo;
-
-      // Populate prediction
-      document.getElementById('predictionResult').textContent = studentData.prediction;
-
-      // Populate achievements
-      const achievementsList = document.getElementById('achievementsList');
-      achievementsList.innerHTML = '';
-      studentData.achievements.forEach(achievement => {
-        const badge = document.createElement('div');
-        badge.className = 'achievement-badge';
-        badge.textContent = achievement;
-        achievementsList.appendChild(badge);
-      });
-
-      // Populate notifications
-      populateList('collegeNews', studentData.collegeNews);
-      populateList('upcomingEvents', studentData.upcomingEvents);
-      populateList('importantNotices', studentData.importantNotices);
-    }
-
-    // Helper function to populate lists
-    function populateList(elementId, items) {
-      const element = document.getElementById(elementId);
-      element.innerHTML = '';
-      items.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        element.appendChild(li);
-      });
-    }
-
-    // ==============================
-    // 📅 GENERATE CALENDAR
-    // ==============================
-    function generateCalendar() {
-      const calendarGrid = document.getElementById('calendarGrid');
-      const today = new Date();
-      const currentDay = today.getDate();
-      const currentMonth = today.getMonth();
-      const currentYear = today.getFullYear();
-
-      const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
-      
-      document.getElementById('calendarMonth').textContent = `${monthNames[currentMonth]} ${currentYear}`;
-      document.getElementById('calendarToday').textContent = `Today: ${currentDay}`;
-
-      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-      // Clear existing dates
-      while (calendarGrid.children.length > 7) {
-        calendarGrid.removeChild(calendarGrid.lastChild);
-      }
-
-      // Add empty cells
-      for (let i = 0; i < firstDay; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'calendar-date';
-        calendarGrid.appendChild(emptyCell);
-      }
-
-      // Add dates
-      for (let day = 1; day <= daysInMonth; day++) {
-        const dateCell = document.createElement('div');
-        dateCell.className = 'calendar-date';
-        dateCell.textContent = day;
-        
-        if (day === currentDay) {
-          dateCell.classList.add('today');
-        }
-        
-        calendarGrid.appendChild(dateCell);
-      }
-    }
-
-    // ==============================
-    // 📝 NOTES FUNCTIONS
-    // ==============================
-    function saveNotes() {
-      const notes = document.getElementById('studentNotes').value;
-      localStorage.setItem('studentNotes', notes);
-      alert('✅ Notes saved successfully!');
-    }
-
-    // Logout link in header
-    document.getElementById("logout").addEventListener("click", logout);
-
-    // fetching for ml model
-
-    // Fetch student with prediction
-const res = await fetch(`${backendUrl}/api/student/profile`, {
-  headers: { 'Authorization': `Bearer ${token}` }
+// ==============================
+// 🔄 LOAD DATA ON PAGE LOAD
+// ==============================
+document.addEventListener('DOMContentLoaded', () => {
+loadStudentData();
+generateCalendar();
+loadNotes();
+createCharts();
 });
-const student = await res.json();
 
-// Display risk level
-document.getElementById('riskLevel').textContent = student.prediction || 'Not calculated';
-document.getElementById('confidence').textContent = `${student.confidence}%` || 'N/A';
-document.getElementById('recommendation').textContent = student.recommendation || '';
+// ==============================
+// 📊 POPULATE DASHBOARD
+// ==============================
+function loadStudentData() {
+let studentData = localStorage.getItem('studentData');
 
-  </script>
+if (studentData) {
+studentData = JSON.parse(studentData);
+} else {
+studentData = sampleStudentData;
+localStorage.setItem('studentData', JSON.stringify(studentData));
+}
+
+document.getElementById('studentName').textContent = studentData.name;
+document.getElementById('collegeName').textContent = studentData.college;
+
+const profilePic = document.getElementById('profilePic');
+if (studentData.profilePic) {
+profilePic.src = studentData.profilePic;
+}
+
+document.getElementById('attendanceValue').textContent = studentData.attendance;
+document.getElementById('cgpaValue').textContent = studentData.cgpa;
+document.getElementById('assignmentsValue').textContent = studentData.assignmentsSubmitted;
+document.getElementById('achievementsCount').textContent = studentData.achievementsCount;
+
+document.getElementById('studentEmail').textContent = studentData.email;
+document.getElementById('studentDepartment').textContent = studentData.department;
+document.getElementById('studentYear').textContent = studentData.year;
+document.getElementById('studentRollNo').textContent = studentData.rollNo;
+
+document.getElementById('predictionResult').textContent = studentData.prediction;
+}
+
+// ==============================
+// 📊 CREATE CHARTS
+// ==============================
+function createCharts() {
+// Subject-wise Attendance Chart
+const subjects = ['Data Structures', 'Database Mgmt', 'Operating Systems', 'Computer Networks', 'Software Eng'];
+const attendance = [95, 92, 94, 91, 93];
+
+new Chart(document.getElementById('attendanceChart'), {
+type: 'bar',
+data: {
+labels: subjects,
+datasets: [{
+label: 'Attendance %',
+data: attendance,
+backgroundColor: [
+'rgba(16, 172, 132, 0.8)',
+'rgba(29, 209, 161, 0.8)',
+'rgba(0, 184, 148, 0.8)',
+'rgba(0, 206, 201, 0.8)',
+'rgba(9, 132, 227, 0.8)'
+],
+borderColor: [
+'#10ac84',
+'#1dd1a1',
+'#00b894',
+'#00cec9',
+'#0984e3'
+],
+borderWidth: 2,
+borderRadius: 8
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: true,
+scales: {
+y: {
+beginAtZero: true,
+max: 100,
+title: {
+display: true,
+text: 'Attendance Percentage (%)',
+font: { size: 12, weight: 'bold' }
+}
+}
+},
+plugins: {
+legend: { display: false },
+title: {
+display: true,
+text: 'Subject-wise Attendance Performance',
+font: { size: 14, weight: 'bold' }
+}
+}
+}
+});
+
+// CGPA Progress Chart
+const cgpaData = [8.9, 9.1, 9.3, 9.4, 9.4];
+new Chart(document.getElementById('cgpaChart'), {
+type: 'line',
+data: {
+labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5'],
+datasets: [{
+label: 'CGPA',
+data: cgpaData,
+backgroundColor: 'rgba(16, 172, 132, 0.2)',
+borderColor: '#10ac84',
+borderWidth: 3,
+fill: true,
+tension: 0.4,
+pointRadius: 6,
+pointBackgroundColor: '#10ac84',
+pointBorderColor: '#fff',
+pointBorderWidth: 2,
+pointHoverRadius: 8
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: true,
+scales: {
+y: {
+beginAtZero: false,
+min: 7,
+max: 10,
+title: {
+display: true,
+text: 'CGPA',
+font: { size: 12, weight: 'bold' }
+}
+}
+},
+plugins: {
+legend: { display: false },
+title: {
+display: true,
+text: 'Semester-wise CGPA Progression',
+font: { size: 14, weight: 'bold' }
+}
+}
+}
+});
+}
+
+// ==============================
+// 📅 GENERATE CALENDAR
+// ==============================
+function generateCalendar() {
+const calendarGrid = document.getElementById('calendarGrid');
+const today = new Date();
+const currentDay = today.getDate();
+const currentMonth = today.getMonth();
+const currentYear = today.getFullYear();
+
+const monthNames = ["January", "February", "March", "April", "May", "June",
+"July", "August", "September", "October", "November", "December"];
+
+document.getElementById('calendarMonth').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+document.getElementById('calendarToday').textContent = `Today: ${currentDay}`;
+
+const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+while (calendarGrid.children.length > 7) {
+calendarGrid.removeChild(calendarGrid.lastChild);
+}
+
+for (let i = 0; i < firstDay; i++) {
+const emptyCell = document.createElement('div');
+emptyCell.className = 'calendar-date';
+calendarGrid.appendChild(emptyCell);
+}
+
+for (let day = 1; day <= daysInMonth; day++) {
+const dateCell = document.createElement('div');
+dateCell.className = 'calendar-date';
+dateCell.textContent = day;
+
+if (day === currentDay) {
+dateCell.classList.add('today');
+}
+
+calendarGrid.appendChild(dateCell);
+}
+}
+
+// ==============================
+// 📝 NOTES FUNCTIONS
+// ==============================
+function loadNotes() {
+const savedNotes = localStorage.getItem('studentNotes');
+if (savedNotes) {
+document.getElementById('studentNotes').value = savedNotes;
+}
+}
+
+function saveNotes() {
+const notes = document.getElementById('studentNotes').value;
+localStorage.setItem('studentNotes', notes);
+alert('✅ Notes saved successfully!');
+}
+
+// ==============================
+// 👤 PROFILE FUNCTIONS
+// ==============================
+function editProfile() {
+alert('Edit Profile feature - Navigate to profile settings page');
+}
+
+document.getElementById('profilePic').addEventListener('click', () => {
+document.getElementById('popupOverlay').style.display = 'flex';
+});
+
+function closePopup() {
+document.getElementById('popupOverlay').style.display = 'none';
+document.getElementById('photoUpload').value = '';
+}
+
+function handleProfileChange() {
+const fileInput = document.getElementById('photoUpload');
+if (fileInput.files && fileInput.files[0]) {
+const reader = new FileReader();
+reader.onload = function(e) {
+document.getElementById('profilePic').src = e.target.result;
+let studentData = JSON.parse(localStorage.getItem('studentData')) || sampleStudentData;
+studentData.profilePic = e.target.result;
+localStorage.setItem('studentData', JSON.stringify(studentData));
+alert('✅ Profile picture updated successfully!');
+closePopup();
+};
+reader.readAsDataURL(fileInput.files[0]);
+} else {
+alert('⚠ Please select a photo first.');
+}
+}
+
+// Close popup when clicking outside
+document.getElementById('popupOverlay').addEventListener('click', (e) => {
+if (e.target.id === 'popupOverlay') {
+closePopup();
+}
+});
+</script>
 </body>
 </html>
