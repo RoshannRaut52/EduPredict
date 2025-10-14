@@ -281,3 +281,90 @@ app.post('/login/parent', async (req, res) => {
 // ====================================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+
+
+// registration and login for teacher
+
+router.post('/register/teacher', async (req, res) => {
+  try {
+    const { name, email, subject, department, password, confirm_password } = req.body;
+
+    // Field validations
+    if (!name || !email || !subject || !department || !password || !confirm_password) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+    if (password !== confirm_password) {
+      return res.status(400).json({ message: 'Passwords do not match.' });
+    }
+
+    // Check for duplicate email
+    const emailCheck = await pool.query(
+      'SELECT 1 FROM teachers WHERE email = $1',
+      [email]
+    );
+    if (emailCheck.rowCount > 0) {
+      return res.status(409).json({ message: 'Email already registered.' });
+    }
+
+    // Hash password
+    const password_hash = await bcrypt.hash(password, 10);
+
+    // Insert teacher
+    const insertRes = await pool.query(
+      `INSERT INTO teachers
+        (name, email, password_hash, subject, department)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING teacher_id, name, email, subject, department, created_at`,
+      [name, email, password_hash, subject, department]
+    );
+    res.status(201).json({ message: "✅ Registration successful!", teacher: insertRes.rows[0] });
+
+  } catch (err) {
+    console.error('Teacher registration error:', err);
+    res.status(500).json({ message: 'Server error.' });
+  }
+});
+
+module.exports = router;
+
+// login
+
+router.post('/api/teacher/login', async (req, res) => {
+  try {
+    const { college, branch, email, password } = req.body;
+    if (!college || !branch || !email || !password) {
+      return res.status(400).json({ error: 'All fields are required.' });
+    }
+
+    // Optionally adapt these to your actual teacher+college schema/columns:
+    // If your teachers table includes a college_code or college_id field use that; else match only by email and department.
+    const result = await pool.query(
+      `SELECT * FROM teachers WHERE email = $1 AND department = $2`,
+      [email, branch.toUpperCase()] // Ensure department codes match DB ("IT", "ENTC", etc.)
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid email or department.' });
+    }
+
+    const teacher = result.rows[0];
+    const valid = await bcrypt.compare(password, teacher.password_hash);
+
+    if (!valid) {
+      return res.status(401).json({ error: 'Invalid password.' });
+    }
+
+    // Optionally add college validation here if your teacher records reference a college
+    // Example: if (teacher.college_code !== college) { ... }
+
+    // Remove password_hash from response
+    const { password_hash, ...teacherData } = teacher;
+    res.json(teacherData);
+
+  } catch (err) {
+    console.error('Teacher login error:', err);
+    res.status(500).json({ error: 'Server error.' });
+  }
+});
+
+module.exports = router;
