@@ -501,7 +501,7 @@
     const safeString = (val) => val && val.trim() !== '' ? val : 'N/A';
     const safeNumber = (val) => Number.isFinite(val) ? val : 0;
 
-    const collegeData = JSON.parse(localStorage.getItem('collegeData'));
+    let collegeData = JSON.parse(localStorage.getItem('collegeData'));
     if (!collegeData) {
       alert('Please login first.');
       window.location.href = 'login/college.html';
