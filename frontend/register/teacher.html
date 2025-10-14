@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Registration | EduPredict</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #b3b4b5 100%);
+      color: #000;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background: #000;
+      color: #fff;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      color: #000;
+    }
+
+    .departments {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+    }
+
+    .departments button {
+      background: #000;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .departments button:hover {
+      background: #10ac84;
+      transform: scale(1.05);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      text-align: left;
+    }
+
+    label {
+      font-weight: 600;
+    }
+
+    input {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    input:focus {
+      border: 2px solid #000;
+    }
+
+    button {
+      background: #000;
+      color: #fff;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #10ac84;
+      transform: scale(1.05);
+    }
+
+    .department-tag {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #10ac84;
+      margin-bottom: 20px;
+    }
+
+    .message {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .success { color: #007f00; }
+    .error { color: #b30000; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #eee;
+      background: #000;
+      font-size: 0.9rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">EduPredict</div>
+  </header>
+
+  <main>
+    <!-- Department Selection -->
+    <div class="container" id="departmentContainer">
+      <h2>🏫 Select Your Department</h2>
+      <div class="departments">
+        <button onclick="selectDepartment('IT')">IT</button>
+        <button onclick="selectDepartment('ENTC')">ENTC</button>
+        <button onclick="selectDepartment('MECHANICAL')">MECHANICAL</button>
+        <button onclick="selectDepartment('CIVIL')">CIVIL</button>
+      </div>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="container hidden" id="registerContainer">
+      <h2>👨‍🏫 Teacher Registration</h2>
+      <div class="department-tag" id="departmentTag"></div>
+
+      <form id="teacherRegisterForm" autocomplete="off">
+        <label>Full Name</label>
+        <input type="text" name="name" placeholder="Enter your name" required>
+
+        <label>Email Address</label>
+        <input type="email" name="email" placeholder="Enter valid email" required>
+
+        <label>Subject</label>
+        <input type="text" name="subject" placeholder="e.g., Data Structures" required>
+
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Create password" required>
+
+        <label>Confirm Password</label>
+        <input type="password" name="confirm_password" placeholder="Confirm password" required>
+
+        <button type="submit">Register</button>
+      </form>
+      <div class="message" id="statusMsg"></div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 EduPredict. All rights reserved.
+  </footer>
+
+  <script>
+    const backendUrl = 'https://edupredict-l9eg.onrender.com';
+    const deptContainer = document.getElementById('departmentContainer');
+    const regContainer = document.getElementById('registerContainer');
+    const deptTag = document.getElementById('departmentTag');
+    const form = document.getElementById("teacherRegisterForm");
+    const msg = document.getElementById("statusMsg");
+    let selectedDept = "";
+
+    function selectDepartment(dept) {
+      selectedDept = dept;
+      deptTag.textContent = `Department: ${dept}`;
+      deptContainer.classList.add('hidden');
+      regContainer.classList.remove('hidden');
+    }
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      msg.textContent = "⏳ Processing...";
+      msg.className = "message";
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      data.department = selectedDept;
+
+      try {
+        const res = await fetch(`${backendUrl}/register/teacher`, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          msg.textContent = result.message || "✅ Registration successful!";
+          msg.classList.add("success");
+          form.reset();
+          setTimeout(() => {
+            window.location.href = "teacherlogin.html";
+          }, 2000);
+        } else {
+          msg.textContent = result.message || "❌ Registration failed";
+          msg.classList.add("error");
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        msg.textContent = "❌ Cannot connect to server. Please try again.";
+        msg.classList.add("error");
+      }
+    };
+  </script>
+</body>
+</html>
