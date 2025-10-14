@@ -285,7 +285,7 @@ app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 
 // registration and login for teacher
 
-router.post('/register/teacher', async (req, res) => {
+app.post('/register/teacher', async (req, res) => {
   try {
     const { name, email, subject, department, password, confirm_password } = req.body;
 
@@ -325,11 +325,10 @@ router.post('/register/teacher', async (req, res) => {
   }
 });
 
-module.exports = router;
 
 // login
 
-router.post('/api/teacher/login', async (req, res) => {
+app.post('/api/teacher/login', async (req, res) => {
   try {
     const { college, branch, email, password } = req.body;
     if (!college || !branch || !email || !password) {
@@ -366,5 +365,3 @@ router.post('/api/teacher/login', async (req, res) => {
     res.status(500).json({ error: 'Server error.' });
   }
 });
-
-module.exports = router;
