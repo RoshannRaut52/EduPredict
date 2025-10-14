@@ -502,7 +502,7 @@
     const safeNumber = (val) => Number.isFinite(val) ? val : 0;
 
     let collegeData = JSON.parse(localStorage.getItem('collegeData'));
-    if (!collegeData) {
+    if (!token || !collegeData) {
       alert('Please login first.');
       window.location.href = 'login/college.html';
     } else {
