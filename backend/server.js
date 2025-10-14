@@ -330,20 +330,19 @@ app.post('/register/teacher', async (req, res) => {
 
 app.post('/api/teacher/login', async (req, res) => {
   try {
-    const { college, branch, email, password } = req.body;
-    if (!college || !branch || !email || !password) {
-      return res.status(400).json({ error: 'All fields are required.' });
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required.' });
     }
 
-    // Optionally adapt these to your actual teacher+college schema/columns:
-    // If your teachers table includes a college_code or college_id field use that; else match only by email and department.
+    // Query by email only
     const result = await pool.query(
-      `SELECT * FROM teachers WHERE email = $1 AND department = $2`,
-      [email, branch.toUpperCase()] // Ensure department codes match DB ("IT", "ENTC", etc.)
+      `SELECT * FROM teachers WHERE email = $1`,
+      [email]
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid email or department.' });
+      return res.status(401).json({ error: 'Invalid email.' });
     }
 
     const teacher = result.rows[0];
@@ -352,9 +351,6 @@ app.post('/api/teacher/login', async (req, res) => {
     if (!valid) {
       return res.status(401).json({ error: 'Invalid password.' });
     }
-
-    // Optionally add college validation here if your teacher records reference a college
-    // Example: if (teacher.college_code !== college) { ... }
 
     // Remove password_hash from response
     const { password_hash, ...teacherData } = teacher;
@@ -365,3 +361,4 @@ app.post('/api/teacher/login', async (req, res) => {
     res.status(500).json({ error: 'Server error.' });
   }
 });
+

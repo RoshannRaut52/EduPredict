@@ -13,7 +13,6 @@
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
     }
-
     body {
       background: linear-gradient(135deg, #b3b4b5 100%);
       color: #0a0808;
@@ -21,7 +20,6 @@
       display: flex;
       flex-direction: column;
     }
-
     header {
       display: flex;
       justify-content: space-between;
@@ -32,14 +30,12 @@
       top: 0;
       z-index: 1000;
     }
-
     .college-brand {
       display: flex;
       align-items: center;
       gap: 15px;
       cursor: pointer;
     }
-
     .college-brand img {
       width: 50px;
       height: 50px;
@@ -47,19 +43,16 @@
       border: 2px solid #fff;
       object-fit: cover;
     }
-
     .college-brand h1 {
       color: #fff;
       font-size: 1.6rem;
       font-weight: 600;
     }
-
     .header-right {
       display: flex;
       align-items: center;
       gap: 15px;
     }
-
     .edit-btn {
       background: #10ac84;
       border: none;
@@ -70,11 +63,9 @@
       cursor: pointer;
       transition: 0.3s;
     }
-
     .edit-btn:hover {
       background: #1dd1a1;
     }
-
     #menuToggleBtn {
       display: none;
       background: #10ac84;
@@ -89,7 +80,6 @@
     #menuToggleBtn:hover {
       background: #1dd1a1;
     }
-
     .container {
       display: flex;
       min-height: calc(100vh - 70px);
@@ -98,7 +88,6 @@
       width: 95%;
       gap: 25px;
     }
-
     .sidebar {
       flex: 0 0 250px;
       background: rgba(0, 0, 0, 0.95);
@@ -113,11 +102,9 @@
       transform: translateX(0);
       z-index: 999;
     }
-
     .sidebar.hidden {
       transform: translateX(-280px);
     }
-
     .sidebar a {
       display: block;
       color: #fff;
@@ -127,28 +114,24 @@
       transition: background 0.3s;
       border-left: 4px solid transparent;
     }
-
     .sidebar a:hover,
     .sidebar a.active {
       background: rgba(255, 255, 255, 0.15);
       border-left: 4px solid #10ac84;
       color: #10ac84;
     }
-
     main {
       flex: 1;
       display: flex;
       flex-direction: column;
       gap: 25px;
     }
-
     .top-section {
       display: flex;
       gap: 30px;
       flex-wrap: wrap;
       justify-content: center;
     }
-
     .chart-box, .notification-box {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
@@ -161,12 +144,10 @@
       flex-direction: column;
       align-items: center;
     }
-
     .chart-box h2, .notification-box h2 {
       margin-bottom: 20px;
       color: #000;
     }
-
     .notif {
       background: rgba(0,0,0,0.8);
       color: #fff;
@@ -176,7 +157,6 @@
       font-weight: 600;
       width: 100%;
     }
-
     .chart-wrapper {
       display: flex;
       align-items: center;
@@ -184,7 +164,6 @@
       justify-content: center;
       flex-wrap: wrap;
     }
-
     .chart-legend {
       display: flex;
       flex-direction: column;
@@ -193,7 +172,6 @@
       color: #000;
       min-width: 150px;
     }
-
     .legend-item {
       display: flex;
       align-items: center;
@@ -201,14 +179,12 @@
       font-weight: 600;
       font-size: 1rem;
     }
-
     .legend-color {
       width: 18px;
       height: 18px;
       border-radius: 50%;
       display: inline-block;
     }
-
     .summary-section {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -216,7 +192,6 @@
       justify-items: center;
       margin-top: 0;
     }
-
     .summary-card {
       background: rgba(255,255,255,0.15);
       backdrop-filter: blur(8px);
@@ -228,23 +203,9 @@
       max-width: 230px;
       transition: transform 0.3s;
     }
-
-    .summary-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .summary-card h3 {
-      color: #000;
-      margin-bottom: 10px;
-      font-size: 1.2rem;
-    }
-
-    .summary-card p {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #10ac84;
-    }
-
+    .summary-card:hover { transform: translateY(-5px); }
+    .summary-card h3 { color: #000; margin-bottom: 10px; font-size: 1.2rem; }
+    .summary-card p { font-size: 1.6rem; font-weight: 700; color: #10ac84; }
     .quick-actions {
       background: rgba(255,255,255,0.12);
       backdrop-filter: blur(8px);
@@ -258,7 +219,6 @@
       max-width: 1000px;
       margin: 15px auto 0;
     }
-
     .action-btn {
       background: #000;
       color: #fff;
@@ -271,13 +231,11 @@
       box-shadow: 0 2px 10px #c7f0df;
       cursor: pointer;
     }
-
     .action-btn:hover {
       background: #10ac84;
       transform: scale(1.1);
       box-shadow: 0 4px 15px #10ac84aa;
     }
-
     .departments {
       width: 100%;
       text-align: left;
@@ -286,7 +244,6 @@
       margin-left: auto;
       margin-right: auto;
     }
-
     .departments h2 {
       font-size: 1.8rem;
       margin-bottom: 20px;
@@ -294,7 +251,6 @@
       font-weight: 700;
       text-align: center;
     }
-
     .department {
       background: rgba(255,255,255,0.15);
       border-radius: 12px;
@@ -311,11 +267,7 @@
       user-select: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.12);
     }
-
-    .department:hover {
-      background: rgba(255,255,255,0.25);
-    }
-
+    .department:hover { background: rgba(255,255,255,0.25); }
     .year-list {
       display: none;
       padding-left: 30px;
@@ -323,7 +275,6 @@
       border-left: 3px solid #10ac84;
       max-width: 400px;
     }
-
     .year-list a {
       display: block;
       text-decoration: none;
@@ -332,7 +283,6 @@
       font-weight: 500;
       position: relative;
     }
-
     .year-list a::before {
       content: "→";
       color: #10ac84;
@@ -341,12 +291,10 @@
       left: -18px;
       top: 0;
     }
-
     .year-list a:hover {
       color: #10ac84;
       text-decoration: underline;
     }
-
     footer {
       text-align: center;
       padding: 20px;
@@ -355,30 +303,15 @@
       background: #000;
       margin-top: auto;
     }
-
     @media (max-width: 900px) {
-      .container {
-        flex-direction: column;
-      }
-
-      .top-section {
-        justify-content: center;
-      }
-
-      .sidebar {
-        position: fixed;
-        height: 100%;
-        z-index: 1001;
-      }
-
-      #menuToggleBtn {
-        display: inline-block;
-      }
+      .container { flex-direction: column; }
+      .top-section { justify-content: center; }
+      .sidebar { position: fixed; height: 100%; z-index: 1001; }
+      #menuToggleBtn { display: inline-block; }
     }
   </style>
 </head>
 <body>
-
   <header>
     <div style="display: flex; align-items: center;">
       <button id="menuToggleBtn" aria-label="Toggle Menu">☰ Menu</button>
@@ -391,19 +324,17 @@
       <a href="editprofile.html" id="openeditmenu" class="edit-btn">✏️ Edit Profile</a>
     </div>
   </header>
-
   <div class="container">
-
     <nav class="sidebar" id="sidebar" aria-label="Sidebar navigation">
       <a href="college.html" class="active">🏠 Home</a>
       <a href="collegedepartments.html">🏛️ Departments</a>
       <a href="#">📊 Dashboard</a>
+      <a href="../register/teacher.html" id="addTeacherBtn">👨‍🏫 Add Teacher</a>
       <a href="#">📬 Student Requests</a>
       <a href="#">ℹ️ About</a>
       <a href="#">❓ Help</a>
       <a href="#">📞 Contact</a>
     </nav>
-
     <main>
       <section class="top-section">
         <div class="chart-box">
@@ -418,14 +349,12 @@
             </div>
           </div>
         </div>
-
         <div class="notification-box" aria-live="polite" aria-atomic="true">
           <h2>Notifications Sent</h2>
           <div class="notif" role="alert">📩 To Parents: <strong id="toParents">0</strong></div>
           <div class="notif" role="alert">👩‍🏫 To Teachers: <strong id="toTeachers">0</strong></div>
         </div>
       </section>
-
       <section class="summary-section" aria-label="Student Summary">
         <div class="summary-card" tabindex="0">
           <h3>Total Students</h3>
@@ -444,7 +373,6 @@
           <p id="summarySavedStudents">0</p>
         </div>
       </section>
-
       <section class="quick-actions" aria-label="Quick Actions">
         <a href="#" class="action-btn">Add Students</a>
         <a href="#" class="action-btn">Manage Mentors</a>
@@ -452,21 +380,18 @@
         <a href="#" class="action-btn">Send Notifications</a>
         <a href="#" class="action-btn">Settings</a>
       </section>
-
       <section class="departments" aria-label="Departments List">
         <h2>Departments</h2>
-
         <div class="department" tabindex="0" role="button" aria-expanded="false" aria-controls="cse" onclick="toggleYears('cse')" onkeypress="if(event.key==='Enter'){toggleYears('cse')}">
           💻 Computer Science & Engineering
           <span aria-hidden="true">▼</span>
         </div>
         <div class="year-list" id="cse" aria-hidden="true" role="region">
-          <a href="#" title="1st Year Computer Science">1st Year</a>
+          <a href="../student1.html" title="1st Year Computer Science">1st Year</a>
           <a href="#" title="2nd Year Computer Science">2nd Year</a>
           <a href="#" title="3rd Year Computer Science">3rd Year</a>
           <a href="#" title="4th Year Computer Science">4th Year</a>
         </div>
-
         <div class="department" tabindex="0" role="button" aria-expanded="false" aria-controls="it" onclick="toggleYears('it')" onkeypress="if(event.key==='Enter'){toggleYears('it')}">
           🌐 Information Technology
           <span aria-hidden="true">▼</span>
@@ -477,7 +402,6 @@
           <a href="#" title="3rd Year IT">3rd Year</a>
           <a href="#" title="4th Year IT">4th Year</a>
         </div>
-
         <div class="department" tabindex="0" role="button" aria-expanded="false" aria-controls="mech" onclick="toggleYears('mech')" onkeypress="if(event.key==='Enter'){toggleYears('mech')}">
           ⚙️ Mechanical Engineering
           <span aria-hidden="true">▼</span>
@@ -491,20 +415,38 @@
       </section>
     </main>
   </div>
-
   <footer>
-    © 2025 ABC Engineering College. All rights reserved.
+    © Edupredict 2025. All rights reserved.
   </footer>
-
   <script>
     // Utility functions for safe access
-    const safeString = (val) => val && val.trim() !== '' ? val : 'N/A';
-    const safeNumber = (val) => Number.isFinite(val) ? val : 0;
+    const safeString = val => val && val.trim() !== '' ? val : 'N/A';
+    const safeNumber = val => Number.isFinite(val) ? val : 0;
 
+    // --- DUMMY DATA for demo (remove for production) ---
+    if (!localStorage.getItem('collegeData')) {
+      localStorage.setItem('collegeData', JSON.stringify({
+        name: "Government College Of Engineering, Karad",
+        total_students: 540,
+        at_risk_students: 48,
+        dropout_students: 17,
+        saved_students: 38,
+        notifications_to_parents: 76,
+        notifications_to_teachers: 22
+      }));
+    }
+    if (!localStorage.getItem('collegeToken')) {
+      localStorage.setItem('collegeToken', "dummytoken");
+    }
+    // ----------------------------------------------------
+    const backendUrl = 'https://edupredict-l9eg.onrender.com';
+
+    // Check if user is logged in
+    const token = localStorage.getItem('collegeToken');
     let collegeData = JSON.parse(localStorage.getItem('collegeData'));
     if (!token || !collegeData) {
       alert('Please login first.');
-      window.location.href = 'login/college.html';
+      window.location.href = '../login/college.html';
     } else {
       document.getElementById('collegeName').textContent = safeString(collegeData.name);
       document.getElementById('totalStudents').textContent = safeNumber(collegeData.total_students);
@@ -545,7 +487,6 @@
         }
       });
     }
-
     // Sidebar Toggle for small screens
     const menuToggleBtn = document.getElementById('menuToggleBtn');
     const sidebar = document.getElementById('sidebar');
@@ -556,7 +497,6 @@
       const list = document.getElementById(id);
       const isVisible = list.style.display === "block";
       list.style.display = isVisible ? "none" : "block";
-
       const deptButton = document.querySelector(`.department[aria-controls="${id}"]`);
       if(deptButton) {
         deptButton.setAttribute('aria-expanded', !isVisible);
@@ -564,153 +504,7 @@
       list.setAttribute('aria-hidden', isVisible);
     }
 
-    //new
-
-    // dashboard/college.html - updated script section
-const backendUrl = 'https://edupredict-l9eg.onrender.com';
-
-// Check if user is logged in
-const token = localStorage.getItem('collegeToken');
-
-if (!token || !collegeData) {
-  alert('Please login first');
-  window.location.href = '../login/college.html';
-}
-
-// Fetch latest dashboard data from backend
-async function loadDashboardData() {
-  try {
-    const res = await fetch(`${backendUrl}/api/college/dashboard`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    if (!res.ok) {
-      if (res.status === 401 || res.status === 403) {
-        alert('Session expired. Please login again.');
-        localStorage.clear();
-        window.location.href = '../login/college.html';
-        return;
-      }
-      throw new Error('Failed to fetch dashboard data');
-    }
-
-    const data = await res.json();
-    
-    // Update localStorage with fresh data
-    collegeData = {
-      ...data.college,
-      ...data.statistics
-    };
-    localStorage.setItem('collegeData', JSON.stringify(collegeData));
-    
-    // Update UI
-    updateDashboard(collegeData, data.departments);
-    
-  } catch (error) {
-    console.error('Error loading dashboard:', error);
-    alert('Failed to load dashboard data');
-  }
-}
-
-// Update dashboard UI with data
-function updateDashboard(data, departments) {
-  // Update college name and logo
-  document.getElementById('collegeName').textContent = data.name || 'College Name';
-  
-  // Update chart legend numbers
-  document.getElementById('totalStudents').textContent = data.total_students || 0;
-  document.getElementById('atRiskStudents').textContent = data.at_risk_students || 0;
-  document.getElementById('dropoutStudents').textContent = data.dropout_students || 0;
-  document.getElementById('savedStudents').textContent = data.saved_students || 0;
-  
-  // Update notifications
-  document.getElementById('toParents').textContent = data.notifications_to_parents || 0;
-  document.getElementById('toTeachers').textContent = data.notifications_to_teachers || 0;
-  
-  // Update summary cards
-  document.getElementById('summaryTotalStudents').textContent = data.total_students || 0;
-  document.getElementById('summaryAtRiskStudents').textContent = data.at_risk_students || 0;
-  document.getElementById('summaryDropoutStudents').textContent = data.dropout_students || 0;
-  document.getElementById('summarySavedStudents').textContent = data.saved_students || 0;
-  
-  // Update chart
-  updateChart(data);
-  
-  // Render departments (if provided)
-  if (departments && departments.length > 0) {
-    renderDepartments(departments);
-  }
-}
-
-// Update Chart.js chart
-function updateChart(data) {
-  const ctx = document.getElementById('studentChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: ['Total Students', 'At Risk', 'Dropout', 'Saved'],
-      datasets: [{
-        data: [
-          data.total_students || 0,
-          data.at_risk_students || 0,
-          data.dropout_students || 0,
-          data.saved_students || 0
-        ],
-        backgroundColor: ['#2e86de', '#ee5253', '#ff9f43', '#10ac84'],
-        borderWidth: 2,
-        borderColor: '#fff'
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: { enabled: true }
-      }
-    }
-  });
-}
-
-// Render departments dynamically from backend
-function renderDepartments(departments) {
-  const container = document.querySelector('.departments');
-  const heading = container.querySelector('h2');
-  
-  // Clear existing departments (except heading)
-  container.querySelectorAll('.department, .year-list').forEach(el => el.remove());
-  
-  departments.forEach(dept => {
-    const deptDiv = document.createElement('div');
-    deptDiv.className = 'department';
-    deptDiv.innerHTML = `
-      💻 ${dept.department_name} (${dept.student_count} students, ${dept.at_risk_count} at risk)
-      <span>▼</span>
-    `;
-    deptDiv.onclick = () => toggleYears(`dept-${dept.department_code}`);
-    
-    const yearList = document.createElement('div');
-    yearList.className = 'year-list';
-    yearList.id = `dept-${dept.department_code}`;
-    yearList.innerHTML = `
-      <a href="students.html?dept=${dept.department_code}&year=1">1st Year</a>
-      <a href="students.html?dept=${dept.department_code}&year=2">2nd Year</a>
-      <a href="students.html?dept=${dept.department_code}&year=3">3rd Year</a>
-      <a href="students.html?dept=${dept.department_code}&year=4">4th Year</a>
-    `;
-    
-    container.appendChild(deptDiv);
-    container.appendChild(yearList);
-  });
-}
-
-// Load dashboard data on page load
-window.onload = loadDashboardData;
-
-// Refresh data every 5 minutes
-setInterval(loadDashboardData, 5 * 60 * 1000);
-
+    // --- If you want to enable live backend data swap out dummy section with loadDashboardData as in your previous code ---
   </script>
 </body>
 </html>
