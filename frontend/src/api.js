@@ -34,20 +34,7 @@ document.getElementById('collegeLoginForm')?.addEventListener('submit', async fu
     errorMsg.textContent = 'Error connecting to server.';
   }
 
-  // extra
-  // In your login success handler
-if (res.ok) {
-  const data = await res.json();
-  
-  // Store ONLY the token string
-  localStorage.setItem('collegeToken', data.token);
-  
-  // Store college data
-  localStorage.setItem('collegeData', JSON.stringify(data.college));
-  
-  window.location.href = '../dashboard/college.html';
-}
-
+ 
 });
 
 
