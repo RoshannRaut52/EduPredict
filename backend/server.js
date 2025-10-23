@@ -6,10 +6,6 @@ const { Pool } = require('pg');
 
 const app = express();
 
-//Import and use the college dashboard routes
-const collegeDashboardRoutes = require('./routes/collegeDashboard');
-app.use('/api/college', collegeDashboardRoutes);
-
 // ==============================
 // 🔹 PostgreSQL Connection
 // ==============================
