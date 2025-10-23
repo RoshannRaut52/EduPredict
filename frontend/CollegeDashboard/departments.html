@@ -565,38 +565,56 @@
     }
 
     // Add Department
-    async function addDepartment(departmentName) {
-      const submitBtn = document.getElementById('submitAddBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Adding...';
+async function addDepartment(departmentName) {
+  const submitBtn = document.getElementById('submitAddBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Adding...';
 
-      try {
-        const response = await fetch(`${backendUrl}/api/college/${collegeId}/departments`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ name: departmentName })
-        });
+  try {
+    const url = `${backendUrl}/api/college/${collegeId}/departments`;
+    console.log('Adding department to:', url);
+    console.log('Department name:', departmentName);
+    console.log('Auth token:', authToken ? 'Present' : 'Missing');
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name: departmentName })
+    });
 
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || 'Failed to add department');
-        }
+    console.log('Response status:', response.status);
+    console.log('Response content-type:', response.headers.get('content-type'));
 
-        const result = await response.json();
-        alert('✅ Department added successfully!');
-        await loadDepartments();
-        closeAddDeptModal();
-      } catch (error) {
-        console.error('Error adding department:', error);
-        alert('❌ ' + error.message);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Add Department';
-      }
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error('Non-JSON response:', text);
+      throw new Error('Server returned an invalid response. Please check if the backend is running correctly.');
     }
+
+    const result = await response.json();
+    console.log('Result:', result);
+
+    if (!response.ok) {
+      throw new Error(result.error || result.message || 'Failed to add department');
+    }
+
+    alert('✅ Department added successfully!');
+    await loadDepartments();
+    closeAddDeptModal();
+  } catch (error) {
+    console.error('Error adding department:', error);
+    alert('❌ Error: ' + error.message);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Add Department';
+  }
+}
+
 
     // Remove Department
     async function removeDepartment(departmentId) {

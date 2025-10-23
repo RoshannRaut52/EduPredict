@@ -248,6 +248,8 @@ app.post('/api/college/:collegeId/departments', authenticateToken, async (req, r
     const { collegeId } = req.params;
     const { name } = req.body;
 
+    console.log('Add Department Request:', { collegeId, name, college_id: req.college.college_id });
+
     if (parseInt(collegeId) !== req.college.college_id) {
       return res.status(403).json({ error: 'Access denied' });
     }
@@ -266,7 +268,7 @@ app.post('/api/college/:collegeId/departments', authenticateToken, async (req, r
       return res.status(400).json({ error: 'Department already exists' });
     }
 
-    // Generate department code (first 4 letters uppercase)
+    // Generate department code
     const code = name.substring(0, 4).toUpperCase().replace(/\s/g, '');
 
     const result = await pool.query(
@@ -283,9 +285,14 @@ app.post('/api/college/:collegeId/departments', authenticateToken, async (req, r
 
   } catch (err) {
     console.error('Error adding department:', err);
-    res.status(500).json({ error: 'Failed to add department' });
+    // ALWAYS return JSON
+    return res.status(500).json({ 
+      error: 'Failed to add department',
+      message: err.message 
+    });
   }
 });
+
 
 // Delete department
 app.delete('/api/college/:collegeId/departments/:departmentId', authenticateToken, async (req, res) => {
@@ -335,6 +342,23 @@ app.delete('/api/college/:collegeId/departments/:departmentId', authenticateToke
     console.error('Error deleting department:', err);
     res.status(500).json({ error: 'Failed to delete department' });
   }
+});
+
+// Global error handler - Always return JSON
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ 
+    error: 'Internal server error',
+    message: err.message 
+  });
+});
+
+// Handle 404 - Route not found
+app.use((req, res) => {
+  res.status(404).json({ 
+    error: 'Endpoint not found',
+    path: req.path 
+  });
 });
 
 // ========================================
