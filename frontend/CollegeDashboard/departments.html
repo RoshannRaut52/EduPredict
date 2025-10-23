@@ -564,6 +564,47 @@
       }
     }
 
+
+    //extra
+    function checkAuthentication() {
+  authToken = localStorage.getItem('collegeToken');
+  const collegeDataStr = localStorage.getItem('collegeData');
+  
+  if (!authToken || !collegeDataStr) {
+    alert('Please login first.');
+    window.location.href = '../login/college.html';
+    return false;
+  }
+  
+  try {
+    const collegeData = JSON.parse(collegeDataStr);
+    
+    // Try multiple possible field names
+    collegeId = collegeData.id || collegeData.college_id || collegeData.code;
+    
+    if (!collegeId) {
+      console.error('College ID not found in:', collegeData);
+      alert('Session error. Please login again.');
+      localStorage.clear();
+      window.location.href = '../login/college.html';
+      return false;
+    }
+    
+    document.getElementById('collegeName').textContent = collegeData.name || 'College Dashboard';
+    console.log('Authenticated with College ID:', collegeId);
+    
+    return true;
+  } catch (err) {
+    console.error('Error parsing college data:', err);
+    alert('Session error. Please login again.');
+    localStorage.clear();
+    window.location.href = '../login/college.html';
+    return false;
+  }
+}
+
+//extra
+
     // Add Department
     async function addDepartment(departmentName) {
       const submitBtn = document.getElementById('submitAddBtn');
