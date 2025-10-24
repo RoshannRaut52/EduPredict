@@ -419,92 +419,241 @@
     © Edupredict 2025. All rights reserved.
   </footer>
   <script>
-    // Utility functions for safe access
-    const safeString = val => val && val.trim() !== '' ? val : 'N/A';
-    const safeNumber = val => Number.isFinite(val) ? val : 0;
+const backendUrl = 'https://edupredict-l9eg.onrender.com';
+let collegeData = null;
+let authToken = null;
 
-    // --- DUMMY DATA for demo (remove for production) ---
-    if (!localStorage.getItem('collegeData')) {
-      localStorage.setItem('collegeData', JSON.stringify({
-        name: "Government College Of Engineering, Karad",
-        total_students: 540,
-        at_risk_students: 48,
-        dropout_students: 17,
-        saved_students: 38,
-        notifications_to_parents: 76,
-        notifications_to_teachers: 22
-      }));
-    }
-    if (!localStorage.getItem('collegeToken')) {
-      localStorage.setItem('collegeToken', "dummytoken");
-    }
-    // ----------------------------------------------------
-    const backendUrl = 'https://edupredict-l9eg.onrender.com';
+// Utility functions
+const safeString = val => val && val.trim() !== '' ? val : 'N/A';
+const safeNumber = val => Number.isFinite(val) ? val : 0;
 
-    // Check if user is logged in
-    const token = localStorage.getItem('collegeToken');
-    let collegeData = JSON.parse(localStorage.getItem('collegeData'));
-    if (!token || !collegeData) {
-      alert('Please login first.');
-      window.location.href = '../login/college.html';
-    } else {
-      document.getElementById('collegeName').textContent = safeString(collegeData.name);
-      document.getElementById('totalStudents').textContent = safeNumber(collegeData.total_students);
-      document.getElementById('atRiskStudents').textContent = safeNumber(collegeData.at_risk_students);
-      document.getElementById('dropoutStudents').textContent = safeNumber(collegeData.dropout_students);
-      document.getElementById('savedStudents').textContent = safeNumber(collegeData.saved_students);
-      document.getElementById('toParents').textContent = safeNumber(collegeData.notifications_to_parents);
-      document.getElementById('toTeachers').textContent = safeNumber(collegeData.notifications_to_teachers);
-      document.getElementById('summaryTotalStudents').textContent = safeNumber(collegeData.total_students);
-      document.getElementById('summaryAtRiskStudents').textContent = safeNumber(collegeData.at_risk_students);
-      document.getElementById('summaryDropoutStudents').textContent = safeNumber(collegeData.dropout_students);
-      document.getElementById('summarySavedStudents').textContent = safeNumber(collegeData.saved_students);
-
-      const ctx = document.getElementById('studentChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ['Total Students', 'At Risk', 'Dropout', 'Saved'],
-          datasets: [{
-            data: [
-              safeNumber(collegeData.total_students),
-              safeNumber(collegeData.at_risk_students),
-              safeNumber(collegeData.dropout_students),
-              safeNumber(collegeData.saved_students),
-            ],
-            backgroundColor: ['#2e86de', '#ee5253', '#ff9f43', '#10ac84'],
-            borderWidth: 1,
-            borderColor: '#fff',
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: { enabled: true, mode: 'nearest' }
-          },
-          animation: { duration: 1000, easing: 'easeOutQuart' },
-        }
-      });
-    }
-    // Sidebar Toggle for small screens
-    const menuToggleBtn = document.getElementById('menuToggleBtn');
-    const sidebar = document.getElementById('sidebar');
-    menuToggleBtn.onclick = () => sidebar.classList.toggle('hidden');
-
-    // Toggle Years list visibility + aria-expanded attributes
-    function toggleYears(id) {
-      const list = document.getElementById(id);
-      const isVisible = list.style.display === "block";
-      list.style.display = isVisible ? "none" : "block";
-      const deptButton = document.querySelector(`.department[aria-controls="${id}"]`);
-      if(deptButton) {
-        deptButton.setAttribute('aria-expanded', !isVisible);
+// Check Authentication and Load Data
+async function initializeDashboard() {
+  authToken = localStorage.getItem('collegeToken');
+  const storedData = localStorage.getItem('collegeData');
+  
+  console.log('🔍 Dashboard Init - Token:', authToken ? 'Present' : 'Missing');
+  console.log('🔍 Dashboard Init - College Data:', storedData);
+  
+  // ✅ Fix: If token is missing but data exists, extract token
+  if (!authToken && storedData) {
+    try {
+      const data = JSON.parse(storedData);
+      if (data.token) {
+        console.log('🔧 Extracting token from collegeData...');
+        localStorage.setItem('collegeToken', data.token);
+        localStorage.setItem('collegeData', JSON.stringify(data.college || data));
+        authToken = data.token;
       }
-      list.setAttribute('aria-hidden', isVisible);
+    } catch (e) {
+      console.error('Error fixing storage:', e);
+    }
+  }
+  
+  if (!authToken) {
+    alert('Please login first.');
+    window.location.href = '../login/college.html';
+    return;
+  }
+  
+  await loadDashboardData();
+}
+
+// Load Dashboard Data from Backend
+async function loadDashboardData() {
+  try {
+    console.log('📡 Fetching dashboard data...');
+    
+    const response = await fetch(`${backendUrl}/api/college/dashboard`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        alert('Session expired. Please login again.');
+        localStorage.clear();
+        window.location.href = '../login/college.html';
+        return;
+      }
+      throw new Error('Failed to load dashboard data');
     }
 
-    // --- If you want to enable live backend data swap out dummy section with loadDashboardData as in your previous code ---
+    collegeData = await response.json();
+    console.log('✅ Dashboard data loaded:', collegeData);
+    
+    // Update localStorage with fresh data
+    localStorage.setItem('collegeData', JSON.stringify(collegeData));
+    
+    // Update UI
+    updateDashboardUI();
+    
+  } catch (error) {
+    console.error('❌ Error loading dashboard:', error);
+    alert('Failed to load dashboard data. Please try again.');
+  }
+}
+
+// Update Dashboard UI with Data
+function updateDashboardUI() {
+  // Update college name
+  document.getElementById('collegeName').textContent = safeString(collegeData.name);
+  
+  // Update chart data
+  document.getElementById('totalStudents').textContent = safeNumber(collegeData.total_students);
+  document.getElementById('atRiskStudents').textContent = safeNumber(collegeData.at_risk_students);
+  document.getElementById('dropoutStudents').textContent = safeNumber(collegeData.dropout_students);
+  document.getElementById('savedStudents').textContent = safeNumber(collegeData.saved_students);
+  
+  // Update notifications
+  document.getElementById('toParents').textContent = safeNumber(collegeData.notifications_to_parents);
+  document.getElementById('toTeachers').textContent = safeNumber(collegeData.notifications_to_teachers);
+  
+  // Update summary cards
+  document.getElementById('summaryTotalStudents').textContent = safeNumber(collegeData.total_students);
+  document.getElementById('summaryAtRiskStudents').textContent = safeNumber(collegeData.at_risk_students);
+  document.getElementById('summaryDropoutStudents').textContent = safeNumber(collegeData.dropout_students);
+  document.getElementById('summarySavedStudents').textContent = safeNumber(collegeData.saved_students);
+  
+  // Create chart
+  createStudentChart();
+  
+  // Load departments dynamically
+  loadDepartmentsSection();
+}
+
+// Create Student Distribution Chart
+function createStudentChart() {
+  const ctx = document.getElementById('studentChart').getContext('2d');
+  
+  // Destroy existing chart if any
+  if (window.studentChartInstance) {
+    window.studentChartInstance.destroy();
+  }
+  
+  window.studentChartInstance = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Total Students', 'At Risk', 'Dropout', 'Saved'],
+      datasets: [{
+        data: [
+          collegeData.total_students || 0,
+          collegeData.at_risk_students || 0,
+          collegeData.dropout_students || 0,
+          collegeData.saved_students || 0,
+        ],
+        backgroundColor: ['#2e86de', '#ee5253', '#ff9f43', '#10ac84'],
+        borderWidth: 1,
+        borderColor: '#fff',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: true, mode: 'nearest' }
+      },
+      animation: { duration: 1000, easing: 'easeOutQuart' },
+    }
+  });
+}
+
+// Load Departments Section Dynamically
+async function loadDepartmentsSection() {
+  try {
+    const response = await fetch(`${backendUrl}/api/college/${collegeData.id}/departments`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      renderDepartmentsList(data.departments || []);
+    }
+  } catch (error) {
+    console.error('Error loading departments:', error);
+  }
+}
+
+// Render Departments List
+function renderDepartmentsList(departments) {
+  const departmentsSection = document.querySelector('.departments');
+  
+  if (!departmentsSection) return;
+  
+  // Clear existing departments (keep only the h2 title)
+  const existingDepts = departmentsSection.querySelectorAll('.department, .year-list');
+  existingDepts.forEach(el => el.remove());
+  
+  if (departments.length === 0) {
+    const emptyMsg = document.createElement('p');
+    emptyMsg.textContent = '📚 No departments found. Add departments from the Departments page.';
+    emptyMsg.style.textAlign = 'center';
+    emptyMsg.style.color = '#141313';
+    departmentsSection.appendChild(emptyMsg);
+    return;
+  }
+  
+  departments.forEach(dept => {
+    const deptDiv = document.createElement('div');
+    deptDiv.className = 'department';
+    deptDiv.setAttribute('tabindex', '0');
+    deptDiv.setAttribute('role', 'button');
+    deptDiv.setAttribute('aria-expanded', 'false');
+    deptDiv.setAttribute('aria-controls', dept.id);
+    deptDiv.innerHTML = `💼 ${dept.name} <span aria-hidden="true">▼</span>`;
+    deptDiv.onclick = () => toggleYears(dept.id);
+    
+    departmentsSection.appendChild(deptDiv);
+    
+    const yearList = document.createElement('div');
+    yearList.className = 'year-list';
+    yearList.id = dept.id;
+    yearList.setAttribute('aria-hidden', 'true');
+    yearList.setAttribute('role', 'region');
+    
+    ['1st Year', '2nd Year', '3rd Year', '4th Year'].forEach(year => {
+      const link = document.createElement('a');
+      link.href = `../student1.html?dept=${dept.id}&year=${year}`;
+      link.title = `${year} ${dept.name}`;
+      link.textContent = year;
+      yearList.appendChild(link);
+    });
+    
+    departmentsSection.appendChild(yearList);
+  });
+}
+
+// Toggle Years list visibility
+function toggleYears(id) {
+  const list = document.getElementById(id);
+  const isVisible = list.style.display === "block";
+  list.style.display = isVisible ? "none" : "block";
+  const deptButton = document.querySelector(`.department[aria-controls="${id}"]`);
+  if (deptButton) {
+    deptButton.setAttribute('aria-expanded', !isVisible);
+  }
+  list.setAttribute('aria-hidden', isVisible);
+}
+
+// Sidebar Toggle for small screens
+const menuToggleBtn = document.getElementById('menuToggleBtn');
+const sidebar = document.getElementById('sidebar');
+menuToggleBtn.onclick = () => sidebar.classList.toggle('hidden');
+
+// Initialize on page load
+window.addEventListener('DOMContentLoaded', initializeDashboard);
+
+// Auto-refresh data every 5 minutes
+setInterval(loadDashboardData, 300000);
+</script>
+
   </script>
 </body>
 </html>
