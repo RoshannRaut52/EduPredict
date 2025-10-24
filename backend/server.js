@@ -19,14 +19,13 @@ const corsOptions = {
       'http://127.0.0.1:5500'
     ];
     
-    // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       console.log('❌ CORS blocked origin:', origin);
-      callback(null, true); // Allow anyway for development
+      callback(null, true);
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -37,8 +36,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
-
-// Middleware
 app.use(express.json());
 
 // PostgreSQL Connection
@@ -47,7 +44,6 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-// JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 // Test endpoint
@@ -133,7 +129,6 @@ app.post('/api/college/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // ✅ MUST USE 'jwt' NOT 'jsonwebtoken'
     const token = jwt.sign(
       { college_id: college.id, email: college.email, code: college.code },
       JWT_SECRET,
@@ -155,95 +150,40 @@ app.post('/api/college/login', async (req, res) => {
   }
 });
 
+// ========================================
+// IMPORT COLLEGE DASHBOARD ROUTES
+// ✅ FIXED: Changed from collegeDepartments to collegeDashboard
+// ========================================
+const collegeDashboardRoutes = require('./routes/collegeDashboard');
+app.use('/api/college', collegeDashboardRoutes);
 
 // ========================================
-// COLLEGE DASHBOARD
+// STUDENT REGISTRATION & LOGIN
 // ========================================
-app.get('/api/college/dashboard', authenticateToken, async (req, res) => {
-  try {
-    const collegeId = req.college.college_id;
-
-    const collegeResult = await pool.query(
-      'SELECT id, name, code, email, principal_name FROM colleges WHERE id = $1',
-      [collegeId]
-    );
-
-    if (collegeResult.rows.length === 0) {
-      return res.status(404).json({ error: 'College not found' });
-    }
-
-    const college = collegeResult.rows[0];
-
-    res.json({
-      ...college,
-      total_students: 0,
-      at_risk_students: 0,
-      dropout_students: 0,
-      saved_students: 0,
-      notifications_to_parents: 0,
-      notifications_to_teachers: 0
-    });
-
-  } catch (err) {
-    console.error('Dashboard error:', err);
-    return res.status(500).json({ error: 'Failed to load dashboard data' });
-  }
-});
-
-// ========================================
-// IMPORT DEPARTMENTS ROUTES
-// ========================================
-const collegeDepartmentsRoutes = require('./routes/collegeDepartments');
-app.use('/api/college', collegeDepartmentsRoutes);
-
-// ========================================
-// ERROR HANDLERS
-// ========================================
-app.use((req, res) => {
-  res.status(404).json({ 
-    error: 'Endpoint not found',
-    path: req.path 
-  });
-});
-
-
-// ====================================================
-// 🎓 STUDENT REGISTRATION & LOGIN (Already Working)
-// ====================================================
-
-// 🟢 Register
-
-// Student Registration Route
 app.post('/register/student', async (req, res) => {
   try {
     const { roll_no, name, email, contact, college_code, course, password, confirm_password } = req.body;
 
-    // Validate all required fields
     if (!roll_no || !name || !email || !contact || !college_code || !password || !confirm_password) {
       return res.status(400).json({ message: 'All required fields must be filled.' });
     }
 
-    // Password match check
     if (password !== confirm_password) {
       return res.status(400).json({ message: 'Passwords do not match.' });
     }
 
-    // Roll number uniqueness check
     const duplicateRoll = await pool.query('SELECT 1 FROM students WHERE roll_no = $1', [roll_no]);
     if (duplicateRoll.rowCount > 0) {
       return res.status(409).json({ message: 'Roll number already registered.' });
     }
 
-    // Email uniqueness check
     const duplicateEmail = await pool.query('SELECT 1 FROM students WHERE email = $1', [email]);
     if (duplicateEmail.rowCount > 0) {
       return res.status(409).json({ message: 'Email already registered.' });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert student (add more fields as needed)
     const result = await pool.query(
       `INSERT INTO students (roll_no, name, email, contact, college_code, course, password_hash, year, semester)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
@@ -258,10 +198,6 @@ app.post('/register/student', async (req, res) => {
   }
 });
 
-module.exports = app;
-
-
-// 🟡 Login
 app.post('/login/student', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -270,10 +206,7 @@ app.post('/login/student', async (req, res) => {
       return res.status(400).json({ message: 'Email and password required.' });
     }
 
-    const result = await pool.query(
-      'SELECT * FROM students WHERE email = $1',
-      [email]
-    );
+    const result = await pool.query('SELECT * FROM students WHERE email = $1', [email]);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ message: 'Invalid email.' });
@@ -294,14 +227,9 @@ app.post('/login/student', async (req, res) => {
   }
 });
 
-
-
-
-// ====================================================
-// 👨‍👩‍👧 PARENT REGISTRATION & LOGIN (NEWLY ADDED)
-// ====================================================
-
-// 🟢 Register Parent
+// ========================================
+// PARENT REGISTRATION & LOGIN
+// ========================================
 app.post('/register/parent', async (req, res) => {
   try {
     const { name, email, phone, student_email, relationship, password, confirm_password } = req.body;
@@ -314,11 +242,7 @@ app.post('/register/parent', async (req, res) => {
       return res.status(400).json({ message: 'Passwords do not match.' });
     }
 
-    // Check if student exists
-    const studentResult = await pool.query(
-      'SELECT id FROM students WHERE email = $1',
-      [student_email]
-    );
+    const studentResult = await pool.query('SELECT id FROM students WHERE email = $1', [student_email]);
 
     if (studentResult.rows.length === 0) {
       return res.status(404).json({ message: 'Student with this email not found.' });
@@ -344,7 +268,6 @@ app.post('/register/parent', async (req, res) => {
   }
 });
 
-// 🟡 Login Parent
 app.post('/login/parent', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -380,21 +303,13 @@ app.post('/login/parent', async (req, res) => {
   }
 });
 
-
-
-// ====================================================
-// 🚀 Start Server
-// ====================================================
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
-
-
-// registration and login for teacher
-
+// ========================================
+// TEACHER REGISTRATION & LOGIN
+// ========================================
 app.post('/register/teacher', async (req, res) => {
   try {
     const { name, email, subject, department, password, confirm_password } = req.body;
 
-    // Field validations
     if (!name || !email || !subject || !department || !password || !confirm_password) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
@@ -402,22 +317,15 @@ app.post('/register/teacher', async (req, res) => {
       return res.status(400).json({ message: 'Passwords do not match.' });
     }
 
-    // Check for duplicate email
-    const emailCheck = await pool.query(
-      'SELECT 1 FROM teachers WHERE email = $1',
-      [email]
-    );
+    const emailCheck = await pool.query('SELECT 1 FROM teachers WHERE email = $1', [email]);
     if (emailCheck.rowCount > 0) {
       return res.status(409).json({ message: 'Email already registered.' });
     }
 
-    // Hash password
     const password_hash = await bcrypt.hash(password, 10);
 
-    // Insert teacher
     const insertRes = await pool.query(
-      `INSERT INTO teachers
-        (name, email, password_hash, subject, department)
+      `INSERT INTO teachers (name, email, password_hash, subject, department)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING teacher_id, name, email, subject, department, created_at`,
       [name, email, password_hash, subject, department]
@@ -430,9 +338,6 @@ app.post('/register/teacher', async (req, res) => {
   }
 });
 
-
-// login
-
 app.post('/api/teacher/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -440,11 +345,7 @@ app.post('/api/teacher/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required.' });
     }
 
-    // Query by email only
-    const result = await pool.query(
-      `SELECT * FROM teachers WHERE email = $1`,
-      [email]
-    );
+    const result = await pool.query('SELECT * FROM teachers WHERE email = $1', [email]);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid email.' });
@@ -457,7 +358,6 @@ app.post('/api/teacher/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid password.' });
     }
 
-    // Remove password_hash from response
     const { password_hash, ...teacherData } = teacher;
     res.json(teacherData);
 
@@ -467,3 +367,17 @@ app.post('/api/teacher/login', async (req, res) => {
   }
 });
 
+// ========================================
+// ERROR HANDLERS
+// ========================================
+app.use((req, res) => {
+  res.status(404).json({ 
+    error: 'Endpoint not found',
+    path: req.path 
+  });
+});
+
+// ========================================
+// START SERVER
+// ========================================
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
