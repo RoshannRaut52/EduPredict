@@ -203,7 +203,7 @@
 
       <div class="login-links">
         <a href="college-register.html">Create Account</a> |
-        <a href="forgot-password.html">Forgot Password?</a>
+        <a href="forgotpassword.html">Forgot Password?</a>
       </div>
 
       <div class="message" id="statusMsg"></div>
@@ -216,51 +216,58 @@
 
   <script>
     const form = document.getElementById('loginForm');
-    const msg = document.getElementById('statusMsg');
-    const backendUrl = 'https://edupredict-l9eg.onrender.com';
+const msg = document.getElementById('statusMsg');
+const backendUrl = 'https://edupredict-l9eg.onrender.com';
 
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      msg.textContent = '⏳ Logging in...';
-      msg.className = 'message';
+form.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  msg.textContent = '⏳ Logging in...';
+  msg.className = 'message';
 
-      const code = document.getElementById('code').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+  const code = document.getElementById('code').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
 
-      try {
-        const res = await fetch(`${backendUrl}/api/college/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code, email, password })
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          msg.textContent = '✅ Login successful! Redirecting...';
-          msg.classList.add('success');
-
-          // Store college data in localStorage
-          localStorage.setItem('collegeData', JSON.stringify(data));
-
-          form.reset();
-
-          // Redirect to college dashboard
-          setTimeout(() => {
-            window.location.href = '../dashboard/college.html';
-          }, 1500);
-        } else {
-          msg.textContent = data.error || '❌ Login failed';
-          msg.classList.add('error');
-        }
-      } catch (err) {
-        console.error('Error:', err);
-        msg.textContent = '❌ Cannot connect to server. Please try again.';
-        msg.classList.add('error');
-      }
+  try {
+    const res = await fetch(`${backendUrl}/api/college/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, email, password })
     });
+
+    const data = await res.json();
+    
+    console.log('Login response:', data); // Debug log
+
+    if (res.ok) {
+      msg.textContent = '✅ Login successful! Redirecting...';
+      msg.classList.add('success');
+
+      // ✅ FIX: Store token and college data SEPARATELY
+      localStorage.setItem('collegeToken', data.token);  // Store token separately
+      localStorage.setItem('collegeData', JSON.stringify(data.college));  // Store college object
+      
+      console.log('✅ Token stored:', data.token);
+      console.log('✅ College data stored:', data.college);
+
+      form.reset();
+
+      // Redirect to college dashboard
+      setTimeout(() => {
+        window.location.href = '../dashboard/college.html';
+      }, 1500);
+    } else {
+      msg.textContent = data.error || '❌ Login failed';
+      msg.classList.add('error');
+    }
+  } catch (err) {
+    console.error('Error:', err);
+    msg.textContent = '❌ Cannot connect to server. Please try again.';
+    msg.classList.add('error');
+  }
+});
+
   </script>
 </body>
 </html>
