@@ -7,11 +7,10 @@ const { Pool } = require('pg');
 //connection to collegeDashboard.js
 const collegeDashboard = require('./collegeDashboard');
 
+const app = express();
+
 // Mount its routes
 app.use('/api/college', collegeDashboard);
-
-
-const app = express();
 
 // ==============================
 // 🔹 PostgreSQL Connection
