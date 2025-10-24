@@ -27,7 +27,7 @@ function RegisterCollegeForm() {
 
   function handleRegisterCollege(event) {
     event.preventDefault();
-    fetch('https://edupredict-l9eg.onrender.com/api/colleges/register', {
+    fetch('https://edupredict-l9eg.onrender.com/api/college/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formValues)
