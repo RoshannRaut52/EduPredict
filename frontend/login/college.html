@@ -236,37 +236,45 @@ form.addEventListener('submit', async function(e) {
       body: JSON.stringify({ code, email, password })
     });
 
+    if (!res.ok) {
+      const error = await res.json();
+      msg.textContent = error.error || '❌ Login failed';
+      msg.classList.add('error');
+      return;
+    }
+
     const data = await res.json();
     
-    console.log('Login response:', data); // Debug log
+    console.log('📥 Login response:', data);
 
-    if (res.ok) {
+    // ✅ CRITICAL: Store token and college separately
+    if (data.token && data.college) {
+      localStorage.setItem('collegeToken', data.token);
+      localStorage.setItem('collegeData', JSON.stringify(data.college));
+      
+      console.log('✅ Token stored:', data.token.substring(0, 30) + '...');
+      console.log('✅ College stored:', data.college);
+      
       msg.textContent = '✅ Login successful! Redirecting...';
       msg.classList.add('success');
-
-      // ✅ FIX: Store token and college data SEPARATELY
-      localStorage.setItem('collegeToken', data.token);  // Store token separately
-      localStorage.setItem('collegeData', JSON.stringify(data.college));  // Store college object
-      
-      console.log('✅ Token stored:', data.token);
-      console.log('✅ College data stored:', data.college);
-
       form.reset();
 
-      // Redirect to college dashboard
       setTimeout(() => {
         window.location.href = '../dashboard/college.html';
       }, 1500);
     } else {
-      msg.textContent = data.error || '❌ Login failed';
+      console.error('❌ Invalid response format:', data);
+      msg.textContent = '❌ Server error: Invalid response';
       msg.classList.add('error');
     }
+
   } catch (err) {
-    console.error('Error:', err);
+    console.error('❌ Login error:', err);
     msg.textContent = '❌ Cannot connect to server. Please try again.';
     msg.classList.add('error');
   }
 });
+
 
   </script>
 </body>

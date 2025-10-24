@@ -430,39 +430,49 @@ const safeNumber = val => Number.isFinite(val) ? val : 0;
 // Check Authentication and Load Data
 async function initializeDashboard() {
   authToken = localStorage.getItem('collegeToken');
-  const storedData = localStorage.getItem('collegeData');
+  const storedDataStr = localStorage.getItem('collegeData');
   
   console.log('🔍 Dashboard Init - Token:', authToken ? 'Present' : 'Missing');
-  console.log('🔍 Dashboard Init - College Data:', storedData);
+  console.log('🔍 Dashboard Init - College Data:', storedDataStr);
   
-  // ✅ Fix: If token is missing but data exists, extract token
-  if (!authToken && storedData) {
-    try {
-      const data = JSON.parse(storedData);
-      if (data.token) {
-        console.log('🔧 Extracting token from collegeData...');
-        localStorage.setItem('collegeToken', data.token);
-        localStorage.setItem('collegeData', JSON.stringify(data.college || data));
-        authToken = data.token;
-      }
-    } catch (e) {
-      console.error('Error fixing storage:', e);
-    }
-  }
-  
-  if (!authToken) {
+  // ✅ Check if we have valid auth data
+  if (!authToken || !storedDataStr) {
+    console.error('❌ No authentication data found');
     alert('Please login first.');
     window.location.href = '../login/college.html';
     return;
   }
   
-  await loadDashboardData();
+  // ✅ Parse stored college data
+  try {
+    collegeData = JSON.parse(storedDataStr);
+    
+    // ✅ Validate college data has required fields
+    if (!collegeData || !collegeData.id) {
+      console.error('❌ Invalid college data:', collegeData);
+      alert('Session error. Please login again.');
+      localStorage.clear();
+      window.location.href = '../login/college.html';
+      return;
+    }
+    
+    console.log('✅ College data parsed:', collegeData);
+    
+    // ✅ Try to load fresh data from backend
+    await loadDashboardData();
+    
+  } catch (error) {
+    console.error('❌ Error parsing college data:', error);
+    alert('Session error. Please login again.');
+    localStorage.clear();
+    window.location.href = '../login/college.html';
+  }
 }
 
 // Load Dashboard Data from Backend
 async function loadDashboardData() {
   try {
-    console.log('📡 Fetching dashboard data...');
+    console.log('📡 Fetching dashboard data for college ID:', collegeData.id);
     
     const response = await fetch(`${backendUrl}/api/college/dashboard`, {
       method: 'GET',
@@ -472,6 +482,8 @@ async function loadDashboardData() {
       }
     });
 
+    console.log('📊 Response status:', response.status);
+
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
         alert('Session expired. Please login again.');
@@ -479,23 +491,45 @@ async function loadDashboardData() {
         window.location.href = '../login/college.html';
         return;
       }
+      
+      // ✅ If 404, use stored data as fallback
+      if (response.status === 404) {
+        console.warn('⚠️ Dashboard endpoint not found, using stored data');
+        updateDashboardUI();
+        return;
+      }
+      
       throw new Error('Failed to load dashboard data');
     }
 
-    collegeData = await response.json();
-    console.log('✅ Dashboard data loaded:', collegeData);
+    const freshData = await response.json();
+    console.log('✅ Fresh dashboard data loaded:', freshData);
     
-    // Update localStorage with fresh data
+    // ✅ Merge fresh data with stored college data
+    collegeData = { ...collegeData, ...freshData };
     localStorage.setItem('collegeData', JSON.stringify(collegeData));
     
-    // Update UI
     updateDashboardUI();
     
   } catch (error) {
     console.error('❌ Error loading dashboard:', error);
-    alert('Failed to load dashboard data. Please try again.');
+    console.warn('⚠️ Using stored college data as fallback');
+    
+    // ✅ Fallback: Use stored data with default stats
+    collegeData = {
+      ...collegeData,
+      total_students: collegeData.total_students || 0,
+      at_risk_students: collegeData.at_risk_students || 0,
+      dropout_students: collegeData.dropout_students || 0,
+      saved_students: collegeData.saved_students || 0,
+      notifications_to_parents: collegeData.notifications_to_parents || 0,
+      notifications_to_teachers: collegeData.notifications_to_teachers || 0
+    };
+    
+    updateDashboardUI();
   }
 }
+
 
 // Update Dashboard UI with Data
 function updateDashboardUI() {
