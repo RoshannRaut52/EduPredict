@@ -75,37 +75,75 @@ app.post('/api/colleges/register', async (req, res) => {
   }
 });
 
+// ========================================
+// COLLEGE LOGIN
+// ========================================
 app.post('/api/college/login', async (req, res) => {
   try {
+    console.log('📥 Login request:', req.body);
+
     const { code, email, password } = req.body;
-    if (!code || !email || !password) {
-      return res.status(400).json({ error: 'Missing required fields.' });
+
+    // Validate inputs
+    if (!email || !password) {
+      console.log('❌ Missing email or password');
+      return res.status(400).json({ error: 'Email and password required' });
     }
 
+    // Query database
     const result = await pool.query(
-      'SELECT * FROM colleges WHERE code = $1 AND email = $2',
-      [code, email]
+      'SELECT * FROM colleges WHERE email = $1',
+      [email]
     );
 
+    console.log('📊 Query result:', result.rows.length, 'colleges found');
+
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid college code or email.' });
+      console.log('❌ No college found with email:', email);
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const college = result.rows[0];
+    
+    // Verify password
     const valid = await bcrypt.compare(password, college.password_hash);
+
     if (!valid) {
-      return res.status(401).json({ error: 'Invalid password.' });
+      console.log('❌ Invalid password for:', email);
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    // Generate JWT token
+    const token = jwt.sign(
+      { 
+        college_id: college.id, 
+        email: college.email, 
+        code: college.code 
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Remove password from response
     const { password_hash, ...collegeData } = college;
-    res.json(collegeData);
+
+    console.log('✅ Login successful for:', email);
+    console.log('✅ Token generated:', token.substring(0, 20) + '...');
+
+    // ✅ IMPORTANT: Return JSON with token and college
+    return res.status(200).json({ 
+      token: token,
+      college: collegeData 
+    });
+
   } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ error: 'Server error' });
+    console.error('❌ Login error:', err);
+    return res.status(500).json({ 
+      error: 'Server error',
+      message: err.message 
+    });
   }
 });
-
-
 
 
 // ====================================================
