@@ -48,6 +48,73 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// ========================================
+// COLLEGE DASHBOARD
+// ========================================
+router.get('/api/college/dashboard', authenticateToken, async (req, res) => {
+  try {
+    const collegeId = req.college.college_id;
+
+    // Fetch college info
+    const collegeResult = await pool.query(
+      'SELECT id, name, code, email, principal_name FROM colleges WHERE id = $1',
+      [collegeId]
+    );
+
+    if (collegeResult.rows.length === 0) {
+      return res.status(404).json({ error: 'College not found' });
+    }
+
+    const college = collegeResult.rows[0];
+
+    // Fetch student statistics
+    const statsResult = await pool.query(`
+      SELECT 
+        COUNT(*) as total_students,
+        SUM(CASE WHEN risk_level = 'high' OR risk_level = 'medium' THEN 1 ELSE 0 END) as at_risk_students,
+        SUM(CASE WHEN status = 'dropout' THEN 1 ELSE 0 END) as dropout_students,
+        SUM(CASE WHEN status = 'saved' THEN 1 ELSE 0 END) as saved_students
+      FROM students 
+      WHERE college_id = $1
+    `, [collegeId]);
+
+    const stats = statsResult.rows[0] || {
+      total_students: 0,
+      at_risk_students: 0,
+      dropout_students: 0,
+      saved_students: 0
+    };
+
+    // Fetch notification counts
+    const notifResult = await pool.query(`
+      SELECT 
+        SUM(CASE WHEN recipient_type = 'parent' THEN 1 ELSE 0 END) as notifications_to_parents,
+        SUM(CASE WHEN recipient_type = 'teacher' THEN 1 ELSE 0 END) as notifications_to_teachers
+      FROM notifications 
+      WHERE college_id = $1
+    `, [collegeId]);
+
+    const notifs = notifResult.rows[0] || {
+      notifications_to_parents: 0,
+      notifications_to_teachers: 0
+    };
+
+    res.json({
+      ...college,
+      total_students: parseInt(stats.total_students) || 0,
+      at_risk_students: parseInt(stats.at_risk_students) || 0,
+      dropout_students: parseInt(stats.dropout_students) || 0,
+      saved_students: parseInt(stats.saved_students) || 0,
+      notifications_to_parents: parseInt(notifs.notifications_to_parents) || 0,
+      notifications_to_teachers: parseInt(notifs.notifications_to_teachers) || 0
+    });
+
+  } catch (err) {
+    console.error('Dashboard error:', err);
+    return res.status(500).json({ error: 'Failed to load dashboard data' });
+  }
+});
+
 
 // ========================================
 // GET ALL DEPARTMENTS (with year-wise stats)
