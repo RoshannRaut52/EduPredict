@@ -1,77 +1,109 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const bcrypt = require('bcryptjs');
 const { Pool } = require('pg');
-
-//connection to collegeDashboard.js
-const collegeDashboard = require('./collegeDashboard');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Mount its routes
-app.use('/api/college', collegeDashboard);
+// ========================================
+// CORS CONFIGURATION
+// ========================================
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://edu-predict-sih.vercel.app',
+      'http://localhost:3000',
+      'http://localhost:5500',
+      'http://127.0.0.1:5500'
+    ];
+    
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('❌ CORS blocked origin:', origin);
+      callback(null, true); // Allow anyway for development
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
 
-// ==============================
-// 🔹 PostgreSQL Connection
-// ==============================
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || "postgresql://database_8suu_user:JhWakO3g5BhqleKSRSd87yFw3tOpf5xF@dpg-d3imcvadbo4c73fs18rg-a.oregon-postgres.render.com/database_8suu?sslmode=require"
-  
-});
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
-
-
-// ==============================
-// 🔹 Middlewares
-// ==============================
-app.use(cors({ origin: "https://edu-predict-sih.vercel.app" })); // adjust origin if running locally
+// Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// ==============================
-// 🔹 Root
-// ==============================
-app.get('/', (req, res) => {
-  res.send('EduPredict API is running.');
+// PostgreSQL Connection
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
+// JWT Secret
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
+// Test endpoint
+app.get('/', (req, res) => {
+  res.json({ message: 'EduPredict Backend API is running!' });
+});
 
-// ====================================================
-// 🏫 COLLEGE REGISTRATION & LOGIN (Already Working)
-// ====================================================
-app.post('/api/colleges/register', async (req, res) => {
-  const aided = req.body.aided === 'true';
+// ========================================
+// AUTHENTICATION MIDDLEWARE
+// ========================================
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid or expired token' });
+    }
+    req.college = decoded;
+    next();
+  });
+};
+
+// ========================================
+// COLLEGE REGISTRATION
+// ========================================
+app.post('/api/college/register', async (req, res) => {
   try {
-    const {
-      name, code, address, city, state, pincode,
-      email, phone, principal_name,
-      college_type, category, aided, password
-    } = req.body;
+    const { name, code, address, city, state, pincode, email, phone, principal_name, college_type, category, aided, password } = req.body;
 
     if (!name || !code || !email || !password) {
-      return res.status(400).json({ error: 'Missing required fields.' });
+      return res.status(400).json({ error: 'Required fields missing' });
+    }
+
+    const existing = await pool.query('SELECT * FROM colleges WHERE code = $1 OR email = $2', [code, email]);
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ error: 'College code or email already exists' });
     }
 
     const password_hash = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
       `INSERT INTO colleges (name, code, address, city, state, pincode, email, phone, principal_name, college_type, category, aided, password_hash)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
-       RETURNING id,name,email,code`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+       RETURNING id, name, email, code`,
       [name, code, address, city, state, pincode, email, phone, principal_name, college_type, category, aided, password_hash]
     );
 
-    res.status(201).json({ message: "College Registered", college: result.rows[0] });
-
+    res.status(201).json({ message: 'College registered successfully', college: result.rows[0] });
   } catch (err) {
-    if (err.code === '23505') {
-      res.status(409).json({ error: 'College code or email already exists.' });
-    } else {
-      console.error('Registration error:', err);
-      res.status(500).json({ error: 'Server error' });
-    }
+    console.error('Registration error:', err);
+    return res.status(500).json({ error: 'Server error', message: err.message });
   }
 });
 
@@ -81,56 +113,37 @@ app.post('/api/colleges/register', async (req, res) => {
 app.post('/api/college/login', async (req, res) => {
   try {
     console.log('📥 Login request:', req.body);
-
     const { code, email, password } = req.body;
 
-    // Validate inputs
     if (!email || !password) {
-      console.log('❌ Missing email or password');
       return res.status(400).json({ error: 'Email and password required' });
     }
 
-    // Query database
-    const result = await pool.query(
-      'SELECT * FROM colleges WHERE email = $1',
-      [email]
-    );
-
+    const result = await pool.query('SELECT * FROM colleges WHERE email = $1', [email]);
     console.log('📊 Query result:', result.rows.length, 'colleges found');
 
     if (result.rows.length === 0) {
-      console.log('❌ No college found with email:', email);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const college = result.rows[0];
-    
-    // Verify password
     const valid = await bcrypt.compare(password, college.password_hash);
 
     if (!valid) {
-      console.log('❌ Invalid password for:', email);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Generate JWT token
+    // ✅ MUST USE 'jwt' NOT 'jsonwebtoken'
     const token = jwt.sign(
-      { 
-        college_id: college.id, 
-        email: college.email, 
-        code: college.code 
-      },
+      { college_id: college.id, email: college.email, code: college.code },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    // Remove password from response
     const { password_hash, ...collegeData } = college;
 
     console.log('✅ Login successful for:', email);
-    console.log('✅ Token generated:', token.substring(0, 20) + '...');
 
-    // ✅ IMPORTANT: Return JSON with token and college
     return res.status(200).json({ 
       token: token,
       college: collegeData 
@@ -138,11 +151,59 @@ app.post('/api/college/login', async (req, res) => {
 
   } catch (err) {
     console.error('❌ Login error:', err);
-    return res.status(500).json({ 
-      error: 'Server error',
-      message: err.message 
-    });
+    return res.status(500).json({ error: 'Server error', message: err.message });
   }
+});
+
+
+// ========================================
+// COLLEGE DASHBOARD
+// ========================================
+app.get('/api/college/dashboard', authenticateToken, async (req, res) => {
+  try {
+    const collegeId = req.college.college_id;
+
+    const collegeResult = await pool.query(
+      'SELECT id, name, code, email, principal_name FROM colleges WHERE id = $1',
+      [collegeId]
+    );
+
+    if (collegeResult.rows.length === 0) {
+      return res.status(404).json({ error: 'College not found' });
+    }
+
+    const college = collegeResult.rows[0];
+
+    res.json({
+      ...college,
+      total_students: 0,
+      at_risk_students: 0,
+      dropout_students: 0,
+      saved_students: 0,
+      notifications_to_parents: 0,
+      notifications_to_teachers: 0
+    });
+
+  } catch (err) {
+    console.error('Dashboard error:', err);
+    return res.status(500).json({ error: 'Failed to load dashboard data' });
+  }
+});
+
+// ========================================
+// IMPORT DEPARTMENTS ROUTES
+// ========================================
+const collegeDepartmentsRoutes = require('./routes/collegeDepartments');
+app.use('/api/college', collegeDepartmentsRoutes);
+
+// ========================================
+// ERROR HANDLERS
+// ========================================
+app.use((req, res) => {
+  res.status(404).json({ 
+    error: 'Endpoint not found',
+    path: req.path 
+  });
 });
 
 
@@ -324,7 +385,6 @@ app.post('/login/parent', async (req, res) => {
 // ====================================================
 // 🚀 Start Server
 // ====================================================
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 
 
