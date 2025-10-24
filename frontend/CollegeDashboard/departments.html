@@ -437,20 +437,44 @@
 
     // Authentication Check
     function checkAuthentication() {
-      authToken = localStorage.getItem('collegeToken');
-      const collegeData = JSON.parse(localStorage.getItem('collegeData'));
-      
-      if (!authToken || !collegeData) {
-        alert('Please login first.');
-        window.location.href = '../login/college.html';
-        return false;
-      }
-      
-      collegeId = collegeData.id || collegeData.college_id;
-      document.getElementById('collegeName').textContent = collegeData.name || 'College Dashboard';
-      
-      return true;
+  authToken = localStorage.getItem('collegeToken');
+  const collegeDataStr = localStorage.getItem('collegeData');
+  
+  console.log('🔍 Checking authentication...');
+  console.log('Token:', authToken ? 'Present' : 'Missing');
+  console.log('College Data:', collegeDataStr);
+  
+  if (!authToken || !collegeDataStr) {
+    alert('Please login first.');
+    window.location.href = '../login/college.html';
+    return false;
+  }
+  
+  try {
+    const collegeData = JSON.parse(collegeDataStr);
+    collegeId = collegeData.id || collegeData.college_id;
+    
+    if (!collegeId) {
+      console.error('❌ College ID not found in:', collegeData);
+      alert('Session error. Please login again.');
+      localStorage.clear();
+      window.location.href = '../login/college.html';
+      return false;
     }
+    
+    document.getElementById('collegeName').textContent = collegeData.name || 'College Dashboard';
+    console.log('✅ Authenticated! College ID:', collegeId);
+    
+    return true;
+  } catch (err) {
+    console.error('❌ Error parsing college data:', err);
+    alert('Session error. Please login again.');
+    localStorage.clear();
+    window.location.href = '../login/college.html';
+    return false;
+  }
+}
+
 
     // Load Departments from Backend
     async function loadDepartments() {
