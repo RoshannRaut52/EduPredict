@@ -435,7 +435,6 @@ async function initializeDashboard() {
   console.log('🔍 Dashboard Init - Token:', authToken ? 'Present' : 'Missing');
   console.log('🔍 Dashboard Init - College Data:', storedDataStr);
   
-  // ✅ Check if we have valid auth data
   if (!authToken || !storedDataStr) {
     console.error('❌ No authentication data found');
     alert('Please login first.');
@@ -443,12 +442,11 @@ async function initializeDashboard() {
     return;
   }
   
-  // ✅ Parse stored college data
   try {
     collegeData = JSON.parse(storedDataStr);
     
-    // ✅ Validate college data has required fields
-    if (!collegeData || !collegeData.id) {
+    // ✅ FIX: Use college_code as fallback if id is null
+    if (!collegeData || (!collegeData.id && !collegeData.college_code)) {
       console.error('❌ Invalid college data:', collegeData);
       alert('Session error. Please login again.');
       localStorage.clear();
@@ -456,9 +454,15 @@ async function initializeDashboard() {
       return;
     }
     
+    // ✅ FIX: If id is null, fetch it from backend
+    if (!collegeData.id && collegeData.college_code) {
+      console.warn('⚠️ ID is null, will use college_code as identifier');
+      // Store college_code temporarily as id
+      collegeData.id = collegeData.college_code;
+    }
+    
     console.log('✅ College data parsed:', collegeData);
     
-    // ✅ Try to load fresh data from backend
     await loadDashboardData();
     
   } catch (error) {
@@ -468,6 +472,7 @@ async function initializeDashboard() {
     window.location.href = '../login/college.html';
   }
 }
+
 
 // Load Dashboard Data from Backend
 async function loadDashboardData() {

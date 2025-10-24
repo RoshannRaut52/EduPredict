@@ -115,14 +115,27 @@ app.post('/api/college/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password required' });
     }
 
-    const result = await pool.query('SELECT * FROM colleges WHERE email = $1', [email]);
+    // ✅ Make sure to select ID
+    const result = await pool.query(
+      'SELECT id, name, code, email, college_type, category, aided, address, city, state, pincode, phone, principal_name FROM colleges WHERE email = $1',
+      [email]
+    );
+    
     console.log('📊 Query result:', result.rows.length, 'colleges found');
+    console.log('📊 College data:', result.rows[0]); // Check if ID is present
 
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const college = result.rows[0];
+    
+    // ✅ Verify ID exists
+    if (!college.id) {
+      console.error('❌ College ID is null!');
+      return res.status(500).json({ error: 'Invalid college data' });
+    }
+    
     const valid = await bcrypt.compare(password, college.password_hash);
 
     if (!valid) {
@@ -138,6 +151,7 @@ app.post('/api/college/login', async (req, res) => {
     const { password_hash, ...collegeData } = college;
 
     console.log('✅ Login successful for:', email);
+    console.log('✅ Returning college with ID:', collegeData.id);
 
     return res.status(200).json({ 
       token: token,
@@ -149,6 +163,7 @@ app.post('/api/college/login', async (req, res) => {
     return res.status(500).json({ error: 'Server error', message: err.message });
   }
 });
+
 
 // ========================================
 // IMPORT COLLEGE DASHBOARD ROUTES
