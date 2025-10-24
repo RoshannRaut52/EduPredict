@@ -4,6 +4,13 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const { Pool } = require('pg');
 
+//connection to collegeDashboard.js
+const collegeDashboard = require('./collegeDashboard');
+
+// Mount its routes
+app.use('/api/college', collegeDashboard);
+
+
 const app = express();
 
 // ==============================
