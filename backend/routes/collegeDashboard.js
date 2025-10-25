@@ -193,4 +193,63 @@ router.delete('/:collegeCode/departments/:departmentId', authenticateToken, asyn
   }
 });
 
+// ========================================
+// GET STUDENTS BY DEPARTMENT AND YEAR
+// ========================================
+router.get('/:collegeCode/departments/:departmentId/students/:year', authenticateToken, async (req, res) => {
+  try {
+    const collegeCode = parseInt(req.params.collegeCode);
+    const { departmentId, year } = req.params;
+
+    console.log('📥 Get students request:', { collegeCode, departmentId, year, user: req.college });
+
+    // Verify college code matches
+    if (collegeCode !== req.college.college_code) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Get department info
+    const deptResult = await pool.query(
+      'SELECT id, name FROM departments WHERE id = $1 AND college_code = $2',
+      [departmentId, collegeCode]
+    );
+
+    if (deptResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Department not found' });
+    }
+
+    const department = deptResult.rows[0];
+
+    // Get students
+    const studentsResult = await pool.query(
+      `SELECT 
+        id,
+        roll_no,
+        name,
+        email,
+        alert_status,
+        created_at
+       FROM students
+       WHERE department_id = $1 AND year = $2
+       ORDER BY roll_no ASC`,
+      [departmentId, year]
+    );
+
+    console.log(`✅ Found ${studentsResult.rows.length} students`);
+
+    res.json({
+      department_id: departmentId,
+      department_name: department.name,
+      year: year,
+      students: studentsResult.rows,
+      count: studentsResult.rows.length
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching students:', error);
+    res.status(500).json({ error: 'Failed to fetch students', details: error.message });
+  }
+});
+
+
 module.exports = router;

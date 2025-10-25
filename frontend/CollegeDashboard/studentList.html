@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Students List - EduPredict</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #b3b4b5 100%);
+      color: #0a0808;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header - Same as index */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+      background: #000;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    
+    .college-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .college-brand img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      object-fit: cover;
+    }
+    
+    .college-brand h1 {
+      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+    
+    .back-btn {
+      background: #10ac84;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .back-btn:hover {
+      background: #1dd1a1;
+      transform: scale(1.05);
+    }
+    
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      flex: 1;
+    }
+    
+    /* Page Header */
+    .page-header {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 25px 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    .page-header h2 {
+      font-size: 2rem;
+      color: #000;
+      margin-bottom: 10px;
+    }
+    
+    .page-header p {
+      color: #333;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    
+    /* Stats Summary */
+    .stats-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .stat-card h3 {
+      font-size: 0.9rem;
+      color: #000;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    
+    .stat-card p {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    
+    .stat-card.total { color: #2e86de; }
+    .stat-card.safe { color: #10ac84; }
+    .stat-card.warning { color: #ff9f43; }
+    .stat-card.danger { color: #ee5253; }
+    
+    /* Search and Filter */
+    .controls {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 2px solid rgba(0,0,0,0.1);
+      font-size: 1rem;
+      background: rgba(255,255,255,0.9);
+      transition: 0.3s;
+    }
+    
+    .search-box input:focus {
+      outline: none;
+      border-color: #10ac84;
+      box-shadow: 0 0 0 3px rgba(16,172,132,0.2);
+    }
+    
+    .filter-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+    }
+    
+    .filter-btn:hover {
+      background: #10ac84;
+      transform: scale(1.05);
+    }
+    
+    .filter-btn.active {
+      background: #10ac84;
+    }
+    
+    /* Students Table */
+    .students-container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+    
+    .students-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+    
+    .students-table thead {
+      background: rgba(0,0,0,0.9);
+      color: #fff;
+    }
+    
+    .students-table th {
+      padding: 15px 20px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+    }
+    
+    .students-table tbody tr {
+      background: rgba(255,255,255,0.9);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    
+    .students-table tbody tr:hover {
+      background: rgba(16,172,132,0.2);
+      transform: scale(1.01);
+    }
+    
+    .students-table td {
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      font-size: 0.95rem;
+    }
+    
+    .students-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    /* Alert Status Badges */
+    .alert-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-align: center;
+      min-width: 80px;
+    }
+    
+    .alert-badge.safe {
+      background: #10ac84;
+      color: #fff;
+    }
+    
+    .alert-badge.warning {
+      background: #ff9f43;
+      color: #fff;
+    }
+    
+    .alert-badge.danger {
+      background: #ee5253;
+      color: #fff;
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #333;
+    }
+    
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 1.2rem;
+      color: #000;
+    }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+      color: #eee;
+      background: #000;
+      margin-top: auto;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+      }
+      
+      .college-brand h1 {
+        font-size: 1.2rem;
+      }
+      
+      .students-table {
+        font-size: 0.85rem;
+      }
+      
+      .students-table th,
+      .students-table td {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="college-brand">
+      <img src="../dashboard/collegelogo.png" alt="College Logo" />
+      <h1 id="collegeName">College Name</h1>
+    </div>
+    <a href="../dashboard/college.html" class="back-btn">
+      ← Back to Dashboard
+    </a>
+  </header>
+
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h2 id="pageTitle">Students List</h2>
+      <p id="pageSubtitle">Department • Year</p>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="stats-summary">
+      <div class="stat-card total">
+        <h3>Total Students</h3>
+        <p id="totalCount">0</p>
+      </div>
+      <div class="stat-card safe">
+        <h3>Safe Students</h3>
+        <p id="safeCount">0</p>
+      </div>
+      <div class="stat-card warning">
+        <h3>At Risk</h3>
+        <p id="warningCount">0</p>
+      </div>
+      <div class="stat-card danger">
+        <h3>High Risk</h3>
+        <p id="dangerCount">0</p>
+      </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="controls">
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="🔍 Search by Roll No or Name..."
+        />
+      </div>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="safe">Safe</button>
+      <button class="filter-btn" data-filter="warning">At Risk</button>
+      <button class="filter-btn" data-filter="danger">High Risk</button>
+    </div>
+
+    <!-- Students Table -->
+    <div class="students-container">
+      <div id="loadingState" class="loading">
+        Loading students...
+      </div>
+      
+      <table class="students-table" id="studentsTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Roll No</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Alert Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="studentsTableBody">
+          <!-- Students will be inserted here dynamically -->
+        </tbody>
+      </table>
+
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <h3>📚 No students found</h3>
+        <p>No students are enrolled in this year yet.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © Edupredict 2025. All rights reserved.
+  </footer>
+
+  <script>
+    const backendUrl = 'https://edupredict-l9eg.onrender.com';
+    let authToken = null;
+    let collegeCode = null;
+    let departmentId = null;
+    let year = null;
+    let allStudents = [];
+    let filteredStudents = [];
+    let currentFilter = 'all';
+
+    // Get URL parameters
+    function getURLParams() {
+      const params = new URLSearchParams(window.location.search);
+      departmentId = params.get('dept');
+      year = params.get('year');
+      
+      console.log('📍 URL Params:', { departmentId, year });
+      
+      if (!departmentId || !year) {
+        alert('Invalid page parameters');
+        window.location.href = '../dashboard/college.html';
+      }
+    }
+
+    // Check Authentication
+    function checkAuth() {
+      authToken = localStorage.getItem('collegeToken');
+      const collegeDataStr = localStorage.getItem('collegeData');
+      
+      if (!authToken || !collegeDataStr) {
+        alert('Please login first');
+        window.location.href = '../login/college.html';
+        return false;
+      }
+      
+      try {
+        const collegeData = JSON.parse(collegeDataStr);
+        collegeCode = collegeData.code;
+        
+        if (!collegeCode) {
+          alert('Invalid session data');
+          localStorage.clear();
+          window.location.href = '../login/college.html';
+          return false;
+        }
+        
+        // Update college name
+        document.getElementById('collegeName').textContent = collegeData.name || 'College';
+        
+        return true;
+      } catch (error) {
+        console.error('Error parsing college data:', error);
+        alert('Session error. Please login again.');
+        localStorage.clear();
+        window.location.href = '../login/college.html';
+        return false;
+      }
+    }
+
+    // Load Students from Backend
+    async function loadStudents() {
+      try {
+        const response = await fetch(
+          `${backendUrl}/api/college/${collegeCode}/departments/${departmentId}/students/${year}`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${authToken}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            showEmptyState();
+            return;
+          }
+          throw new Error('Failed to load students');
+        }
+
+        const data = await response.json();
+        console.log('✅ Students loaded:', data);
+        
+        allStudents = data.students || [];
+        
+        // Update page title
+        document.getElementById('pageTitle').textContent = 
+          `${data.department_name || 'Department'} - ${year}`;
+        document.getElementById('pageSubtitle').textContent = 
+          `${data.department_name || 'Department'} • ${year}`;
+        
+        if (allStudents.length === 0) {
+          showEmptyState();
+        } else {
+          filteredStudents = allStudents;
+          renderStudents();
+          updateStats();
+        }
+        
+      } catch (error) {
+        console.error('❌ Error loading students:', error);
+        showEmptyState();
+      } finally {
+        document.getElementById('loadingState').style.display = 'none';
+      }
+    }
+
+    // Render Students Table
+    function renderStudents() {
+      const tbody = document.getElementById('studentsTableBody');
+      tbody.innerHTML = '';
+      
+      if (filteredStudents.length === 0) {
+        document.getElementById('studentsTable').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+        document.getElementById('emptyState').querySelector('p').textContent = 
+          'No students match your search or filter.';
+        return;
+      }
+      
+      document.getElementById('studentsTable').style.display = 'table';
+      document.getElementById('emptyState').style.display = 'none';
+      
+      filteredStudents.forEach(student => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${student.roll_no || 'N/A'}</strong></td>
+          <td>${student.name || 'N/A'}</td>
+          <td>${student.email || 'N/A'}</td>
+          <td>
+            <span class="alert-badge ${student.alert_status}">
+              ${getAlertLabel(student.alert_status)}
+            </span>
+          </td>
+          <td>
+            <button class="filter-btn" onclick="viewStudent('${student.id}')">
+              View
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Get Alert Label
+    function getAlertLabel(status) {
+      const labels = {
+        'safe': '✓ Safe',
+        'warning': '⚠ At Risk',
+        'danger': '⚠️ High Risk'
+      };
+      return labels[status] || 'Unknown';
+    }
+
+    // Update Statistics
+    function updateStats() {
+      const total = allStudents.length;
+      const safe = allStudents.filter(s => s.alert_status === 'safe').length;
+      const warning = allStudents.filter(s => s.alert_status === 'warning').length;
+      const danger = allStudents.filter(s => s.alert_status === 'danger').length;
+      
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('safeCount').textContent = safe;
+      document.getElementById('warningCount').textContent = warning;
+      document.getElementById('dangerCount').textContent = danger;
+    }
+
+    // Show Empty State
+    function showEmptyState() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('studentsTable').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
+    }
+
+    // Search Students
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      
+      filteredStudents = allStudents.filter(student => {
+        const matchesSearch = 
+          (student.roll_no || '').toLowerCase().includes(searchTerm) ||
+          (student.name || '').toLowerCase().includes(searchTerm);
+        
+        const matchesFilter = 
+          currentFilter === 'all' || student.alert_status === currentFilter;
+        
+        return matchesSearch && matchesFilter;
+      });
+      
+      renderStudents();
+    });
+
+    // Filter Students
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentFilter = btn.dataset.filter;
+        
+        // Update active state
+        document.querySelectorAll('.filter-btn[data-filter]').forEach(b => 
+          b.classList.remove('active')
+        );
+        btn.classList.add('active');
+        
+        // Filter students
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        filteredStudents = allStudents.filter(student => {
+          const matchesSearch = 
+            (student.roll_no || '').toLowerCase().includes(searchTerm) ||
+            (student.name || '').toLowerCase().includes(searchTerm);
+          
+          const matchesFilter = 
+            currentFilter === 'all' || student.alert_status === currentFilter;
+          
+          return matchesSearch && matchesFilter;
+        });
+        
+        renderStudents();
+      });
+    });
+
+    // View Student Details
+    function viewStudent(studentId) {
+      // Navigate to student detail page
+      window.location.href = `student-detail.html?id=${studentId}&dept=${departmentId}&year=${year}`;
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      getURLParams();
+      if (checkAuth()) {
+        loadStudents();
+      }
+    });
+  </script>
+</body>
+</html>
