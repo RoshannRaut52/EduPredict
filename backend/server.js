@@ -74,34 +74,59 @@ const authenticateToken = (req, res, next) => {
 // ========================================
 // COLLEGE REGISTRATION
 // ========================================
-app.post('/api/college/register', async (req, res) => {
+app.post('/api/college/login', async (req, res) => {
   try {
-    const { name, code, address, city, state, pincode, email, phone, principal_name, college_type, category, aided, password } = req.body;
+    console.log('📥 Login request:', req.body);
+    const { code, email, password } = req.body;
 
-    if (!name || !code || !email || !password) {
-      return res.status(400).json({ error: 'Required fields missing' });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password required' });
     }
 
-    const existing = await pool.query('SELECT * FROM colleges WHERE code = $1 OR email = $2', [code, email]);
-    if (existing.rows.length > 0) {
-      return res.status(400).json({ error: 'College code or email already exists' });
-    }
-
-    const password_hash = await bcrypt.hash(password, 10);
-
+    // ✅ FIX: Add password_hash to the SELECT query
     const result = await pool.query(
-      `INSERT INTO colleges (name, code, address, city, state, pincode, email, phone, principal_name, college_type, category, aided, password_hash)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-       RETURNING id, name, email, code`,
-      [name, code, address, city, state, pincode, email, phone, principal_name, college_type, category, aided, password_hash]
+      'SELECT id, name, code, email, college_type, category, aided, address, city, state, pincode, phone, principal_name, password_hash FROM colleges WHERE email = $1',
+      [email]
+    );
+    
+    console.log('📊 Query result:', result.rows.length, 'colleges found');
+    console.log('📊 College data:', result.rows[0]);
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const college = result.rows[0];
+    
+    // ✅ Now password_hash will exist
+    const valid = await bcrypt.compare(password, college.password_hash);
+
+    if (!valid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign(
+      { college_id: college.id, email: college.email, code: college.code },
+      JWT_SECRET,
+      { expiresIn: '7d' }
     );
 
-    res.status(201).json({ message: 'College registered successfully', college: result.rows[0] });
+    // ✅ Don't send password_hash to frontend
+    const { password_hash, ...collegeData } = college;
+
+    console.log('✅ Login successful for:', email);
+
+    return res.status(200).json({ 
+      token: token,
+      college: collegeData 
+    });
+
   } catch (err) {
-    console.error('Registration error:', err);
+    console.error('❌ Login error:', err);
     return res.status(500).json({ error: 'Server error', message: err.message });
   }
 });
+
 
 // ========================================
 // COLLEGE LOGIN
