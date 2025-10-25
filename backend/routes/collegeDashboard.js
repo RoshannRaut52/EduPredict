@@ -4,18 +4,12 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-// ========================================
-// DATABASE CONNECTION
-// ========================================
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-// JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-
-// ✅ NO MIDDLEWARE HERE - they're in server.js
 
 // ========================================
 // AUTHENTICATION MIDDLEWARE
@@ -28,26 +22,26 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: 'Access token required' });
   }
 
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+  jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
+      console.error('❌ Token verification failed:', err.message);
       return res.status(403).json({ error: 'Invalid or expired token' });
     }
-    req.college = decoded;
+    req.college = user;
     next();
   });
 };
 
 // ========================================
-// COLLEGE DASHBOARD
-// ✅ FIXED: /dashboard instead of /api/college/dashboard
+// GET DASHBOARD DATA
 // ========================================
 router.get('/dashboard', authenticateToken, async (req, res) => {
   try {
-    const collegeId = req.college.college_id;
+    const collegeCode = req.college.college_code;
 
     const collegeResult = await pool.query(
-      'SELECT id, name, code, email, principal_name FROM colleges WHERE id = $1',
-      [collegeId]
+      'SELECT code, name, email, principal_name FROM colleges WHERE code = $1',
+      [collegeCode]
     );
 
     if (collegeResult.rows.length === 0) {
@@ -56,7 +50,6 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
 
     const college = collegeResult.rows[0];
 
-    // Return with dummy stats for now
     res.json({
       ...college,
       total_students: 0,
@@ -76,23 +69,24 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
 // ========================================
 // GET ALL DEPARTMENTS
 // ========================================
-router.get('/:collegeId/departments', authenticateToken, async (req, res) => {
+router.get('/:collegeCode/departments', authenticateToken, async (req, res) => {
   try {
-    const { collegeId } = req.params;
+    // ✅ Convert to number since code is INT
+    const collegeCode = parseInt(req.params.collegeCode);
 
-    if (parseInt(collegeId) !== req.college.college_id) {
+    // ✅ Compare numbers
+    if (collegeCode !== req.college.college_code) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
     const result = await pool.query(
       `SELECT d.id, d.name, d.code, d.created_at
        FROM departments d
-       WHERE d.college_id = $1
+       WHERE d.college_code = $1
        ORDER BY d.name ASC`,
-      [collegeId]
+      [collegeCode]
     );
 
-    // Add year stats
     for (let dept of result.rows) {
       dept.years = [1, 2, 3, 4].map(year => ({
         year: `${year}${year === 1 ? 'st' : year === 2 ? 'nd' : year === 3 ? 'rd' : 'th'} Year`,
@@ -116,12 +110,15 @@ router.get('/:collegeId/departments', authenticateToken, async (req, res) => {
 // ========================================
 // ADD NEW DEPARTMENT
 // ========================================
-router.post('/:collegeId/departments', authenticateToken, async (req, res) => {
+router.post('/:collegeCode/departments', authenticateToken, async (req, res) => {
   try {
-    const { collegeId } = req.params;
-    const { name } = req.body;
+    const collegeCode = parseInt(req.params.collegeCode);
+    const { name, code } = req.body; // ✅ Accept code from frontend
 
-    if (parseInt(collegeId) !== req.college.college_id) {
+    console.log('📥 Add department request:', { collegeCode, name, code, user: req.college });
+
+    if (collegeCode !== req.college.college_code) {
+      console.error('❌ Unauthorized: College code mismatch');
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -130,22 +127,25 @@ router.post('/:collegeId/departments', authenticateToken, async (req, res) => {
     }
 
     const existing = await pool.query(
-      'SELECT * FROM departments WHERE college_id = $1 AND LOWER(name) = LOWER($2)',
-      [collegeId, name.trim()]
+      'SELECT * FROM departments WHERE college_code = $1 AND LOWER(name) = LOWER($2)',
+      [collegeCode, name.trim()]
     );
 
     if (existing.rows.length > 0) {
       return res.status(400).json({ error: 'Department already exists' });
     }
 
-    const code = name.trim().substring(0, 4).toUpperCase().replace(/\s/g, '');
+    // ✅ Use provided code or NULL
+    const deptCode = code ? parseInt(code) : null;
 
     const result = await pool.query(
-      `INSERT INTO departments (college_id, name, code, created_at)
+      `INSERT INTO departments (college_code, name, code, created_at)
        VALUES ($1, $2, $3, NOW())
        RETURNING id, name, code, created_at`,
-      [collegeId, name.trim(), code]
+      [collegeCode, name.trim(), deptCode]
     );
+
+    console.log('✅ Department added:', result.rows[0]);
 
     res.status(201).json({
       message: 'Department added successfully',
@@ -153,25 +153,29 @@ router.post('/:collegeId/departments', authenticateToken, async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Error adding department:', err);
-    return res.status(500).json({ error: 'Failed to add department' });
+    console.error('❌ Error adding department:', err);
+    return res.status(500).json({ error: 'Failed to add department', details: err.message });
   }
 });
+
 
 // ========================================
 // DELETE DEPARTMENT
 // ========================================
-router.delete('/:collegeId/departments/:departmentId', authenticateToken, async (req, res) => {
+router.delete('/:collegeCode/departments/:departmentId', authenticateToken, async (req, res) => {
   try {
-    const { collegeId, departmentId } = req.params;
+    // ✅ Convert to number since code is INT
+    const collegeCode = parseInt(req.params.collegeCode);
+    const departmentId = parseInt(req.params.departmentId);
 
-    if (parseInt(collegeId) !== req.college.college_id) {
+    // ✅ Compare numbers
+    if (collegeCode !== req.college.college_code) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
     const result = await pool.query(
-      'DELETE FROM departments WHERE id = $1 AND college_id = $2 RETURNING *',
-      [departmentId, collegeId]
+      'DELETE FROM departments WHERE id = $1 AND college_code = $2 RETURNING *',
+      [departmentId, collegeCode]
     );
 
     if (result.rows.length === 0) {

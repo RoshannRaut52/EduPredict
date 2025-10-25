@@ -116,14 +116,12 @@ app.post('/api/college/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password required' });
     }
 
-    // ✅ FIX: Add password_hash to the SELECT query
     const result = await pool.query(
-      'SELECT id, name, code, email, college_type, category, aided, address, city, state, pincode, phone, principal_name, password_hash FROM colleges WHERE email = $1',
+      'SELECT code, name, email, college_type, category, aided, address, city, state, pincode, phone, principal_name, password_hash FROM colleges WHERE email = $1',
       [email]
     );
     
     console.log('📊 Query result:', result.rows.length, 'colleges found');
-    console.log('📊 College data:', result.rows[0]);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -131,23 +129,23 @@ app.post('/api/college/login', async (req, res) => {
 
     const college = result.rows[0];
     
-    // ✅ Now password_hash will exist
     const valid = await bcrypt.compare(password, college.password_hash);
 
     if (!valid) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    // ✅ college.code is already a number from database
     const token = jwt.sign(
-      { college_id: college.id, email: college.email, code: college.code },
+      { college_code: college.code, email: college.email, name: college.name },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    // ✅ Don't send password_hash to frontend
     const { password_hash, ...collegeData } = college;
 
     console.log('✅ Login successful for:', email);
+    console.log('✅ College code:', college.code);
 
     return res.status(200).json({ 
       token: token,
@@ -159,6 +157,7 @@ app.post('/api/college/login', async (req, res) => {
     return res.status(500).json({ error: 'Server error', message: err.message });
   }
 });
+
 
 
 // ========================================
