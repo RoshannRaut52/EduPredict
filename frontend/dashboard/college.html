@@ -420,7 +420,7 @@
   </footer>
   <script>
 const backendUrl = 'https://edupredict-l9eg.onrender.com';
-let collegeData = null;
+let collegeCode = null; // ✅ Changed from collegeId
 let authToken = null;
 
 // Utility functions
@@ -443,25 +443,24 @@ async function initializeDashboard() {
   }
   
   try {
-    collegeData = JSON.parse(storedDataStr);
+    const collegeData = JSON.parse(storedDataStr);
     
-    // ✅ FIX: Use college_code as fallback if id is null
-    if (!collegeData || (!collegeData.id && !collegeData.college_code)) {
-      console.error('❌ Invalid college data:', collegeData);
-      alert('Session error. Please login again.');
+    // ✅ FIX: Use code instead of id
+    collegeCode = collegeData.code;
+    
+    if (!collegeCode) {
+      console.error('❌ College code not found in:', collegeData);
+      alert('Invalid college data. Please login again.');
       localStorage.clear();
       window.location.href = '../login/college.html';
       return;
     }
     
-    // ✅ FIX: If id is null, fetch it from backend
-    if (!collegeData.id && collegeData.college_code) {
-      console.warn('⚠️ ID is null, will use college_code as identifier');
-      // Store college_code temporarily as id
-      collegeData.id = collegeData.college_code;
-    }
-    
     console.log('✅ College data parsed:', collegeData);
+    console.log('✅ College code:', collegeCode);
+    
+    // Update college name immediately
+    document.getElementById('collegeName').textContent = safeString(collegeData.name);
     
     await loadDashboardData();
     
@@ -473,12 +472,12 @@ async function initializeDashboard() {
   }
 }
 
-
 // Load Dashboard Data from Backend
 async function loadDashboardData() {
   try {
-    console.log('📡 Fetching dashboard data for college ID:', collegeData.id);
+    console.log('📡 Fetching dashboard data for college code:', collegeCode);
     
+    // ✅ FIX: Use /dashboard endpoint without ID (backend gets it from token)
     const response = await fetch(`${backendUrl}/api/college/dashboard`, {
       method: 'GET',
       headers: {
@@ -497,75 +496,75 @@ async function loadDashboardData() {
         return;
       }
       
-      // ✅ If 404, use stored data as fallback
-      if (response.status === 404) {
-        console.warn('⚠️ Dashboard endpoint not found, using stored data');
-        updateDashboardUI();
-        return;
-      }
-      
-      throw new Error('Failed to load dashboard data');
+      // ✅ If 404 or error, use stored data as fallback
+      console.warn('⚠️ Dashboard endpoint error, using fallback data');
+      useFallbackData();
+      return;
     }
 
     const freshData = await response.json();
     console.log('✅ Fresh dashboard data loaded:', freshData);
     
     // ✅ Merge fresh data with stored college data
-    collegeData = { ...collegeData, ...freshData };
-    localStorage.setItem('collegeData', JSON.stringify(collegeData));
+    const collegeData = JSON.parse(localStorage.getItem('collegeData'));
+    const updatedData = { ...collegeData, ...freshData };
+    localStorage.setItem('collegeData', JSON.stringify(updatedData));
     
-    updateDashboardUI();
+    updateDashboardUI(updatedData);
     
   } catch (error) {
     console.error('❌ Error loading dashboard:', error);
     console.warn('⚠️ Using stored college data as fallback');
-    
-    // ✅ Fallback: Use stored data with default stats
-    collegeData = {
-      ...collegeData,
-      total_students: collegeData.total_students || 0,
-      at_risk_students: collegeData.at_risk_students || 0,
-      dropout_students: collegeData.dropout_students || 0,
-      saved_students: collegeData.saved_students || 0,
-      notifications_to_parents: collegeData.notifications_to_parents || 0,
-      notifications_to_teachers: collegeData.notifications_to_teachers || 0
-    };
-    
-    updateDashboardUI();
+    useFallbackData();
   }
 }
 
+// Use Fallback Data when API fails
+function useFallbackData() {
+  const collegeData = JSON.parse(localStorage.getItem('collegeData'));
+  const fallbackData = {
+    ...collegeData,
+    total_students: collegeData.total_students || 0,
+    at_risk_students: collegeData.at_risk_students || 0,
+    dropout_students: collegeData.dropout_students || 0,
+    saved_students: collegeData.saved_students || 0,
+    notifications_to_parents: collegeData.notifications_to_parents || 0,
+    notifications_to_teachers: collegeData.notifications_to_teachers || 0
+  };
+  
+  updateDashboardUI(fallbackData);
+}
 
 // Update Dashboard UI with Data
-function updateDashboardUI() {
+function updateDashboardUI(data) {
   // Update college name
-  document.getElementById('collegeName').textContent = safeString(collegeData.name);
+  document.getElementById('collegeName').textContent = safeString(data.name);
   
   // Update chart data
-  document.getElementById('totalStudents').textContent = safeNumber(collegeData.total_students);
-  document.getElementById('atRiskStudents').textContent = safeNumber(collegeData.at_risk_students);
-  document.getElementById('dropoutStudents').textContent = safeNumber(collegeData.dropout_students);
-  document.getElementById('savedStudents').textContent = safeNumber(collegeData.saved_students);
+  document.getElementById('totalStudents').textContent = safeNumber(data.total_students);
+  document.getElementById('atRiskStudents').textContent = safeNumber(data.at_risk_students);
+  document.getElementById('dropoutStudents').textContent = safeNumber(data.dropout_students);
+  document.getElementById('savedStudents').textContent = safeNumber(data.saved_students);
   
   // Update notifications
-  document.getElementById('toParents').textContent = safeNumber(collegeData.notifications_to_parents);
-  document.getElementById('toTeachers').textContent = safeNumber(collegeData.notifications_to_teachers);
+  document.getElementById('toParents').textContent = safeNumber(data.notifications_to_parents);
+  document.getElementById('toTeachers').textContent = safeNumber(data.notifications_to_teachers);
   
   // Update summary cards
-  document.getElementById('summaryTotalStudents').textContent = safeNumber(collegeData.total_students);
-  document.getElementById('summaryAtRiskStudents').textContent = safeNumber(collegeData.at_risk_students);
-  document.getElementById('summaryDropoutStudents').textContent = safeNumber(collegeData.dropout_students);
-  document.getElementById('summarySavedStudents').textContent = safeNumber(collegeData.saved_students);
+  document.getElementById('summaryTotalStudents').textContent = safeNumber(data.total_students);
+  document.getElementById('summaryAtRiskStudents').textContent = safeNumber(data.at_risk_students);
+  document.getElementById('summaryDropoutStudents').textContent = safeNumber(data.dropout_students);
+  document.getElementById('summarySavedStudents').textContent = safeNumber(data.saved_students);
   
   // Create chart
-  createStudentChart();
+  createStudentChart(data);
   
   // Load departments dynamically
   loadDepartmentsSection();
 }
 
 // Create Student Distribution Chart
-function createStudentChart() {
+function createStudentChart(data) {
   const ctx = document.getElementById('studentChart').getContext('2d');
   
   // Destroy existing chart if any
@@ -579,10 +578,10 @@ function createStudentChart() {
       labels: ['Total Students', 'At Risk', 'Dropout', 'Saved'],
       datasets: [{
         data: [
-          collegeData.total_students || 0,
-          collegeData.at_risk_students || 0,
-          collegeData.dropout_students || 0,
-          collegeData.saved_students || 0,
+          data.total_students || 0,
+          data.at_risk_students || 0,
+          data.dropout_students || 0,
+          data.saved_students || 0,
         ],
         backgroundColor: ['#2e86de', '#ee5253', '#ff9f43', '#10ac84'],
         borderWidth: 1,
@@ -603,7 +602,8 @@ function createStudentChart() {
 // Load Departments Section Dynamically
 async function loadDepartmentsSection() {
   try {
-    const response = await fetch(`${backendUrl}/api/college/${collegeData.id}/departments`, {
+    // ✅ FIX: Use collegeCode in URL
+    const response = await fetch(`${backendUrl}/api/college/${collegeCode}/departments`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${authToken}`,
@@ -613,10 +613,15 @@ async function loadDepartmentsSection() {
 
     if (response.ok) {
       const data = await response.json();
+      console.log('✅ Departments loaded:', data);
       renderDepartmentsList(data.departments || []);
+    } else {
+      console.error('❌ Failed to load departments');
+      renderDepartmentsList([]);
     }
   } catch (error) {
     console.error('Error loading departments:', error);
+    renderDepartmentsList([]);
   }
 }
 
@@ -645,15 +650,15 @@ function renderDepartmentsList(departments) {
     deptDiv.setAttribute('tabindex', '0');
     deptDiv.setAttribute('role', 'button');
     deptDiv.setAttribute('aria-expanded', 'false');
-    deptDiv.setAttribute('aria-controls', dept.id);
+    deptDiv.setAttribute('aria-controls', `dept-${dept.id}`);
     deptDiv.innerHTML = `💼 ${dept.name} <span aria-hidden="true">▼</span>`;
-    deptDiv.onclick = () => toggleYears(dept.id);
+    deptDiv.onclick = () => toggleYears(`dept-${dept.id}`);
     
     departmentsSection.appendChild(deptDiv);
     
     const yearList = document.createElement('div');
     yearList.className = 'year-list';
-    yearList.id = dept.id;
+    yearList.id = `dept-${dept.id}`;
     yearList.setAttribute('aria-hidden', 'true');
     yearList.setAttribute('role', 'region');
     
@@ -672,8 +677,11 @@ function renderDepartmentsList(departments) {
 // Toggle Years list visibility
 function toggleYears(id) {
   const list = document.getElementById(id);
+  if (!list) return;
+  
   const isVisible = list.style.display === "block";
   list.style.display = isVisible ? "none" : "block";
+  
   const deptButton = document.querySelector(`.department[aria-controls="${id}"]`);
   if (deptButton) {
     deptButton.setAttribute('aria-expanded', !isVisible);
@@ -684,13 +692,16 @@ function toggleYears(id) {
 // Sidebar Toggle for small screens
 const menuToggleBtn = document.getElementById('menuToggleBtn');
 const sidebar = document.getElementById('sidebar');
-menuToggleBtn.onclick = () => sidebar.classList.toggle('hidden');
+if (menuToggleBtn && sidebar) {
+  menuToggleBtn.onclick = () => sidebar.classList.toggle('hidden');
+}
 
 // Initialize on page load
 window.addEventListener('DOMContentLoaded', initializeDashboard);
 
 // Auto-refresh data every 5 minutes
 setInterval(loadDashboardData, 300000);
+
 </script>
 
   </script>
