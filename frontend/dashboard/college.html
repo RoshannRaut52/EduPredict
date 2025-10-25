@@ -663,12 +663,13 @@ function renderDepartmentsList(departments) {
     yearList.setAttribute('role', 'region');
     
     ['1st Year', '2nd Year', '3rd Year', '4th Year'].forEach(year => {
-      const link = document.createElement('a');
-      link.href = `../student1.html?dept=${dept.id}&year=${year}`;
-      link.title = `${year} ${dept.name}`;
-      link.textContent = year;
-      yearList.appendChild(link);
-    });
+  const link = document.createElement('a');
+  // ✅ FIX: Point to students.html instead of student1.html
+  link.href = `../CollegeDashboard/students.html?dept=${dept.id}&year=${encodeURIComponent(year)}`;
+  link.title = `${year} ${dept.name}`;
+  link.textContent = year;
+  yearList.appendChild(link);
+});
     
     departmentsSection.appendChild(yearList);
   });
