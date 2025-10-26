@@ -178,42 +178,51 @@
   </footer>
 
   <script>
-    const form = document.getElementById("studentRegisterForm");
-    const msg = document.getElementById("statusMsg");
-    const backendUrl = 'https://edupredict-l9eg.onrender.com';
+const form = document.getElementById("studentRegisterForm");
+const msg = document.getElementById("statusMsg");
+const backendUrl = 'https://edupredict-l9eg.onrender.com';
 
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      msg.textContent = "⏳ Processing...";
-      msg.className = "message";
+form.onsubmit = async (e) => {
+  e.preventDefault();
+  msg.textContent = "⏳ Processing...";
+  msg.className = "message";
 
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());  // includes roll_no now
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
 
-      try {
-        const res = await fetch(`${backendUrl}/register/student`, {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-        const result = await res.json();
-        if (res.ok) {
-          msg.textContent = result.message || "✅ Registration successful!";
-          msg.classList.add("success");
-          form.reset();
-          setTimeout(() => {
-            window.location.href = "studentlogin.html";
-          }, 2000);
-        } else {
-          msg.textContent = result.message || "❌ Registration failed";
-          msg.classList.add("error");
-        }
-      } catch (err) {
-        console.error('Error:', err);
-        msg.textContent = "❌ Cannot connect to server. Please try again.";
-        msg.classList.add("error");
-      }
-    };
-  </script>
+  // Validate passwords match
+  if (data.password !== data.confirm_password) {
+    msg.textContent = "❌ Passwords do not match";
+    msg.classList.add("error");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${backendUrl}/api/student-requests/submit`, {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    
+    const result = await res.json();
+    
+    if (res.ok) {
+      msg.textContent = result.message || "✅ Registration request submitted! Please wait for college approval.";
+      msg.classList.add("success");
+      form.reset();
+      setTimeout(() => {
+        window.location.href = "studentlogin.html";
+      }, 3000);
+    } else {
+      msg.textContent = result.error || "❌ Registration failed";
+      msg.classList.add("error");
+    }
+  } catch (err) {
+    console.error('Error:', err);
+    msg.textContent = "❌ Cannot connect to server. Please try again.";
+    msg.classList.add("error");
+  }
+};
+</script>
 </body>
 </html>

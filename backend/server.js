@@ -168,6 +168,12 @@ const collegeDashboardRoutes = require('./routes/collegeDashboard');
 app.use('/api/college', collegeDashboardRoutes);
 
 // ========================================
+// Student Requests Routes
+// ========================================
+const studentRequestsRoutes = require('./routes/studentRequests');
+app.use('/api/studentRequests', studentRequestsRoutes);
+
+// ========================================
 // STUDENT REGISTRATION & LOGIN
 // ========================================
 app.post('/register/student', async (req, res) => {
