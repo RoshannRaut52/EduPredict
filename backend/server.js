@@ -171,7 +171,7 @@ app.use('/api/college', collegeDashboardRoutes);
 // Student Requests Routes
 // ========================================
 const studentRequestsRoutes = require('./routes/studentRequests');
-app.use('/api/studentRequests', studentRequestsRoutes);
+app.use('/api/student-requests', studentRequestsRoutes);
 
 // ========================================
 // STUDENT REGISTRATION & LOGIN
