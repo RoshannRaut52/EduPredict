@@ -209,7 +209,7 @@
       margin-top: auto;
     }
     
-    /* Modal for Department Selection */
+    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -238,6 +238,7 @@
     .modal-content h3 {
       margin-bottom: 20px;
       color: #000;
+      font-size: 1.5rem;
     }
     
     .modal-content label {
@@ -247,13 +248,35 @@
       color: #000;
     }
     
-    .modal-content select {
+    .modal-content input[type="text"] {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-bottom: 15px;
       border-radius: 8px;
       border: 2px solid #ccc;
       font-size: 1rem;
+      box-sizing: border-box;
+    }
+    
+    .modal-content input[type="text"]:focus {
+      outline: none;
+      border-color: #10ac84;
+      box-shadow: 0 0 0 3px rgba(16,172,132,0.2);
+    }
+    
+    .modal-content select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 2px solid #ccc;
+      font-size: 1rem;
+    }
+    
+    .modal-content select:focus {
+      outline: none;
+      border-color: #10ac84;
+      box-shadow: 0 0 0 3px rgba(16,172,132,0.2);
     }
     
     .modal-actions {
@@ -318,13 +341,17 @@
   <div id="approvalModal" class="modal">
     <div class="modal-content">
       <h3>Approve Student</h3>
-      <label>Select Department</label>
-      <select id="departmentSelect">
-        <option value="">-- Select Department --</option>
-      </select>
+      
+      <label>Assign Roll Number *</label>
+      <input 
+        type="text" 
+        id="rollNoInput" 
+        placeholder="Enter roll number (e.g., CS2025001)" 
+        required
+      />
 
-      <label>Select Year</label>
-      <select id="yearSelect">
+      <label>Select Year *</label>
+      <select id="yearSelect" required>
         <option value="">-- Select Year --</option>
         <option value="1st Year">1st Year</option>
         <option value="2nd Year">2nd Year</option>
@@ -348,7 +375,6 @@
     let authToken = null;
     let collegeCode = null;
     let currentRequestId = null;
-    let departments = [];
 
     // Check Authentication
     function checkAuth() {
@@ -380,37 +406,6 @@
         localStorage.clear();
         window.location.href = '../login/college.html';
         return false;
-      }
-    }
-
-    // Load Departments
-    async function loadDepartments() {
-      try {
-        const response = await fetch(
-          `${backendUrl}/api/college/${collegeCode}/departments`,
-          {
-            headers: {
-              'Authorization': `Bearer ${authToken}`
-            }
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          departments = data.departments || [];
-          
-          const select = document.getElementById('departmentSelect');
-          select.innerHTML = '<option value="">-- Select Department --</option>';
-          
-          departments.forEach(dept => {
-            const option = document.createElement('option');
-            option.value = dept.id;
-            option.textContent = dept.name;
-            select.appendChild(option);
-          });
-        }
-      } catch (error) {
-        console.error('Error loading departments:', error);
       }
     }
 
@@ -461,10 +456,6 @@
           </div>
           <div class="request-details">
             <div class="detail-item">
-              <span class="detail-label">Roll Number</span>
-              <span class="detail-value">${req.roll_no}</span>
-            </div>
-            <div class="detail-item">
               <span class="detail-label">Email</span>
               <span class="detail-value">${req.email}</span>
             </div>
@@ -473,8 +464,8 @@
               <span class="detail-value">${req.contact || 'N/A'}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Course</span>
-              <span class="detail-value">${req.course || 'N/A'}</span>
+              <span class="detail-label">Department</span>
+              <span class="detail-value">${req.department_name}</span>
             </div>
           </div>
           <div class="request-actions">
@@ -495,6 +486,8 @@
     // Open Approval Modal
     function openApprovalModal(requestId) {
       currentRequestId = requestId;
+      document.getElementById('rollNoInput').value = '';
+      document.getElementById('yearSelect').value = '';
       document.getElementById('approvalModal').classList.add('active');
     }
 
@@ -506,11 +499,11 @@
 
     // Confirm Approval
     async function confirmApproval() {
-      const department_id = document.getElementById('departmentSelect').value;
+      const roll_no = document.getElementById('rollNoInput').value.trim();
       const year = document.getElementById('yearSelect').value;
 
-      if (!department_id || !year) {
-        alert('Please select both department and year');
+      if (!roll_no || !year) {
+        alert('❌ Please enter roll number and select year');
         return;
       }
 
@@ -523,14 +516,14 @@
               'Authorization': `Bearer ${authToken}`,
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ department_id, year })
+            body: JSON.stringify({ roll_no, year })
           }
         );
 
         const result = await response.json();
 
         if (response.ok) {
-          alert('✅ Student approved successfully!');
+          alert(`✅ Student approved successfully!\nRoll Number: ${roll_no}\nYear: ${year}`);
           closeModal();
           loadRequests();
         } else {
@@ -538,7 +531,7 @@
         }
       } catch (error) {
         console.error('Error approving student:', error);
-        alert('❌ Failed to approve student');
+        alert('❌ Failed to approve student. Please try again.');
       }
     }
 
@@ -575,7 +568,6 @@
     // Initialize
     window.addEventListener('DOMContentLoaded', () => {
       if (checkAuth()) {
-        loadDepartments();
         loadRequests();
       }
     });
