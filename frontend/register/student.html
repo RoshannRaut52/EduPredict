@@ -198,7 +198,7 @@ form.onsubmit = async (e) => {
   }
 
   try {
-    const res = await fetch(`${backendUrl}/api/student-requests/submit`, {
+    const res = await fetch(`${backendUrl}/api/studentRequests/submit`, {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -211,7 +211,7 @@ form.onsubmit = async (e) => {
       msg.classList.add("success");
       form.reset();
       setTimeout(() => {
-        window.location.href = "studentlogin.html";
+        window.location.href = "../login/student.html";
       }, 3000);
     } else {
       msg.textContent = result.error || "❌ Registration failed";
