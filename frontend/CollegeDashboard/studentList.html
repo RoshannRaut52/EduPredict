@@ -510,244 +510,309 @@
   </footer>
 
   <script>
-    const backendUrl = 'https://edupredict-l9eg.onrender.com';
-    let authToken = null;
-    let collegeCode = null;
-    let departmentId = null;
-    let year = null;
-    let allStudents = [];
-    let filteredStudents = [];
-    let currentFilter = 'all';
+const backendUrl = 'https://edupredict-l9eg.onrender.com';
+let authToken = null;
+let collegeCode = null;
+let departmentId = null;
+let year = null;
+let departmentName = 'Department'; // ✅ ADD: Store department name
+let allStudents = [];
+let filteredStudents = [];
+let currentFilter = 'all';
 
-    // Get URL parameters
-    function getURLParams() {
-      const params = new URLSearchParams(window.location.search);
-      departmentId = params.get('dept');
-      year = params.get('year');
-      
-      console.log('📍 URL Params:', { departmentId, year });
-      
-      if (!departmentId || !year) {
-        alert('Invalid page parameters');
-        window.location.href = '../dashboard/college.html';
-      }
+// Get URL parameters
+function getURLParams() {
+  const params = new URLSearchParams(window.location.search);
+  departmentId = params.get('dept');
+  year = params.get('year');
+  
+  console.log('📍 URL Params:', { departmentId, year });
+  
+  if (!departmentId || !year) {
+    alert('Invalid page parameters');
+    window.location.href = '../dashboard/college.html';
+  }
+}
+
+// Check Authentication
+function checkAuth() {
+  authToken = localStorage.getItem('collegeToken');
+  const collegeDataStr = localStorage.getItem('collegeData');
+  
+  if (!authToken || !collegeDataStr) {
+    alert('Please login first');
+    window.location.href = '../login/college.html';
+    return false;
+  }
+  
+  try {
+    const collegeData = JSON.parse(collegeDataStr);
+    collegeCode = collegeData.code;
+    
+    if (!collegeCode) {
+      alert('Invalid session data');
+      localStorage.clear();
+      window.location.href = '../login/college.html';
+      return false;
     }
+    
+    // Update college name
+    document.getElementById('collegeName').textContent = collegeData.name || 'College';
+    
+    return true;
+  } catch (error) {
+    console.error('Error parsing college data:', error);
+    alert('Session error. Please login again.');
+    localStorage.clear();
+    window.location.href = '../login/college.html';
+    return false;
+  }
+}
 
-    // Check Authentication
-    function checkAuth() {
-      authToken = localStorage.getItem('collegeToken');
-      const collegeDataStr = localStorage.getItem('collegeData');
-      
-      if (!authToken || !collegeDataStr) {
-        alert('Please login first');
-        window.location.href = '../login/college.html';
-        return false;
+// ✅ FIXED: Update Sidebar Info Function
+function updateSidebarInfo(deptName, yearText) {
+  console.log('✅ Updating sidebar:', { deptName, yearText });
+  
+  document.getElementById('deptName').textContent = deptName || 'Department';
+  document.getElementById('deptYear').textContent = yearText || 'Year';
+  document.getElementById('yearBadge').textContent = yearText || 'Loading...';
+  
+  // Also update if elements exist
+  const pageTitle = document.getElementById('pageTitle');
+  if (pageTitle) {
+    pageTitle.textContent = `${deptName} - ${yearText}`;
+  }
+  
+  const pageSubtitle = document.getElementById('pageSubtitle');
+  if (pageSubtitle) {
+    pageSubtitle.textContent = `${deptName} • ${yearText}`;
+  }
+}
+
+// Load Students from Backend
+async function loadStudents() {
+  try {
+    console.log('📡 Fetching students...');
+    
+    const response = await fetch(
+      `${backendUrl}/api/college/${collegeCode}/departments/${departmentId}/students/${year}`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+          'Content-Type': 'application/json'
+        }
       }
-      
-      try {
-        const collegeData = JSON.parse(collegeDataStr);
-        collegeCode = collegeData.code;
-        
-        if (!collegeCode) {
-          alert('Invalid session data');
-          localStorage.clear();
-          window.location.href = '../login/college.html';
-          return false;
-        }
-        
-        // Update college name
-        document.getElementById('collegeName').textContent = collegeData.name || 'College';
-        
-        return true;
-      } catch (error) {
-        console.error('Error parsing college data:', error);
-        alert('Session error. Please login again.');
-        localStorage.clear();
-        window.location.href = '../login/college.html';
-        return false;
-      }
-    }
+    );
 
-    // Load Students from Backend
-    async function loadStudents() {
-      try {
-        const response = await fetch(
-          `${backendUrl}/api/college/${collegeCode}/departments/${departmentId}/students/${year}`,
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${authToken}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
+    console.log('📊 Response status:', response.status);
 
-        if (!response.ok) {
-          if (response.status === 404) {
-            showEmptyState();
-            return;
-          }
-          throw new Error('Failed to load students');
-        }
-
-        const data = await response.json();
-        console.log('✅ Students loaded:', data);
-        
-        allStudents = data.students || [];
-        
-        // Update sidebar info
-        document.getElementById('deptName').textContent = data.department_name || 'Department';
-        document.getElementById('deptYear').textContent = year;
-        document.getElementById('yearBadge').textContent = year;
-        
-        if (allStudents.length === 0) {
-          showEmptyState();
-        } else {
-          filteredStudents = allStudents;
-          renderStudents();
-          updateStats();
-        }
-        
-      } catch (error) {
-        console.error('❌ Error loading students:', error);
+    if (!response.ok) {
+      if (response.status === 404) {
+        // ✅ FIXED: Try to get department name even on 404
+        await fetchDepartmentName();
         showEmptyState();
-      } finally {
-        document.getElementById('loadingState').style.display = 'none';
-      }
-    }
-
-    // Render Students Table
-    function renderStudents() {
-      const tbody = document.getElementById('studentsTableBody');
-      tbody.innerHTML = '';
-      
-      if (filteredStudents.length === 0) {
-        document.getElementById('studentsTable').style.display = 'none';
-        document.getElementById('emptyState').style.display = 'block';
-        document.getElementById('emptyState').querySelector('p').textContent = 
-          'No students match your search or filter.';
         return;
       }
-      
-      document.getElementById('studentsTable').style.display = 'table';
-      document.getElementById('emptyState').style.display = 'none';
-      
-      filteredStudents.forEach(student => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><strong>${student.roll_no || 'N/A'}</strong></td>
-          <td>${student.name || 'N/A'}</td>
-          <td>${student.email || 'N/A'}</td>
-          <td>
-            <span class="alert-badge ${student.alert_status}">
-              ${getAlertLabel(student.alert_status)}
-            </span>
-          </td>
-          <td>
-            <button class="view-btn" onclick="viewStudent('${student.id}')">
-              View
-            </button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
+      throw new Error('Failed to load students');
     }
 
-    // Get Alert Label
-    function getAlertLabel(status) {
-      const labels = {
-        'safe': '✓ Safe',
-        'warning': '⚠ At Risk',
-        'danger': '⚠️ High Risk'
-      };
-      return labels[status] || 'Unknown';
-    }
-
-    // Update Statistics
-    function updateStats() {
-      const total = allStudents.length;
-      const safe = allStudents.filter(s => s.alert_status === 'safe').length;
-      const warning = allStudents.filter(s => s.alert_status === 'warning').length;
-      const danger = allStudents.filter(s => s.alert_status === 'danger').length;
-      
-      document.getElementById('totalCount').textContent = total;
-      document.getElementById('safeCount').textContent = safe;
-      document.getElementById('warningCount').textContent = warning;
-      document.getElementById('dangerCount').textContent = danger;
-    }
-
-    // Show Empty State
-    function showEmptyState() {
-      document.getElementById('loadingState').style.display = 'none';
-      document.getElementById('studentsTable').style.display = 'none';
-      document.getElementById('emptyState').style.display = 'block';
-      
-      // Update sidebar with placeholder data
-      document.getElementById('deptName').textContent = 'Department';
-      document.getElementById('deptYear').textContent = year;
-      document.getElementById('yearBadge').textContent = year;
-    }
-
-    // Search Students
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const searchTerm = e.target.value.toLowerCase();
-      
-      filteredStudents = allStudents.filter(student => {
-        const matchesSearch = 
-          (student.roll_no || '').toLowerCase().includes(searchTerm) ||
-          (student.name || '').toLowerCase().includes(searchTerm);
-        
-        const matchesFilter = 
-          currentFilter === 'all' || student.alert_status === currentFilter;
-        
-        return matchesSearch && matchesFilter;
-      });
-      
+    const data = await response.json();
+    console.log('✅ Students loaded:', data);
+    
+    allStudents = data.students || [];
+    departmentName = data.department_name || 'Department'; // ✅ Store department name
+    
+    // ✅ FIXED: Update sidebar info immediately
+    updateSidebarInfo(departmentName, year);
+    
+    if (allStudents.length === 0) {
+      showEmptyState();
+    } else {
+      filteredStudents = allStudents;
       renderStudents();
-    });
-
-    // Filter Students
-    document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentFilter = btn.dataset.filter;
-        
-        // Update active state
-        document.querySelectorAll('.filter-btn[data-filter]').forEach(b => 
-          b.classList.remove('active')
-        );
-        btn.classList.add('active');
-        
-        // Filter students
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        
-        filteredStudents = allStudents.filter(student => {
-          const matchesSearch = 
-            (student.roll_no || '').toLowerCase().includes(searchTerm) ||
-            (student.name || '').toLowerCase().includes(searchTerm);
-          
-          const matchesFilter = 
-            currentFilter === 'all' || student.alert_status === currentFilter;
-          
-          return matchesSearch && matchesFilter;
-        });
-        
-        renderStudents();
-      });
-    });
-
-    // View Student Details
-    function viewStudent(studentId) {
-      // Navigate to student detail page
-      window.location.href = `student-detail.html?id=${studentId}&dept=${departmentId}&year=${year}`;
+      updateStats();
     }
+    
+  } catch (error) {
+    console.error('❌ Error loading students:', error);
+    // ✅ FIXED: Try to get department name on error
+    await fetchDepartmentName();
+    showEmptyState();
+  } finally {
+    document.getElementById('loadingState').style.display = 'none';
+  }
+}
 
-    // Initialize
-    window.addEventListener('DOMContentLoaded', () => {
-      getURLParams();
-      if (checkAuth()) {
-        loadStudents();
+// ✅ NEW: Fetch Department Name Separately
+async function fetchDepartmentName() {
+  try {
+    console.log('📡 Fetching department name...');
+    
+    const response = await fetch(
+      `${backendUrl}/api/college/${collegeCode}/departments`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+          'Content-Type': 'application/json'
+        }
       }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      const dept = data.departments.find(d => d.id == departmentId);
+      
+      if (dept) {
+        departmentName = dept.name;
+        console.log('✅ Department name found:', departmentName);
+        updateSidebarInfo(departmentName, year);
+      }
+    }
+  } catch (error) {
+    console.error('❌ Error fetching department name:', error);
+  }
+}
+
+// Render Students Table
+function renderStudents() {
+  const tbody = document.getElementById('studentsTableBody');
+  tbody.innerHTML = '';
+  
+  if (filteredStudents.length === 0) {
+    document.getElementById('studentsTable').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('emptyState').querySelector('p').textContent = 
+      'No students match your search or filter.';
+    return;
+  }
+  
+  document.getElementById('studentsTable').style.display = 'table';
+  document.getElementById('emptyState').style.display = 'none';
+  
+  filteredStudents.forEach(student => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><strong>${student.roll_no || 'N/A'}</strong></td>
+      <td>${student.name || 'N/A'}</td>
+      <td>${student.email || 'N/A'}</td>
+      <td>
+        <span class="alert-badge ${student.alert_status}">
+          ${getAlertLabel(student.alert_status)}
+        </span>
+      </td>
+      <td>
+        <button class="view-btn" onclick="viewStudent('${student.id}')">
+          View
+        </button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// Get Alert Label
+function getAlertLabel(status) {
+  const labels = {
+    'safe': '✓ Safe',
+    'warning': '⚠ At Risk',
+    'danger': '⚠️ High Risk'
+  };
+  return labels[status] || 'Unknown';
+}
+
+// Update Statistics
+function updateStats() {
+  const total = allStudents.length;
+  const safe = allStudents.filter(s => s.alert_status === 'safe').length;
+  const warning = allStudents.filter(s => s.alert_status === 'warning').length;
+  const danger = allStudents.filter(s => s.alert_status === 'danger').length;
+  
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('safeCount').textContent = safe;
+  document.getElementById('warningCount').textContent = warning;
+  document.getElementById('dangerCount').textContent = danger;
+}
+
+// ✅ FIXED: Show Empty State
+function showEmptyState() {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('studentsTable').style.display = 'none';
+  document.getElementById('emptyState').style.display = 'block';
+  
+  // ✅ FIXED: Use stored department name
+  updateSidebarInfo(departmentName, year);
+  
+  // Reset stats to 0
+  document.getElementById('totalCount').textContent = '0';
+  document.getElementById('safeCount').textContent = '0';
+  document.getElementById('warningCount').textContent = '0';
+  document.getElementById('dangerCount').textContent = '0';
+}
+
+// Search Students
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const searchTerm = e.target.value.toLowerCase();
+  
+  filteredStudents = allStudents.filter(student => {
+    const matchesSearch = 
+      (student.roll_no || '').toLowerCase().includes(searchTerm) ||
+      (student.name || '').toLowerCase().includes(searchTerm);
+    
+    const matchesFilter = 
+      currentFilter === 'all' || student.alert_status === currentFilter;
+    
+    return matchesSearch && matchesFilter;
+  });
+  
+  renderStudents();
+});
+
+// Filter Students
+document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentFilter = btn.dataset.filter;
+    
+    // Update active state
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(b => 
+      b.classList.remove('active')
+    );
+    btn.classList.add('active');
+    
+    // Filter students
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    filteredStudents = allStudents.filter(student => {
+      const matchesSearch = 
+        (student.roll_no || '').toLowerCase().includes(searchTerm) ||
+        (student.name || '').toLowerCase().includes(searchTerm);
+      
+      const matchesFilter = 
+        currentFilter === 'all' || student.alert_status === currentFilter;
+      
+      return matchesSearch && matchesFilter;
     });
-  </script>
+    
+    renderStudents();
+  });
+});
+
+// View Student Details
+function viewStudent(studentId) {
+  // Navigate to student detail page
+  window.location.href = `student-detail.html?id=${studentId}&dept=${departmentId}&year=${year}`;
+}
+
+// Initialize
+window.addEventListener('DOMContentLoaded', () => {
+  getURLParams();
+  if (checkAuth()) {
+    // ✅ FIXED: Set initial placeholder with year
+    updateSidebarInfo('Loading...', year);
+    loadStudents();
+  }
+});
+</script>
 </body>
 </html>
