@@ -418,7 +418,7 @@
     async function loadRequests() {
       try {
         const response = await fetch(
-          `${backendUrl}/api/student-requests/${collegeCode}/pending`,
+          `${backendUrl}/api/studentRequests/${collegeCode}/pending`,
           {
             headers: {
               'Authorization': `Bearer ${authToken}`
@@ -516,7 +516,7 @@
 
       try {
         const response = await fetch(
-          `${backendUrl}/api/student-requests/${collegeCode}/approve/${currentRequestId}`,
+          `${backendUrl}/api/studentRequests/${collegeCode}/approve/${currentRequestId}`,
           {
             method: 'POST',
             headers: {
@@ -548,7 +548,7 @@
 
       try {
         const response = await fetch(
-          `${backendUrl}/api/student-requests/${collegeCode}/reject/${requestId}`,
+          `${backendUrl}/api/studentRequests/${collegeCode}/reject/${requestId}`,
           {
             method: 'POST',
             headers: {
