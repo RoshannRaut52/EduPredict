@@ -13,11 +13,10 @@ const PORT = process.env.PORT || 5000;
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
-      'https://edu-predict-sih.vercel.app',
-      'http://localhost:3000',
-      'http://localhost:5500',
-      'http://127.0.0.1:5500'
-    ];
+  'https://edu-predict-sih.vercel.app', // production frontend
+  'http://localhost:3000',              // local frontend (optional for development)
+  'http://localhost:5173',              // or Vite local
+];
     
     if (!origin) return callback(null, true);
     
@@ -34,7 +33,10 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 app.options('*', cors(corsOptions));
 app.use(express.json());
 
