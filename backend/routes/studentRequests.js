@@ -35,15 +35,18 @@ const authenticateToken = (req, res, next) => {
 // ========================================
 // SUBMIT STUDENT REGISTRATION REQUEST
 // ========================================
+// ========================================
+// SUBMIT STUDENT REGISTRATION REQUEST (UPDATED)
+// ========================================
 router.post('/submit', async (req, res) => {
   try {
-    const { name, email, contact, college_code, roll_no, course, password, confirm_password } = req.body;
+    const { name, email, contact, college_code, department_id, password, confirm_password } = req.body;
 
-    console.log('📥 Student registration request:', { name, email, college_code, roll_no });
+    console.log('📥 Student registration request:', { name, email, college_code, department_id });
 
     // Validation
-    if (!name || !email || !college_code || !roll_no || !password) {
-      return res.status(400).json({ error: 'All required fields must be filled' });
+    if (!name || !email || !contact || !college_code || !department_id || !password) {
+      return res.status(400).json({ error: 'All fields are required' });
     }
 
     if (password !== confirm_password) {
@@ -52,7 +55,7 @@ router.post('/submit', async (req, res) => {
 
     // Verify college exists
     const collegeResult = await pool.query(
-      'SELECT code FROM colleges WHERE code = $1',
+      'SELECT code, name FROM colleges WHERE code = $1',
       [parseInt(college_code)]
     );
 
@@ -60,24 +63,34 @@ router.post('/submit', async (req, res) => {
       return res.status(404).json({ error: 'Invalid college code' });
     }
 
-    // Check if already requested
+    // Verify department exists and belongs to college
+    const deptResult = await pool.query(
+      'SELECT id, name FROM departments WHERE id = $1 AND college_code = $2',
+      [parseInt(department_id), parseInt(college_code)]
+    );
+
+    if (deptResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Invalid department or department does not belong to this college' });
+    }
+
+    // Check if already requested with this email
     const existingRequest = await pool.query(
-      'SELECT id FROM student_requests WHERE college_code = $1 AND (roll_no = $2 OR email = $3)',
-      [parseInt(college_code), roll_no, email]
+      'SELECT id FROM student_requests WHERE college_code = $1 AND email = $2',
+      [parseInt(college_code), email]
     );
 
     if (existingRequest.rows.length > 0) {
-      return res.status(400).json({ error: 'Registration request already exists for this roll number or email' });
+      return res.status(400).json({ error: 'Registration request already exists for this email' });
     }
 
-    // Check if already a student
+    // Check if already a student with this email
     const existingStudent = await pool.query(
-      'SELECT id FROM students WHERE roll_no = $1 OR email = $2',
-      [roll_no, email]
+      'SELECT id FROM students WHERE email = $1',
+      [email]
     );
 
     if (existingStudent.rows.length > 0) {
-      return res.status(400).json({ error: 'Student with this roll number or email already exists' });
+      return res.status(400).json({ error: 'Student with this email already exists' });
     }
 
     // Hash password
@@ -86,10 +99,10 @@ router.post('/submit', async (req, res) => {
     // Insert registration request
     const result = await pool.query(
       `INSERT INTO student_requests 
-       (college_code, name, email, contact, roll_no, course, password_hash, status, requested_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending', NOW())
-       RETURNING id, name, email, roll_no, requested_at`,
-      [parseInt(college_code), name, email, contact, roll_no, course, password_hash]
+       (college_code, department_id, name, email, contact, password_hash, status, requested_at)
+       VALUES ($1, $2, $3, $4, $5, $6, 'pending', NOW())
+       RETURNING id, name, email, requested_at`,
+      [parseInt(college_code), parseInt(department_id), name, email, contact, password_hash]
     );
 
     console.log('✅ Student request submitted:', result.rows[0]);
@@ -105,8 +118,9 @@ router.post('/submit', async (req, res) => {
   }
 });
 
+
 // ========================================
-// GET ALL PENDING REQUESTS FOR A COLLEGE
+// GET ALL PENDING REQUESTS FOR A COLLEGE (UPDATED)
 // ========================================
 router.get('/:collegeCode/pending', authenticateToken, async (req, res) => {
   try {
@@ -117,10 +131,13 @@ router.get('/:collegeCode/pending', authenticateToken, async (req, res) => {
     }
 
     const result = await pool.query(
-      `SELECT id, name, email, contact, roll_no, course, requested_at
-       FROM student_requests
-       WHERE college_code = $1 AND status = 'pending'
-       ORDER BY requested_at DESC`,
+      `SELECT 
+         sr.id, sr.name, sr.email, sr.contact, sr.requested_at,
+         d.name as department_name
+       FROM student_requests sr
+       JOIN departments d ON sr.department_id = d.id
+       WHERE sr.college_code = $1 AND sr.status = 'pending'
+       ORDER BY sr.requested_at DESC`,
       [collegeCode]
     );
 
@@ -136,6 +153,7 @@ router.get('/:collegeCode/pending', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch requests', details: error.message });
   }
 });
+
 
 // ========================================
 // APPROVE STUDENT REQUEST
@@ -245,5 +263,49 @@ router.post('/:collegeCode/reject/:requestId', authenticateToken, async (req, re
     res.status(500).json({ error: 'Failed to reject request', details: error.message });
   }
 });
+
+// ========================================
+// GET ALL COLLEGES (PUBLIC - NO AUTH)
+// ========================================
+router.get('/colleges', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT code, name FROM colleges ORDER BY name ASC'
+    );
+
+    res.json({
+      colleges: result.rows,
+      count: result.rows.length
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching colleges:', error);
+    res.status(500).json({ error: 'Failed to fetch colleges' });
+  }
+});
+
+// ========================================
+// GET DEPARTMENTS BY COLLEGE CODE (PUBLIC)
+// ========================================
+router.get('/colleges/:collegeCode/departments', async (req, res) => {
+  try {
+    const collegeCode = parseInt(req.params.collegeCode);
+
+    const result = await pool.query(
+      'SELECT id, name FROM departments WHERE college_code = $1 ORDER BY name ASC',
+      [collegeCode]
+    );
+
+    res.json({
+      departments: result.rows,
+      count: result.rows.length
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching departments:', error);
+    res.status(500).json({ error: 'Failed to fetch departments' });
+  }
+});
+
 
 module.exports = router;

@@ -78,16 +78,26 @@
     }
     .register-container label {
       font-weight: 600;
+      color: #000;
     }
-    .register-container input {
+    .register-container input,
+    .register-container select {
       padding: 12px;
       border: none;
       border-radius: 8px;
       outline: none;
       font-size: 1rem;
+      background: rgba(255,255,255,0.9);
+      color: #000;
     }
-    .register-container input:focus {
-      border: 2px solid #000;
+    .register-container input:focus,
+    .register-container select:focus {
+      border: 2px solid #10ac84;
+      box-shadow: 0 0 0 3px rgba(16,172,132,0.2);
+    }
+    .register-container select:disabled {
+      background: rgba(200,200,200,0.5);
+      cursor: not-allowed;
     }
     .register-container button {
       background: #000;
@@ -100,9 +110,14 @@
       cursor: pointer;
       transition: all 0.3s ease;
     }
-    .register-container button:hover {
+    .register-container button:hover:not(:disabled) {
       background: #10ac84;
       transform: scale(1.05);
+    }
+    .register-container button:disabled {
+      background: #888;
+      cursor: not-allowed;
+      transform: none;
     }
     .message {
       margin-top: 15px;
@@ -112,6 +127,20 @@
     }
     .success { color: #007f00; }
     .error { color: #b30000; }
+    .login-link {
+      margin-top: 20px;
+      text-align: center;
+      color: #000;
+      font-weight: 500;
+    }
+    .login-link a {
+      color: #10ac84;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
     footer {
       text-align: center;
       padding: 20px;
@@ -125,6 +154,8 @@
     }
     @media(max-width:600px) {
       .register-container { padding: 25px; }
+      header { padding: 15px 20px; }
+      .logo { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -132,10 +163,10 @@
   <header>
     <div class="logo">EduPredict</div>
     <div class="top-right">
-      <a href="../index.html">Home</a>
-      <a href="../about.html">About</a>
-      <a href="../help.html">Help</a>
-      <a href="../contact.html">Contact</a>
+      <a href="../../index.html">Home</a>
+      <a href="../../about.html">About</a>
+      <a href="../../help.html">Help</a>
+      <a href="../../contact.html">Contact</a>
     </div>
   </header>
 
@@ -143,33 +174,39 @@
     <div class="register-container">
       <h2>🎓 Student Registration</h2>
       <form id="studentRegisterForm" autocomplete="off">
-        <label>Full Name</label>
-        <input type="text" name="name" placeholder="Enter your name" required>
+        <label>Full Name *</label>
+        <input type="text" name="name" placeholder="Enter your full name" required>
 
-        <label>Email Address</label>
+        <label>Email Address *</label>
         <input type="email" name="email" placeholder="Enter valid email" required>
 
-        <label>Contact Number</label>
-        <input type="text" name="contact" placeholder="Enter your phone number" required>
+        <label>Contact Number *</label>
+        <input type="tel" name="contact" placeholder="Enter your phone number" required>
 
-        <label>College Code</label>
-        <input type="text" name="college_code" placeholder="Enter your college code" required>
+        <label>Select College *</label>
+        <select name="college_code" id="collegeSelect" required>
+          <option value="">-- Select Your College --</option>
+        </select>
 
-        <label>Roll Number</label>
-        <input type="text" name="roll_no" placeholder="Enter your roll number" required>
+        <label>Select Department *</label>
+        <select name="department_id" id="departmentSelect" required disabled>
+          <option value="">-- First Select College --</option>
+        </select>
 
-        <label>Course (Optional)</label>
-        <input type="text" name="course" placeholder="e.g., B.Tech IT">
+        <label>Password *</label>
+        <input type="password" name="password" placeholder="Create password (min 6 characters)" required minlength="6">
 
-        <label>Password</label>
-        <input type="password" name="password" placeholder="Create password" required>
-
-        <label>Confirm Password</label>
+        <label>Confirm Password *</label>
         <input type="password" name="confirm_password" placeholder="Confirm password" required>
 
-        <button type="submit">Register</button>
+        <button type="submit" id="submitBtn">Register</button>
       </form>
+      
       <div class="message" id="statusMsg"></div>
+      
+      <div class="login-link">
+        Already registered? <a href="../login/student.html">Login here</a>
+      </div>
     </div>
   </main>
 
@@ -178,51 +215,173 @@
   </footer>
 
   <script>
-const form = document.getElementById("studentRegisterForm");
-const msg = document.getElementById("statusMsg");
-const backendUrl = 'https://edupredict-l9eg.onrender.com';
+    const form = document.getElementById("studentRegisterForm");
+    const msg = document.getElementById("statusMsg");
+    const collegeSelect = document.getElementById("collegeSelect");
+    const departmentSelect = document.getElementById("departmentSelect");
+    const submitBtn = document.getElementById("submitBtn");
+    const backendUrl = 'https://edupredict-l9eg.onrender.com';
 
-form.onsubmit = async (e) => {
-  e.preventDefault();
-  msg.textContent = "⏳ Processing...";
-  msg.className = "message";
+    // Load Colleges on Page Load
+    async function loadColleges() {
+      try {
+        console.log('📡 Loading colleges...');
+        const res = await fetch(`${backendUrl}/api/student-requests/colleges`);
+        
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
+        const data = await res.json();
 
-  const formData = new FormData(form);
-  const data = Object.fromEntries(formData.entries());
+        if (data.colleges && data.colleges.length > 0) {
+          collegeSelect.innerHTML = '<option value="">-- Select Your College --</option>';
+          
+          data.colleges.forEach(college => {
+            const option = document.createElement('option');
+            option.value = college.code;
+            option.textContent = `${college.name} (Code: ${college.code})`;
+            collegeSelect.appendChild(option);
+          });
 
-  // Validate passwords match
-  if (data.password !== data.confirm_password) {
-    msg.textContent = "❌ Passwords do not match";
-    msg.classList.add("error");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${backendUrl}/api/studentRequests/submit`, {
-      method: "POST",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    
-    const result = await res.json();
-    
-    if (res.ok) {
-      msg.textContent = result.message || "✅ Registration request submitted! Please wait for college approval.";
-      msg.classList.add("success");
-      form.reset();
-      setTimeout(() => {
-        window.location.href = "../login/student.html";
-      }, 3000);
-    } else {
-      msg.textContent = result.error || "❌ Registration failed";
-      msg.classList.add("error");
+          console.log('✅ Loaded', data.colleges.length, 'colleges');
+        } else {
+          collegeSelect.innerHTML = '<option value="">-- No Colleges Available --</option>';
+          msg.textContent = '⚠️ No colleges found. Please contact admin.';
+          msg.classList.add('error');
+        }
+      } catch (error) {
+        console.error('❌ Error loading colleges:', error);
+        collegeSelect.innerHTML = '<option value="">-- Error Loading Colleges --</option>';
+        msg.textContent = '❌ Failed to load colleges. Please refresh the page.';
+        msg.classList.add('error');
+      }
     }
-  } catch (err) {
-    console.error('Error:', err);
-    msg.textContent = "❌ Cannot connect to server. Please try again.";
-    msg.classList.add("error");
-  }
-};
-</script>
+
+    // Load Departments when College is Selected
+    collegeSelect.addEventListener('change', async (e) => {
+      const collegeCode = e.target.value;
+      
+      // Reset department dropdown
+      departmentSelect.innerHTML = '<option value="">-- Loading Departments... --</option>';
+      departmentSelect.disabled = true;
+      msg.textContent = '';
+      msg.className = 'message';
+
+      if (!collegeCode) {
+        departmentSelect.innerHTML = '<option value="">-- First Select College --</option>';
+        return;
+      }
+
+      try {
+        console.log('📡 Loading departments for college:', collegeCode);
+        const res = await fetch(`${backendUrl}/api/student-requests/colleges/${collegeCode}/departments`);
+        
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
+        const data = await res.json();
+
+        if (data.departments && data.departments.length > 0) {
+          departmentSelect.innerHTML = '<option value="">-- Select Your Department --</option>';
+          
+          data.departments.forEach(dept => {
+            const option = document.createElement('option');
+            option.value = dept.id;
+            option.textContent = dept.name;
+            departmentSelect.appendChild(option);
+          });
+
+          departmentSelect.disabled = false;
+          console.log('✅ Loaded', data.departments.length, 'departments');
+        } else {
+          departmentSelect.innerHTML = '<option value="">-- No Departments Available --</option>';
+          msg.textContent = '⚠️ This college has no departments yet.';
+          msg.classList.add('error');
+        }
+      } catch (error) {
+        console.error('❌ Error loading departments:', error);
+        departmentSelect.innerHTML = '<option value="">-- Error Loading Departments --</option>';
+        msg.textContent = '❌ Failed to load departments. Please try again.';
+        msg.classList.add('error');
+      }
+    });
+
+    // Form Submission
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      msg.textContent = "⏳ Processing your registration...";
+      msg.className = "message";
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Registering...";
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      // Validate passwords match
+      if (data.password !== data.confirm_password) {
+        msg.textContent = "❌ Passwords do not match";
+        msg.classList.add("error");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Register";
+        return;
+      }
+
+      // Remove confirm_password before sending
+      delete data.confirm_password;
+
+      console.log('📤 Submitting registration:', { 
+        name: data.name, 
+        email: data.email, 
+        college_code: data.college_code,
+        department_id: data.department_id 
+      });
+
+      try {
+        const res = await fetch(`${backendUrl}/api/student-requests/submit`, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await res.json();
+        console.log('📨 Server response:', result);
+        
+        if (res.ok) {
+          msg.textContent = result.message || "✅ Registration request submitted! Please wait for college approval.";
+          msg.classList.add("success");
+          form.reset();
+          
+          // Reload colleges and reset department dropdown
+          loadColleges();
+          departmentSelect.disabled = true;
+          departmentSelect.innerHTML = '<option value="">-- First Select College --</option>';
+          
+          // Redirect to login after 3 seconds
+          setTimeout(() => {
+            window.location.href = "../login/student.html";
+          }, 3000);
+        } else {
+          msg.textContent = result.error || "❌ Registration failed";
+          msg.classList.add("error");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Register";
+        }
+      } catch (err) {
+        console.error('❌ Network error:', err);
+        msg.textContent = "❌ Cannot connect to server. Please check your internet connection and try again.";
+        msg.classList.add("error");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Register";
+      }
+    };
+
+    // Load colleges when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 Page loaded, initializing...');
+      loadColleges();
+    });
+  </script>
 </body>
 </html>
