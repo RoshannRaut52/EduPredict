@@ -20,7 +20,7 @@
       flex-direction: column;
     }
     
-    /* Header - Same as index */
+    /* Header */
     header {
       display: flex;
       justify-content: space-between;
@@ -73,112 +73,159 @@
       transform: scale(1.05);
     }
     
-    /* Main Container */
-    .container {
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 0 20px;
-      flex: 1;
+    /* Main Container with Sidebar */
+    .main-wrapper {
+      display: flex;
+      min-height: calc(100vh - 130px);
+      max-width: 1400px;
+      margin: 20px auto;
+      width: 95%;
+      gap: 25px;
     }
     
-    /* Page Header */
-    .page-header {
+    /* Left Sidebar - Sticky */
+    .left-sidebar {
+      flex: 0 0 300px;
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    /* Department Info Card */
+    .dept-info {
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(10px);
-      padding: 25px 30px;
+      padding: 25px;
       border-radius: 15px;
-      margin-bottom: 30px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     
-    .page-header h2 {
-      font-size: 2rem;
+    .dept-info h2 {
+      font-size: 1.5rem;
       color: #000;
-      margin-bottom: 10px;
-    }
-    
-    .page-header p {
-      color: #333;
-      font-size: 1.1rem;
-      font-weight: 500;
-    }
-    
-    /* Stats Summary */
-    .stats-summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .stat-card {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(8px);
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      transition: transform 0.3s;
-    }
-    
-    .stat-card:hover {
-      transform: translateY(-5px);
-    }
-    
-    .stat-card h3 {
-      font-size: 0.9rem;
-      color: #000;
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
-    
-    .stat-card p {
-      font-size: 2rem;
+      margin-bottom: 8px;
       font-weight: 700;
     }
     
-    .stat-card.total { color: #2e86de; }
-    .stat-card.safe { color: #10ac84; }
-    .stat-card.warning { color: #ff9f43; }
-    .stat-card.danger { color: #ee5253; }
+    .dept-info p {
+      color: #333;
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
     
-    /* Search and Filter */
-    .controls {
+    .dept-info .year-badge {
+      display: inline-block;
+      background: #10ac84;
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    
+    /* Search Box */
+    .search-card {
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(8px);
       padding: 20px;
       border-radius: 12px;
-      margin-bottom: 25px;
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-      align-items: center;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
     
-    .search-box {
-      flex: 1;
-      min-width: 250px;
+    .search-card h3 {
+      font-size: 1.1rem;
+      color: #000;
+      margin-bottom: 12px;
+      font-weight: 600;
     }
     
-    .search-box input {
+    .search-card input {
       width: 100%;
-      padding: 12px 20px;
+      padding: 12px 15px;
       border-radius: 8px;
       border: 2px solid rgba(0,0,0,0.1);
-      font-size: 1rem;
+      font-size: 0.95rem;
       background: rgba(255,255,255,0.9);
       transition: 0.3s;
     }
     
-    .search-box input:focus {
+    .search-card input:focus {
       outline: none;
       border-color: #10ac84;
       box-shadow: 0 0 0 3px rgba(16,172,132,0.2);
     }
     
+    /* Stats Summary */
+    .stats-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    
+    .stats-card h3 {
+      font-size: 1.1rem;
+      color: #000;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .stat-item:last-child {
+      border-bottom: none;
+    }
+    
+    .stat-label {
+      font-weight: 500;
+      color: #333;
+      font-size: 0.95rem;
+    }
+    
+    .stat-value {
+      font-weight: 700;
+      font-size: 1.3rem;
+    }
+    
+    .stat-value.total { color: #2e86de; }
+    .stat-value.safe { color: #10ac84; }
+    .stat-value.warning { color: #ff9f43; }
+    .stat-value.danger { color: #ee5253; }
+    
+    /* Filter Buttons */
+    .filter-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    
+    .filter-card h3 {
+      font-size: 1.1rem;
+      color: #000;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    
     .filter-btn {
-      padding: 12px 24px;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
       border: none;
       border-radius: 8px;
       font-weight: 600;
@@ -186,15 +233,24 @@
       transition: 0.3s;
       background: rgba(0,0,0,0.8);
       color: #fff;
+      font-size: 0.9rem;
     }
     
     .filter-btn:hover {
       background: #10ac84;
-      transform: scale(1.05);
+      transform: scale(1.02);
     }
     
     .filter-btn.active {
       background: #10ac84;
+      box-shadow: 0 4px 12px rgba(16,172,132,0.4);
+    }
+    
+    /* Right Content Area */
+    .right-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
     
     /* Students Table */
@@ -204,6 +260,7 @@
       border-radius: 15px;
       padding: 30px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      flex: 1;
     }
     
     .students-table {
@@ -217,6 +274,9 @@
     .students-table thead {
       background: rgba(0,0,0,0.9);
       color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     
     .students-table th {
@@ -235,7 +295,7 @@
     
     .students-table tbody tr:hover {
       background: rgba(16,172,132,0.2);
-      transform: scale(1.01);
+      transform: scale(1.005);
     }
     
     .students-table td {
@@ -274,24 +334,39 @@
       color: #fff;
     }
     
-    /* Empty State */
-    .empty-state {
+    /* View Button */
+    .view-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background: #000;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 0.85rem;
+    }
+    
+    .view-btn:hover {
+      background: #10ac84;
+      transform: scale(1.05);
+    }
+    
+    /* Empty/Loading States */
+    .empty-state, .loading {
       text-align: center;
       padding: 60px 20px;
       color: #333;
     }
     
+    .loading {
+      font-size: 1.2rem;
+      color: #000;
+    }
+    
     .empty-state h3 {
       font-size: 1.5rem;
       margin-bottom: 10px;
-    }
-    
-    /* Loading State */
-    .loading {
-      text-align: center;
-      padding: 60px 20px;
-      font-size: 1.2rem;
-      color: #000;
     }
     
     /* Footer */
@@ -305,6 +380,19 @@
     }
     
     /* Responsive */
+    @media (max-width: 1024px) {
+      .main-wrapper {
+        flex-direction: column;
+      }
+      
+      .left-sidebar {
+        flex: 0 0 auto;
+        position: relative;
+        top: 0;
+        max-height: none;
+      }
+    }
+    
     @media (max-width: 768px) {
       header {
         padding: 15px 20px;
@@ -336,74 +424,85 @@
     </a>
   </header>
 
-  <div class="container">
-    <!-- Page Header -->
-    <div class="page-header">
-      <h2 id="pageTitle">Students List</h2>
-      <p id="pageSubtitle">Department • Year</p>
-    </div>
+  <div class="main-wrapper">
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar">
+      <!-- Department Info -->
+      <div class="dept-info">
+        <h2 id="deptName">Department</h2>
+        <p id="deptYear">Year</p>
+        <span class="year-badge" id="yearBadge">Loading...</span>
+      </div>
 
-    <!-- Stats Summary -->
-    <div class="stats-summary">
-      <div class="stat-card total">
-        <h3>Total Students</h3>
-        <p id="totalCount">0</p>
-      </div>
-      <div class="stat-card safe">
-        <h3>Safe Students</h3>
-        <p id="safeCount">0</p>
-      </div>
-      <div class="stat-card warning">
-        <h3>At Risk</h3>
-        <p id="warningCount">0</p>
-      </div>
-      <div class="stat-card danger">
-        <h3>High Risk</h3>
-        <p id="dangerCount">0</p>
-      </div>
-    </div>
-
-    <!-- Search and Filter -->
-    <div class="controls">
-      <div class="search-box">
+      <!-- Search Box -->
+      <div class="search-card">
+        <h3>🔍 Search Students</h3>
         <input 
           type="text" 
           id="searchInput" 
-          placeholder="🔍 Search by Roll No or Name..."
+          placeholder="Roll No or Name..."
         />
       </div>
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="safe">Safe</button>
-      <button class="filter-btn" data-filter="warning">At Risk</button>
-      <button class="filter-btn" data-filter="danger">High Risk</button>
-    </div>
 
-    <!-- Students Table -->
-    <div class="students-container">
-      <div id="loadingState" class="loading">
-        Loading students...
+      <!-- Stats Summary -->
+      <div class="stats-card">
+        <h3>📊 Statistics</h3>
+        <div class="stat-item">
+          <span class="stat-label">Total Students</span>
+          <span class="stat-value total" id="totalCount">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Safe Students</span>
+          <span class="stat-value safe" id="safeCount">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">At Risk</span>
+          <span class="stat-value warning" id="warningCount">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">High Risk</span>
+          <span class="stat-value danger" id="dangerCount">0</span>
+        </div>
       </div>
-      
-      <table class="students-table" id="studentsTable" style="display: none;">
-        <thead>
-          <tr>
-            <th>Roll No</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Alert Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="studentsTableBody">
-          <!-- Students will be inserted here dynamically -->
-        </tbody>
-      </table>
 
-      <div id="emptyState" class="empty-state" style="display: none;">
-        <h3>📚 No students found</h3>
-        <p>No students are enrolled in this year yet.</p>
+      <!-- Filter Buttons -->
+      <div class="filter-card">
+        <h3>🔽 Filter by Status</h3>
+        <button class="filter-btn active" data-filter="all">All Students</button>
+        <button class="filter-btn" data-filter="safe">✓ Safe Only</button>
+        <button class="filter-btn" data-filter="warning">⚠ At Risk Only</button>
+        <button class="filter-btn" data-filter="danger">⚠️ High Risk Only</button>
       </div>
-    </div>
+    </aside>
+
+    <!-- Right Content Area -->
+    <main class="right-content">
+      <div class="students-container">
+        <div id="loadingState" class="loading">
+          Loading students...
+        </div>
+        
+        <table class="students-table" id="studentsTable" style="display: none;">
+          <thead>
+            <tr>
+              <th>Roll No</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Alert Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="studentsTableBody">
+            <!-- Students will be inserted here dynamically -->
+          </tbody>
+        </table>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+          <h3>📚 No students found</h3>
+          <p>No students are enrolled in this year yet.</p>
+        </div>
+      </div>
+    </main>
   </div>
 
   <footer>
@@ -496,11 +595,10 @@
         
         allStudents = data.students || [];
         
-        // Update page title
-        document.getElementById('pageTitle').textContent = 
-          `${data.department_name || 'Department'} - ${year}`;
-        document.getElementById('pageSubtitle').textContent = 
-          `${data.department_name || 'Department'} • ${year}`;
+        // Update sidebar info
+        document.getElementById('deptName').textContent = data.department_name || 'Department';
+        document.getElementById('deptYear').textContent = year;
+        document.getElementById('yearBadge').textContent = year;
         
         if (allStudents.length === 0) {
           showEmptyState();
@@ -546,7 +644,7 @@
             </span>
           </td>
           <td>
-            <button class="filter-btn" onclick="viewStudent('${student.id}')">
+            <button class="view-btn" onclick="viewStudent('${student.id}')">
               View
             </button>
           </td>
@@ -583,6 +681,11 @@
       document.getElementById('loadingState').style.display = 'none';
       document.getElementById('studentsTable').style.display = 'none';
       document.getElementById('emptyState').style.display = 'block';
+      
+      // Update sidebar with placeholder data
+      document.getElementById('deptName').textContent = 'Department';
+      document.getElementById('deptYear').textContent = year;
+      document.getElementById('yearBadge').textContent = year;
     }
 
     // Search Students
