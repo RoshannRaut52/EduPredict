@@ -4,7 +4,6 @@ const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ========================================
@@ -32,6 +31,8 @@ const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200
 };
+
+const app = express();
 
 app.use(cors({
   origin: allowedOrigins,
