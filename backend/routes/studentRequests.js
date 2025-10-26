@@ -242,20 +242,21 @@ const alert_status = 0; // hardcoded as 'safe' on approval
 
 const studentResult = await pool.query(
   `INSERT INTO students 
-   (department_id, roll_no, name, email, contact, year, password_hash, alert_status, created_at)
-   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+   (department_id, roll_no, name, email, contact, year, password_hash, alert_status, created_at, college_code)
+   VALUES ($1, $2, $3, $4, $5, $6, $7, 0, NOW(), $8)
    RETURNING roll_no, name, email`,
   [
-     request.department_id,
-     roll_no,
-     request.name,
-     request.email,
-     request.contact,
-     year,
-     request.password_hash,
-     alert_status
+    request.department_id,
+    roll_no,
+    request.name,
+    request.email,
+    request.contact,
+    year,
+    request.password_hash,
+    request.college_code   // <- Add this argument!
   ]
 );
+
 
 
 
