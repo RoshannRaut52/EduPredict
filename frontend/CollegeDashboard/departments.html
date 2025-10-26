@@ -585,7 +585,7 @@ function createDepartmentElement(dept) {
     yearCard.onclick = (e) => {
       e.stopPropagation(); // Prevent triggering parent click
       console.log('📍 Navigating to:', `students.html?dept=${dept.id}&year=${encodeURIComponent(year.year)}`);
-      window.location.href = `students.html?dept=${dept.id}&year=${encodeURIComponent(year.year)}`;
+      window.location.href = `studentList.html?dept=${dept.id}&year=${encodeURIComponent(year.year)}`;
     };
     
     // ✅ ADD: Visual feedback
