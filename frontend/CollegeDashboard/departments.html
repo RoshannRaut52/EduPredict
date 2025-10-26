@@ -360,6 +360,24 @@
         justify-content: center;
       }
     }
+
+    .year-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+  flex: 1 1 170px;
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: all 0.3s ease; /* ✅ Changed from transform only */
+  cursor: pointer; /* ✅ Added cursor pointer */
+}
+
+.year-card:hover {
+  transform: translateY(-5px);
+  background: rgba(16, 172, 132, 0.3); /* ✅ Added hover background */
+  box-shadow: 0 6px 20px rgba(16, 172, 132, 0.4); /* ✅ Enhanced shadow */
+}
+
   </style>
 </head>
 <body>
@@ -436,12 +454,12 @@
 
   <script>
     const backendUrl = 'https://edupredict-l9eg.onrender.com';
-    let departmentsData = [];
-    let collegeCode = null; // ✅ CHANGED: Renamed from collegeId
-    let authToken = null;
+let departmentsData = [];
+let collegeCode = null;
+let authToken = null;
 
-    // Authentication Check
-    function checkAuthentication() {
+// Authentication Check
+function checkAuthentication() {
   authToken = localStorage.getItem('collegeToken');
   const collegeDataStr = localStorage.getItem('collegeData');
   
@@ -457,7 +475,7 @@
   
   try {
     const collegeData = JSON.parse(collegeDataStr);
-    collegeCode = collegeData.code; // ✅ CHANGED: Use code instead of id
+    collegeCode = collegeData.code;
     
     if (!collegeCode) {
       console.error('❌ College code not found in:', collegeData);
@@ -480,10 +498,8 @@
   }
 }
 
-
-
-    // Load Departments from Backend
-    async function loadDepartments() {
+// Load Departments from Backend
+async function loadDepartments() {
   if (!checkAuthentication()) return;
   
   try {
@@ -495,107 +511,119 @@
       }
     });
 
-        if (!response.ok) {
-          throw new Error('Failed to load departments');
-        }
-
-        const data = await response.json();
-        departmentsData = data.departments || [];
-        renderDepartments();
-      } catch (error) {
-        console.error('Error loading departments:', error);
-        document.getElementById('departmentsList').innerHTML = `
-          <div style="text-align: center; padding: 40px; color: #ee5253;">
-            <p>⚠️ Failed to load departments. Please try again.</p>
-            <button onclick="loadDepartments()" style="margin-top: 20px;">Retry</button>
-          </div>
-        `;
-      }
+    if (!response.ok) {
+      throw new Error('Failed to load departments');
     }
 
-    // Render Departments
-    function renderDepartments() {
-      const listEl = document.getElementById('departmentsList');
-      listEl.innerHTML = '';
+    const data = await response.json();
+    departmentsData = data.departments || [];
+    renderDepartments();
+  } catch (error) {
+    console.error('Error loading departments:', error);
+    document.getElementById('departmentsList').innerHTML = `
+      <div style="text-align: center; padding: 40px; color: #ee5253;">
+        <p>⚠️ Failed to load departments. Please try again.</p>
+        <button onclick="loadDepartments()" style="margin-top: 20px;">Retry</button>
+      </div>
+    `;
+  }
+}
 
-      if (departmentsData.length === 0) {
-        listEl.innerHTML = `
-          <div style="text-align: center; padding: 40px; color: #141313;">
-            <p>📚 No departments found. Add your first department!</p>
-          </div>
-        `;
-        updateRemoveDeptOptions();
-        return;
-      }
+// Render Departments
+function renderDepartments() {
+  const listEl = document.getElementById('departmentsList');
+  listEl.innerHTML = '';
 
-      departmentsData.forEach(dept => {
-        listEl.appendChild(createDepartmentElement(dept));
-      });
-      
-      updateRemoveDeptOptions();
-    }
+  if (departmentsData.length === 0) {
+    listEl.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: #141313;">
+        <p>📚 No departments found. Add your first department!</p>
+      </div>
+    `;
+    updateRemoveDeptOptions();
+    return;
+  }
 
-    // Create Department Element
-    function createDepartmentElement(dept) {
-      const deptDiv = document.createElement('div');
-      deptDiv.className = 'department';
-      deptDiv.setAttribute('role', 'listitem');
-      deptDiv.setAttribute('tabindex', 0);
+  departmentsData.forEach(dept => {
+    listEl.appendChild(createDepartmentElement(dept));
+  });
+  
+  updateRemoveDeptOptions();
+}
 
-      const header = document.createElement('div');
-      header.className = 'department-header';
-      header.innerHTML = `${dept.name} <span class="expand-icon">&#9654;</span>`;
-      header.onclick = () => toggleYears(`years-${dept.id}`, header);
+// ✅ FIXED: Create Department Element with Click Navigation
+function createDepartmentElement(dept) {
+  const deptDiv = document.createElement('div');
+  deptDiv.className = 'department';
+  deptDiv.setAttribute('role', 'listitem');
+  deptDiv.setAttribute('tabindex', 0);
 
-      deptDiv.appendChild(header);
+  const header = document.createElement('div');
+  header.className = 'department-header';
+  header.innerHTML = `${dept.name} <span class="expand-icon">&#9654;</span>`;
+  header.onclick = () => toggleYears(`years-${dept.id}`, header);
 
-      const yearsPanel = document.createElement('div');
-      yearsPanel.className = 'year-panel';
-      yearsPanel.id = `years-${dept.id}`;
-      yearsPanel.style.display = 'none';
+  deptDiv.appendChild(header);
 
-      const years = dept.years || [
-        { year: "1st Year", total: 0, saved: 0, risk: 0 },
-        { year: "2nd Year", total: 0, saved: 0, risk: 0 },
-        { year: "3rd Year", total: 0, saved: 0, risk: 0 },
-        { year: "4th Year", total: 0, saved: 0, risk: 0 }
-      ];
+  const yearsPanel = document.createElement('div');
+  yearsPanel.className = 'year-panel';
+  yearsPanel.id = `years-${dept.id}`;
+  yearsPanel.style.display = 'none';
 
-      years.forEach(year => {
-        const yearCard = document.createElement('div');
-        yearCard.className = 'year-card';
-        yearCard.innerHTML = `
-          <h4>${year.year}</h4>
-          <ul class="stats-list">
-            <li>Total Students: ${year.total || 0}</li>
-            <li>Saved from Dropout: ${year.saved || 0}</li>
-            <li>At Risk: ${year.risk || 0}</li>
-          </ul>
-        `;
-        yearsPanel.appendChild(yearCard);
-      });
+  const years = dept.years || [
+    { year: "1st Year", total: 0, saved: 0, risk: 0 },
+    { year: "2nd Year", total: 0, saved: 0, risk: 0 },
+    { year: "3rd Year", total: 0, saved: 0, risk: 0 },
+    { year: "4th Year", total: 0, saved: 0, risk: 0 }
+  ];
 
-      deptDiv.appendChild(yearsPanel);
-      return deptDiv;
-    }
+  years.forEach(year => {
+    const yearCard = document.createElement('div');
+    yearCard.className = 'year-card';
+    
+    // ✅ ADD: Click handler to navigate to students page
+    yearCard.onclick = (e) => {
+      e.stopPropagation(); // Prevent triggering parent click
+      console.log('📍 Navigating to:', `students.html?dept=${dept.id}&year=${encodeURIComponent(year.year)}`);
+      window.location.href = `students.html?dept=${dept.id}&year=${encodeURIComponent(year.year)}`;
+    };
+    
+    // ✅ ADD: Visual feedback
+    yearCard.style.cursor = 'pointer';
+    yearCard.setAttribute('title', `View ${year.year} students`);
+    
+    yearCard.innerHTML = `
+      <h4>${year.year}</h4>
+      <ul class="stats-list">
+        <li>Total Students: ${year.total || 0}</li>
+        <li>Saved from Dropout: ${year.saved || 0}</li>
+        <li>At Risk: ${year.risk || 0}</li>
+      </ul>
+    `;
+    yearsPanel.appendChild(yearCard);
+  });
 
-    // Toggle Years Panel
-    function toggleYears(panelId, headerEl) {
-      const panel = document.getElementById(panelId);
-      const icon = headerEl.querySelector('.expand-icon');
-      const isVisible = panel.style.display === "flex";
+  deptDiv.appendChild(yearsPanel);
+  return deptDiv;
+}
 
-      if (isVisible) {
-        panel.style.display = 'none';
-        icon.classList.remove('expanded');
-      } else {
-        panel.style.display = 'flex';
-        icon.classList.add('expanded');
-      }
-    }
+// Toggle Years Panel
+function toggleYears(panelId, headerEl) {
+  const panel = document.getElementById(panelId);
+  const icon = headerEl.querySelector('.expand-icon');
+  const isVisible = panel.style.display === "flex";
 
-    // Add Department
-async function addDepartment(departmentName, departmentCode) {
+  if (isVisible) {
+    panel.style.display = 'none';
+    icon.classList.remove('expanded');
+  } else {
+    panel.style.display = 'flex';
+    icon.classList.add('expanded');
+  }
+}
+
+  // Add Department
+  async function addDepartment(departmentName, departmentCode) {
   const submitBtn = document.getElementById('submitAddBtn');
   submitBtn.disabled = true;
   submitBtn.textContent = 'Adding...';
