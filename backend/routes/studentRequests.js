@@ -238,13 +238,25 @@ router.post('/:collegeCode/approve/:requestId', authenticateToken, async (req, r
 
     try {
       // Insert into students table
+const alert_status = 0; // hardcoded as 'safe' on approval
+
 const studentResult = await pool.query(
   `INSERT INTO students 
    (department_id, roll_no, name, email, contact, year, password_hash, alert_status, created_at)
-   VALUES ($1, $2, $3, $4, $5, $6, $7, 'safe', NOW())
-   RETURNING roll_no, name, email`,  // ✅ FIXED: Use roll_no instead of id
-  [request.department_id, roll_no, request.name, request.email, request.contact, year, request.password_hash]
+   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+   RETURNING roll_no, name, email`,
+  [
+     request.department_id,
+     roll_no,
+     request.name,
+     request.email,
+     request.contact,
+     year,
+     request.password_hash,
+     alert_status
+  ]
 );
+
 
 
       // Update request status
