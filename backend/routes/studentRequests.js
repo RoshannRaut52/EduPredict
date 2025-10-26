@@ -118,7 +118,7 @@ router.post('/submit', async (req, res) => {
 
     // Check if already requested with this email
     const existingRequest = await pool.query(
-      'SELECT id FROM student_requests WHERE college_code = $1 AND email = $2',
+      'SELECT * FROM student_requests WHERE college_code = $1 AND email = $2',  // ✅ Use * instead of id
       [parseInt(college_code), email]
     );
 
@@ -128,7 +128,7 @@ router.post('/submit', async (req, res) => {
 
     // Check if already a student with this email
     const existingStudent = await pool.query(
-      'SELECT id FROM students WHERE email = $1',
+      'SELECT roll_no FROM students WHERE email = $1',  // ✅ FIXED: Use roll_no instead of id
       [email]
     );
 
@@ -144,7 +144,7 @@ router.post('/submit', async (req, res) => {
       `INSERT INTO student_requests 
        (college_code, department_id, name, email, contact, password_hash, status, requested_at)
        VALUES ($1, $2, $3, $4, $5, $6, 'pending', NOW())
-       RETURNING id, name, email, requested_at`,
+       RETURNING *`,  // ✅ FIXED: Return all columns instead of specific ones
       [parseInt(college_code), parseInt(department_id), name, email, contact, password_hash]
     );
 
@@ -152,7 +152,12 @@ router.post('/submit', async (req, res) => {
 
     res.status(201).json({
       message: 'Registration request submitted successfully! Please wait for college approval.',
-      request: result.rows[0]
+      request: {
+        id: result.rows[0].id,
+        name: result.rows[0].name,
+        email: result.rows[0].email,
+        requested_at: result.rows[0].requested_at
+      }
     });
 
   } catch (error) {
@@ -160,6 +165,7 @@ router.post('/submit', async (req, res) => {
     res.status(500).json({ error: 'Failed to submit registration request', details: error.message });
   }
 });
+
 
 // ========================================
 // GET ALL PENDING REQUESTS FOR A COLLEGE
@@ -232,13 +238,14 @@ router.post('/:collegeCode/approve/:requestId', authenticateToken, async (req, r
 
     try {
       // Insert into students table
-      const studentResult = await pool.query(
-        `INSERT INTO students 
-         (department_id, roll_no, name, email, contact, year, password_hash, alert_status, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, 'safe', NOW())
-         RETURNING id, roll_no, name, email`,
-        [request.department_id, roll_no, request.name, request.email, request.contact, year, request.password_hash]
-      );
+const studentResult = await pool.query(
+  `INSERT INTO students 
+   (department_id, roll_no, name, email, contact, year, password_hash, alert_status, created_at)
+   VALUES ($1, $2, $3, $4, $5, $6, $7, 'safe', NOW())
+   RETURNING roll_no, name, email`,  // ✅ FIXED: Use roll_no instead of id
+  [request.department_id, roll_no, request.name, request.email, request.contact, year, request.password_hash]
+);
+
 
       // Update request status
       await pool.query(
