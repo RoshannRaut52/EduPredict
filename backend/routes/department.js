@@ -7,7 +7,7 @@ router.get('/:departmentId/students', async (req, res) => {
   const departmentId = parseInt(req.params.departmentId);
   try {
     const result = await pool.query(
-      'SELECT * FROM students WHERE department_id = $1',
+      'SELECT * FROM students WHERE department_code = $1',
       [departmentId]
     );
     res.json(result.rows);
@@ -27,7 +27,7 @@ router.get('/:departmentId/years/summary', async (req, res) => {
          SUM(CASE WHEN alert_status = 0 THEN 1 ELSE 0 END) AS saved,
          SUM(CASE WHEN alert_status = 1 THEN 1 ELSE 0 END) AS risk
        FROM students 
-       WHERE department_id = $1
+       WHERE department_code = $1
        GROUP BY year
        ORDER BY year ASC`,
       [departmentId]
