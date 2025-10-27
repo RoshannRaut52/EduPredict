@@ -11,29 +11,18 @@ const PORT = process.env.PORT || 5000;
 // CORS CONFIGURATION
 // ========================================
 const corsOptions = {
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      'https://edu-predict-sih.vercel.app',
-      'http://localhost:3000',
-      'http://localhost:5173'
-    ];
-    
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.log('❌ CORS blocked origin:', origin);
-      callback(null, true); // Allow temporarily for debugging, use 'false' for strict CORS
-    }
-  },
+  origin: [
+    'https://edu-predict-sih.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5173'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   credentials: true,
   optionsSuccessStatus: 200
 };
-
 app.use(cors(corsOptions));
+
 app.options('*', cors(corsOptions));
 app.use(express.json());
 
