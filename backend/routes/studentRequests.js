@@ -240,6 +240,7 @@ router.post('/:collegeCode/approve/:requestId', authenticateToken, async (req, r
       // Insert into students table
 const alert_status = 0; // hardcoded as 'safe' on approval
 
+// Insert student as before
 const studentResult = await pool.query(
   `INSERT INTO students 
    (department_id, roll_no, name, email, contact, year, password_hash, alert_status, created_at, college_code)
@@ -253,12 +254,15 @@ const studentResult = await pool.query(
     request.contact,
     year,
     request.password_hash,
-    request.college_code   // <- Add this argument!
+    request.college_code // Make sure this field is available
   ]
 );
 
-
-
+// Increment college's student count
+await pool.query(
+  'UPDATE colleges SET total_student = total_student + 1 WHERE code = $1',
+  [request.college_code]
+);
 
       // Update request status
       await pool.query(

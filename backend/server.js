@@ -174,6 +174,13 @@ const studentRequestsRoutes = require('./routes/studentRequests');
 app.use('/api/student-requests', studentRequestsRoutes);
 
 // ========================================
+// Department dashboard Routes
+// ========================================
+const departmentRoutes = require('./routes/department');
+app.use('/api/departments', departmentRoutes);
+
+
+// ========================================
 // STUDENT REGISTRATION & LOGIN
 // ========================================
 app.post('/register/student', async (req, res) => {
