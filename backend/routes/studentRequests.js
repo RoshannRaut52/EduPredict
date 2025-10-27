@@ -82,12 +82,12 @@ router.get('/colleges/:collegeCode/departments', async (req, res) => {
 // ========================================
 router.post('/submit', async (req, res) => {
   try {
-    const { name, email, contact, college_code, department_id, password } = req.body;
+    const { name, email, contact, college_code, department_code, password } = req.body;
 
-    console.log('📥 Student registration request:', { name, email, college_code, department_id });
+    console.log('📥 Student registration request:', { name, email, college_code, department_code });
 
     // Validation
-    if (!name || !email || !contact || !college_code || !department_id || !password) {
+    if (!name || !email || !contact || !college_code || !department_code || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -104,7 +104,7 @@ router.post('/submit', async (req, res) => {
     // Verify department exists and belongs to college
     const deptResult = await pool.query(
       'SELECT id, name FROM departments WHERE id = $1 AND college_code = $2',
-      [parseInt(department_id), parseInt(college_code)]
+      [parseInt(department_code), parseInt(college_code)]
     );
 
     if (deptResult.rows.length === 0) {
@@ -137,10 +137,10 @@ router.post('/submit', async (req, res) => {
     // Insert registration request
     const result = await pool.query(
       `INSERT INTO student_requests 
-       (college_code, department_id, name, email, contact, password_hash, status, requested_at)
+       (college_code, department_code, name, email, contact, password_hash, status, requested_at)
        VALUES ($1, $2, $3, $4, $5, $6, 'pending', NOW())
        RETURNING *`,  // ✅ FIXED: Return all columns instead of specific ones
-      [parseInt(college_code), parseInt(department_id), name, email, contact, password_hash]
+      [parseInt(college_code), parseInt(department_code), name, email, contact, password_hash]
     );
 
     console.log('✅ Student request submitted:', result.rows[0]);
@@ -176,9 +176,9 @@ router.get('/:collegeCode/pending', authenticateToken, async (req, res) => {
     const result = await pool.query(
       `SELECT 
          sr.id, sr.name, sr.email, sr.contact, sr.requested_at,
-         d.name as department_name, sr.department_id
+         d.name as department_name, sr.department_code
        FROM student_requests sr
-       JOIN departments d ON sr.department_id = d.id
+       JOIN departments d ON sr.department_code = d.id
        WHERE sr.college_code = $1 AND sr.status = 'pending'
        ORDER BY sr.requested_at DESC`,
       [collegeCode]
@@ -238,11 +238,11 @@ const alert_status = 0; // hardcoded as 'safe' on approval
 // Insert student as before
 const studentResult = await pool.query(
   `INSERT INTO students 
-   (department_id, roll_no, name, email, contact, year, password_hash, alert_status, created_at, college_code)
+   (department_code, roll_no, name, email, contact, year, password_hash, alert_status, created_at, college_code)
    VALUES ($1, $2, $3, $4, $5, $6, $7, 0, NOW(), $8)
    RETURNING roll_no, name, email`,
   [
-    request.department_id,
+    request.department_code,
     roll_no,
     request.name,
     request.email,
