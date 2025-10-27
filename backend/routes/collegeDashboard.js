@@ -36,35 +36,55 @@ const authenticateToken = (req, res, next) => {
 // GET DASHBOARD DATA
 // ========================================
 router.get('/dashboard', authenticateToken, async (req, res) => {
-  try {
-    const collegeCode = req.college.college_code;
+  try {
+    const collegeCode = req.college.college_code;
 
-    const collegeResult = await pool.query(
-      'SELECT code, name, email, principal_name FROM colleges WHERE code = $1',
-      [collegeCode]
-    );
+    const collegeResult = await pool.query(
+      'SELECT code, name, email, principal_name FROM colleges WHERE code = $1',
+      [collegeCode]
+    );
 
-    if (collegeResult.rows.length === 0) {
-      return res.status(404).json({ error: 'College not found' });
-    }
+    if (collegeResult.rows.length === 0) {
+      return res.status(404).json({ error: 'College not found' });
+    }
 
-    const college = collegeResult.rows[0];
+    const college = collegeResult.rows[0];
 
-    res.json({
-      ...college,
-      total_students: 0,
-      at_risk_students: 0,
-      dropout_students: 0,
-      saved_students: 0,
-      notifications_to_parents: 0,
-      notifications_to_teachers: 0
-    });
+    // Calculate stats
+    const result = await pool.query(
+      `SELECT 
+        COUNT(*) AS total,
+        SUM(CASE WHEN alert_status = 1 THEN 1 ELSE 0 END) AS at_risk,
+        SUM(CASE WHEN alert_status = 2 THEN 1 ELSE 0 END) AS dropout,
+        SUM(CASE WHEN alert_status = 0 THEN 1 ELSE 0 END) AS saved
+       FROM students WHERE college_code = $1`,
+      [collegeCode]
+    );
 
-  } catch (err) {
-    console.error('Dashboard error:', err);
-    return res.status(500).json({ error: 'Failed to load dashboard data' });
-  }
+    // Example notifications, adjust table/column as needed
+    const notifResult = await pool.query(
+      `SELECT 
+        SUM(CASE WHEN recipient_role = 'parent' THEN 1 ELSE 0 END) AS notifications_to_parents,
+        SUM(CASE WHEN recipient_role = 'teacher' THEN 1 ELSE 0 END) AS notifications_to_teachers
+       FROM notifications WHERE college_code = $1`,
+      [collegeCode]
+    );
+
+    res.json({
+      ...college,
+      total_students: parseInt(result.rows[0].total) || 0,
+      at_risk_students: parseInt(result.rows[0].at_risk) || 0,
+      dropout_students: parseInt(result.rows[0].dropout) || 0,
+      saved_students: parseInt(result.rows[0].saved) || 0,
+      notifications_to_parents: notifResult.rows[0]?.notifications_to_parents || 0,
+      notifications_to_teachers: notifResult.rows[0]?.notifications_to_teachers || 0
+    });
+  } catch (err) {
+    console.error('Dashboard error:', err);
+    return res.status(500).json({ error: 'Failed to load dashboard data' });
+  }
 });
+
 
 // ========================================
 // GET ALL DEPARTMENTS
