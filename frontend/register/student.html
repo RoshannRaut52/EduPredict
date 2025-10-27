@@ -288,7 +288,7 @@
           
           data.departments.forEach(dept => {
             const option = document.createElement('option');
-            option.value = dept.id;
+            option.value = dept.code;
             option.textContent = dept.name;
             departmentSelect.appendChild(option);
           });
