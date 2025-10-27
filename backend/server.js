@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
+const { Pool } = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -36,13 +36,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 app.use(express.json());
-
-
-// PostgreSQL Connection
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
@@ -404,3 +397,5 @@ app.use((req, res) => {
 // START SERVER
 // ========================================
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+
+module.exports = pool;

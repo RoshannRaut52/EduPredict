@@ -1,5 +1,5 @@
 const express = require('express');
-const { Pool } = require('pg');
+const { Pool } = require('../db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 

@@ -1,13 +1,8 @@
 const express = require('express');
-const { Pool } = require('pg');
+const { Pool } = require('../db');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
