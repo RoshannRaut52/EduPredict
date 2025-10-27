@@ -1,3 +1,6 @@
+const express = require('express');
+const router = express.Router();
+
 router.get('/:departmentId/students', async (req, res) => {
   const departmentId = parseInt(req.params.departmentId);
   const result = await pool.query(
@@ -6,3 +9,5 @@ router.get('/:departmentId/students', async (req, res) => {
   );
   res.json(result.rows);
 });
+
+module.exports = router;
