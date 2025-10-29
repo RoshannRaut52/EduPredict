@@ -565,22 +565,22 @@ function createDepartmentElement(dept) {
   header.innerHTML = `
     ${dept.name} <span style="color:#888;font-size:1rem;">(${dept.code})</span>
     <span class="expand-icon">&#9654;</span>`;
-  header.onclick = () => toggleYears(`years-${dept.id}`, header);
+  header.onclick = () => toggleYears(`years-${dept.code}`, header);
   deptDiv.appendChild(header);
 
   const yearsPanel = document.createElement('div');
   yearsPanel.className = 'year-panel';
-  yearsPanel.id = `years-${dept.id}`;
+  yearsPanel.id = `years-${dept.code}`;
   yearsPanel.style.display = 'none';
 
   // Fetch dynamic year summary
-  fetchDepartmentYearSummary(dept.id).then(yearsSummary => {
+  fetchDepartmentYearSummary(dept.code).then(yearsSummary => {
     ['1st Year', '2nd Year', '3rd Year', '4th Year'].forEach(year => {
       const stats = yearsSummary.find(y => y.year === year) || { total: 0, saved: 0, risk: 0 };
       const yearCard = document.createElement('div');
       yearCard.className = 'year-card';
       yearCard.onclick = () =>
-        window.location.href = `studentList.html?dept=${dept.id}&year=${encodeURIComponent(year)}`;
+        window.location.href = `studentList.html?dept=${dept.code}&year=${encodeURIComponent(year)}`;
       yearCard.innerHTML = `
         <h4>${year}</h4>
         <ul class="stats-list">
@@ -708,7 +708,7 @@ function toggleYears(panelId, headerEl) {
   select.innerHTML = '<option value="">-- Select Department --</option>';
   departmentsData.forEach(dept => {
     const option = document.createElement('option');
-    option.value = dept.id;
+    option.value = dept.code;
     option.textContent = `${dept.name} (${dept.code})`;
     select.appendChild(option);
   });
