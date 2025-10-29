@@ -177,11 +177,11 @@ router.post('/:collegeCode/departments', authenticateToken, async (req, res) => 
 // ========================================
 // DELETE DEPARTMENT
 // ========================================
-router.delete('/:collegeCode/departments/:departmentId', authenticateToken, async (req, res) => {
+router.delete('/:collegeCode/departments/:departmentCode', authenticateToken, async (req, res) => {
   try {
     // ✅ Convert to number since code is INT
     const collegeCode = parseInt(req.params.collegeCode);
-    const departmentId = parseInt(req.params.departmentId);
+    const departmentCode = parseInt(req.params.departmentCode);
 
     // ✅ Compare numbers
     if (collegeCode !== req.college.college_code) {
@@ -190,7 +190,7 @@ router.delete('/:collegeCode/departments/:departmentId', authenticateToken, asyn
 
     const result = await pool.query(
       'DELETE FROM departments WHERE id = $1 AND college_code = $2 RETURNING *',
-      [departmentId, collegeCode]
+      [departmentCode, collegeCode]
     );
 
     if (result.rows.length === 0) {
@@ -211,12 +211,12 @@ router.delete('/:collegeCode/departments/:departmentId', authenticateToken, asyn
 // ========================================
 // GET STUDENTS BY DEPARTMENT AND YEAR
 // ========================================
-router.get('/:collegeCode/departments/:departmentId/students/:year', authenticateToken, async (req, res) => {
+router.get('/:collegeCode/departments/:departmentCode/students/:year', authenticateToken, async (req, res) => {
   try {
     const collegeCode = parseInt(req.params.collegeCode);
-    const { departmentId, year } = req.params;
+    const { departmentCode, year } = req.params;
 
-    console.log('📥 Get students request:', { collegeCode, departmentId, year, user: req.college });
+    console.log('📥 Get students request:', { collegeCode, departmentCode, year, user: req.college });
 
     // Verify college code matches
     if (collegeCode !== req.college.college_code) {
@@ -226,7 +226,7 @@ router.get('/:collegeCode/departments/:departmentId/students/:year', authenticat
     // Get department info
     const deptResult = await pool.query(
       'SELECT id, name FROM departments WHERE id = $1 AND college_code = $2',
-      [departmentId, collegeCode]
+      [departmentCode, collegeCode]
     );
 
     if (deptResult.rows.length === 0) {
@@ -245,15 +245,15 @@ router.get('/:collegeCode/departments/:departmentId/students/:year', authenticat
         alert_status,
         created_at
        FROM students
-       WHERE department_id = $1 AND year = $2
+       WHERE department_code = $1 AND year = $2
        ORDER BY roll_no ASC`,
-      [departmentId, year]
+      [departmentCode, year]
     );
 
     console.log(`✅ Found ${studentsResult.rows.length} students`);
 
     res.json({
-      department_id: departmentId,
+      department_code: departmentCode,
       department_name: department.name,
       year: year,
       students: studentsResult.rows,
