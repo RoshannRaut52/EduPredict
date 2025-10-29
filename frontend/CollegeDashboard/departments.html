@@ -671,13 +671,13 @@ function toggleYears(panelId, headerEl) {
 
 
     // Remove Department
-    async function removeDepartment(departmentId) {
+    async function removeDepartment(departmentCode) {
   const submitBtn = document.getElementById('submitRemoveBtn');
   submitBtn.disabled = true;
   submitBtn.textContent = 'Removing...';
 
   try {
-    const response = await fetch(`${backendUrl}/api/college/${collegeCode}/departments/${departmentId}`, {
+    const response = await fetch(`${backendUrl}/api/college/${collegeCode}/departments/${departmentCode}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${authToken}`,

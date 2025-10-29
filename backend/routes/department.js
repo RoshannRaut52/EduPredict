@@ -3,12 +3,12 @@ const router = express.Router();
 const pool = require('../db'); // Adjust path if needed
 
 // List all students in a department
-router.get('/:departmentId/students', async (req, res) => {
-  const departmentId = parseInt(req.params.departmentId);
+router.get('/:departmentCode/students', async (req, res) => {
+  const departmentCode = parseInt(req.params.departmentCode);
   try {
     const result = await pool.query(
       'SELECT * FROM students WHERE department_code = $1',
-      [departmentId]
+      [departmentCode]
     );
     res.json(result.rows);
   } catch (err) {
@@ -18,8 +18,8 @@ router.get('/:departmentId/students', async (req, res) => {
 });
 
 // Yearly stats summary
-router.get('/:departmentId/years/summary', async (req, res) => {
-  const departmentId = parseInt(req.params.departmentId);
+router.get('/:departmentCode/years/summary', async (req, res) => {
+  const departmentCode = parseInt(req.params.departmentCode);
   try {
     const result = await pool.query(
       `SELECT year, 
@@ -30,7 +30,7 @@ router.get('/:departmentId/years/summary', async (req, res) => {
        WHERE department_code = $1
        GROUP BY year
        ORDER BY year ASC`,
-      [departmentId]
+      [departmentCode]
     );
     res.json({ years: result.rows }); // Now returns { years: [...] }
   } catch (err) {
