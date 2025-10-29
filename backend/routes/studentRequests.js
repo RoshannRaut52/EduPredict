@@ -4,322 +4,226 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
-
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
-// ========================================
-// AUTHENTICATION MIDDLEWARE
-// ========================================
+// Auth Middleware
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({ error: 'Access token required' });
-  }
+  if (!token) return res.status(401).json({ error: 'Access token required' });
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ error: 'Invalid or expired token' });
-    }
+    if (err) return res.status(403).json({ error: 'Invalid or expired token' });
     req.college = user;
     next();
   });
 };
 
-// ========================================
-// GET ALL COLLEGES (PUBLIC - NO AUTH)
-// ========================================
+// GET Colleges
 router.get('/colleges', async (req, res) => {
   try {
-    console.log('📥 Request: GET all colleges');
-    
     const result = await pool.query(
       'SELECT code, name FROM colleges ORDER BY name ASC'
     );
-
-    console.log(`✅ Found ${result.rows.length} colleges`);
-
-    res.json({
-      colleges: result.rows,
-      count: result.rows.length
-    });
-
+    res.json({ colleges: result.rows, count: result.rows.length });
   } catch (error) {
-    console.error('❌ Error fetching colleges:', error);
     res.status(500).json({ error: 'Failed to fetch colleges', details: error.message });
   }
 });
 
-// ========================================
-// GET DEPARTMENTS BY COLLEGE CODE (PUBLIC)
-// ========================================
+// GET Departments by College
 router.get('/colleges/:collegeCode/departments', async (req, res) => {
   try {
-    const collegeCode = parseInt(req.params.collegeCode);
-    console.log('📥 Request: GET departments for college:', collegeCode);
-
+    const collegeCode = Number(req.params.collegeCode);
     const result = await pool.query(
-      'SELECT id, name FROM departments WHERE college_code = $1 ORDER BY name ASC',
+      'SELECT code, name FROM departments WHERE college_code = $1 ORDER BY name ASC',
       [collegeCode]
     );
-
-    console.log(`✅ Found ${result.rows.length} departments`);
-
-    res.json({
-      departments: result.rows,
-      count: result.rows.length
-    });
-
+    res.json({ departments: result.rows, count: result.rows.length });
   } catch (error) {
-    console.error('❌ Error fetching departments:', error);
     res.status(500).json({ error: 'Failed to fetch departments', details: error.message });
   }
 });
 
-// ========================================
-// SUBMIT STUDENT REGISTRATION REQUEST
-// ========================================
+// Submit Student Registration Request
 router.post('/submit', async (req, res) => {
   try {
     const { name, email, contact, college_code, department_code, password } = req.body;
-
-    console.log('📥 Student registration request:', { name, email, college_code, department_code });
-
-    // Validation
-    if (!name || !email || !contact || !college_code || !department_code || !password) {
+    if (!name || !email || !contact || !college_code || !department_code || !password)
       return res.status(400).json({ error: 'All fields are required' });
-    }
 
-    // Verify college exists
+    const cc = Number(college_code);
+    const dc = Number(department_code);
+
+    // College exists?
     const collegeResult = await pool.query(
-      'SELECT code, name FROM colleges WHERE code = $1',
-      [parseInt(college_code)]
+      'SELECT code FROM colleges WHERE code = $1',
+      [cc]
     );
-
-    if (collegeResult.rows.length === 0) {
+    if (collegeResult.rows.length === 0)
       return res.status(404).json({ error: 'Invalid college code' });
-    }
 
-    // Verify department exists and belongs to college
+    // Department exists and belongs to college?
     const deptResult = await pool.query(
-      'SELECT id, name FROM departments WHERE id = $1 AND college_code = $2',
-      [parseInt(department_code), parseInt(college_code)]
+      'SELECT code FROM departments WHERE code = $1 AND college_code = $2',
+      [dc, cc]
     );
+    if (deptResult.rows.length === 0)
+      return res.status(404).json({ error: 'Invalid department or does not belong to this college' });
 
-    if (deptResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Invalid department or department does not belong to this college' });
-    }
-
-    // Check if already requested with this email
+    // Check for duplicate request/student
     const existingRequest = await pool.query(
-      'SELECT * FROM student_requests WHERE college_code = $1 AND email = $2',  // ✅ Use * instead of id
-      [parseInt(college_code), email]
+      'SELECT * FROM student_requests WHERE college_code = $1 AND email = $2',
+      [cc, email]
     );
-
-    if (existingRequest.rows.length > 0) {
+    if (existingRequest.rows.length > 0)
       return res.status(400).json({ error: 'Registration request already exists for this email' });
-    }
 
-    // Check if already a student with this email
     const existingStudent = await pool.query(
-      'SELECT roll_no FROM students WHERE email = $1',  // ✅ FIXED: Use roll_no instead of id
+      'SELECT roll_no FROM students WHERE email = $1',
       [email]
     );
-
-    if (existingStudent.rows.length > 0) {
+    if (existingStudent.rows.length > 0)
       return res.status(400).json({ error: 'Student with this email already exists' });
-    }
 
     // Hash password
     const password_hash = await bcrypt.hash(password, 10);
 
     // Insert registration request
     const result = await pool.query(
-      `INSERT INTO student_requests 
-       (college_code, department_code, name, email, contact, password_hash, status, requested_at)
-       VALUES ($1, $2, $3, $4, $5, $6, 'pending', NOW())
-       RETURNING *`,  // ✅ FIXED: Return all columns instead of specific ones
-      [parseInt(college_code), parseInt(department_code), name, email, contact, password_hash]
+      `INSERT INTO student_requests
+        (college_code, department_code, name, email, contact, password_hash, status, requested_at)
+        VALUES ($1, $2, $3, $4, $5, $6, 'pending', NOW())
+        RETURNING *`,
+      [cc, dc, name, email, contact, password_hash]
     );
-
-    console.log('✅ Student request submitted:', result.rows[0]);
-
     res.status(201).json({
       message: 'Registration request submitted successfully! Please wait for college approval.',
-      request: {
-        id: result.rows[0].id,
-        name: result.rows[0].name,
-        email: result.rows[0].email,
-        requested_at: result.rows[0].requested_at
-      }
+      request: result.rows[0]
     });
-
   } catch (error) {
-    console.error('❌ Error submitting student request:', error);
     res.status(500).json({ error: 'Failed to submit registration request', details: error.message });
   }
 });
 
-
-// ========================================
-// GET ALL PENDING REQUESTS FOR A COLLEGE
-// ========================================
+// Get All Pending Requests
 router.get('/:collegeCode/pending', authenticateToken, async (req, res) => {
   try {
-    const collegeCode = parseInt(req.params.collegeCode);
-
-    if (collegeCode !== req.college.college_code) {
+    const collegeCode = Number(req.params.collegeCode);
+    if (collegeCode !== req.college.college_code)
       return res.status(403).json({ error: 'Access denied' });
-    }
 
     const result = await pool.query(
       `SELECT 
-         sr.id, sr.name, sr.email, sr.contact, sr.requested_at,
-         d.name as department_name, sr.department_code
-       FROM student_requests sr
-       JOIN departments d ON sr.department_code = d.id
-       WHERE sr.college_code = $1 AND sr.status = 'pending'
-       ORDER BY sr.requested_at DESC`,
+          sr.id, sr.name, sr.email, sr.contact, sr.requested_at,
+          d.name as department_name, sr.department_code
+        FROM student_requests sr
+        JOIN departments d ON sr.department_code = d.code
+        WHERE sr.college_code = $1 AND sr.status = 'pending'
+        ORDER BY sr.requested_at DESC`,
       [collegeCode]
     );
-
-    console.log(`✅ Found ${result.rows.length} pending requests`);
-
-    res.json({
-      requests: result.rows,
-      count: result.rows.length
-    });
-
+    res.json({ requests: result.rows, count: result.rows.length });
   } catch (error) {
-    console.error('❌ Error fetching pending requests:', error);
     res.status(500).json({ error: 'Failed to fetch requests', details: error.message });
   }
 });
 
-// ========================================
-// APPROVE STUDENT REQUEST
-// ========================================
+// Approve Student Request
 router.post('/:collegeCode/approve/:requestId', authenticateToken, async (req, res) => {
   try {
-    const collegeCode = parseInt(req.params.collegeCode);
-    const requestId = parseInt(req.params.requestId);
+    const collegeCode = Number(req.params.collegeCode);
+    const requestId = Number(req.params.requestId);
     const { roll_no, year } = req.body;
 
-    console.log('📥 Approve request:', { collegeCode, requestId, roll_no, year });
-
-    if (collegeCode !== req.college.college_code) {
+    if (collegeCode !== req.college.college_code)
       return res.status(403).json({ error: 'Access denied' });
-    }
 
-    if (!roll_no || !year) {
+    if (!roll_no || !year)
       return res.status(400).json({ error: 'Roll number and year are required' });
-    }
 
     // Get request details
     const requestResult = await pool.query(
       'SELECT * FROM student_requests WHERE id = $1 AND college_code = $2 AND status = $3',
       [requestId, collegeCode, 'pending']
     );
-
-    if (requestResult.rows.length === 0) {
+    if (requestResult.rows.length === 0)
       return res.status(404).json({ error: 'Request not found or already processed' });
-    }
-
     const request = requestResult.rows[0];
 
-    // Start transaction
     await pool.query('BEGIN');
-
     try {
-      // Insert into students table
-const alert_status = 0; // hardcoded as 'safe' on approval
+      // Insert student
+      const studentResult = await pool.query(
+        `INSERT INTO students
+          (department_code, roll_no, name, email, contact, year, password_hash, alert_status, created_at, college_code)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, 0, NOW(), $8)
+          RETURNING roll_no, name, email`,
+        [
+          request.department_code,
+          roll_no,
+          request.name,
+          request.email,
+          request.contact,
+          year,
+          request.password_hash,
+          request.college_code
+        ]
+      );
 
-// Insert student as before
-const studentResult = await pool.query(
-  `INSERT INTO students 
-   (department_code, roll_no, name, email, contact, year, password_hash, alert_status, created_at, college_code)
-   VALUES ($1, $2, $3, $4, $5, $6, $7, 0, NOW(), $8)
-   RETURNING roll_no, name, email`,
-  [
-    request.department_code,
-    roll_no,
-    request.name,
-    request.email,
-    request.contact,
-    year,
-    request.password_hash,
-    request.college_code // Make sure this field is available
-  ]
-);
-
-// Increment college's student count
-await pool.query(
-  'UPDATE colleges SET total_student = total_student + 1 WHERE code = $1',
-  [request.college_code]
-);
-
-      // Update request status
+      // Update student's total count
       await pool.query(
-        `UPDATE student_requests 
-         SET status = 'approved', reviewed_at = NOW(), reviewed_by = $1, roll_no = $2, year = $3
-         WHERE id = $4`,
+        'UPDATE colleges SET total_student = total_student + 1 WHERE code = $1',
+        [request.college_code]
+      );
+
+      // Change request status
+      await pool.query(
+        `UPDATE student_requests
+          SET status = 'approved', reviewed_at = NOW(), reviewed_by = $1, roll_no = $2, year = $3
+          WHERE id = $4`,
         [req.college.email, roll_no, year, requestId]
       );
 
       await pool.query('COMMIT');
-
-      console.log('✅ Student approved and added:', studentResult.rows[0]);
-
       res.json({
         message: 'Student request approved successfully',
         student: studentResult.rows[0]
       });
-
     } catch (error) {
       await pool.query('ROLLBACK');
       throw error;
     }
-
   } catch (error) {
-    console.error('❌ Error approving request:', error);
     res.status(500).json({ error: 'Failed to approve request', details: error.message });
   }
 });
 
-// ========================================
-// REJECT STUDENT REQUEST
-// ========================================
+// Reject Student Request
 router.post('/:collegeCode/reject/:requestId', authenticateToken, async (req, res) => {
   try {
-    const collegeCode = parseInt(req.params.collegeCode);
-    const requestId = parseInt(req.params.requestId);
+    const collegeCode = Number(req.params.collegeCode);
+    const requestId = Number(req.params.requestId);
 
-    if (collegeCode !== req.college.college_code) {
+    if (collegeCode !== req.college.college_code)
       return res.status(403).json({ error: 'Access denied' });
-    }
 
     const result = await pool.query(
       `UPDATE student_requests 
-       SET status = 'rejected', reviewed_at = NOW(), reviewed_by = $1
-       WHERE id = $2 AND college_code = $3 AND status = 'pending'
-       RETURNING id, name, email`,
+        SET status = 'rejected', reviewed_at = NOW(), reviewed_by = $1
+        WHERE id = $2 AND college_code = $3 AND status = 'pending'
+        RETURNING id, name, email`,
       [req.college.email, requestId, collegeCode]
     );
-
-    if (result.rows.length === 0) {
+    if (result.rows.length === 0)
       return res.status(404).json({ error: 'Request not found or already processed' });
-    }
-
-    console.log('✅ Student request rejected:', result.rows[0]);
 
     res.json({
       message: 'Student request rejected',
       request: result.rows[0]
     });
-
   } catch (error) {
-    console.error('❌ Error rejecting request:', error);
     res.status(500).json({ error: 'Failed to reject request', details: error.message });
   }
 });
