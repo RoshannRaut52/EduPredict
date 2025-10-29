@@ -174,7 +174,7 @@ router.post('/:collegeCode/approve/:requestId', authenticateToken, async (req, r
 
       // Update student's total count
       await pool.query(
-        'UPDATE colleges SET total_student = total_student + 1 WHERE code = $1',
+        'UPDATE colleges SET total_students = total_students + 1 WHERE code = $1',
         [request.college_code]
       );
 
