@@ -513,7 +513,7 @@
 const backendUrl = 'https://edupredict-l9eg.onrender.com';
 let authToken = null;
 let collegeCode = null;
-let departmentId = null;
+let departmentCode = null;
 let year = null;
 let departmentName = 'Department'; // ✅ ADD: Store department name
 let allStudents = [];
@@ -523,12 +523,12 @@ let currentFilter = 'all';
 // Get URL parameters
 function getURLParams() {
   const params = new URLSearchParams(window.location.search);
-  departmentId = params.get('dept');
+  departmentCode = params.get('dept');
   year = params.get('year');
   
-  console.log('📍 URL Params:', { departmentId, year });
+  console.log('📍 URL Params:', { departmentCode, year });
   
-  if (!departmentId || !year) {
+  if (!departmentCode || !year) {
     alert('Invalid page parameters');
     window.location.href = '../dashboard/college.html';
   }
@@ -595,7 +595,7 @@ async function loadStudents() {
     console.log('📡 Fetching students...');
     
     const response = await fetch(
-      `${backendUrl}/api/college/${collegeCode}/departments/${departmentId}/students/${year}`,
+      `${backendUrl}/api/college/${collegeCode}/departments/${departmentCode}/students/${year}`,
       {
         method: 'GET',
         headers: {
@@ -662,7 +662,7 @@ async function fetchDepartmentName() {
 
     if (response.ok) {
       const data = await response.json();
-      const dept = data.departments.find(d => d.id == departmentId);
+      const dept = data.departments.find(d => d.id == departmentCode);
       
       if (dept) {
         departmentName = dept.name;
@@ -801,7 +801,7 @@ document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
 // View Student Details
 function viewStudent(studentId) {
   // Navigate to student detail page
-  window.location.href = `student-detail.html?id=${studentId}&dept=${departmentId}&year=${year}`;
+  window.location.href = `student-detail.html?id=${studentId}&dept=${departmentCode}&year=${year}`;
 }
 
 // Initialize

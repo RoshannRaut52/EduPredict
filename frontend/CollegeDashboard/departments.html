@@ -597,7 +597,7 @@ function createDepartmentElement(dept) {
 }
 
 async function fetchDepartmentYearSummary(deptId) {
-  const response = await fetch(`${backendUrl}/api/department/${deptId}/years/summary`, {
+  const response = await fetch(`${backendUrl}/api/departments/${deptId}/years/summary`, {
     headers: { 'Authorization': `Bearer ${authToken}` }
   });
   if (!response.ok) return [];
