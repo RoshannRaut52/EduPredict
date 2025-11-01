@@ -39,4 +39,37 @@ router.get('/:departmentCode/years/summary', async (req, res) => {
   }
 });
 
+//student List
+router.get('/:departmentCode/students', async (req, res) => {
+  const departmentCode = req.params.departmentCode;
+  const year = req.query.year; // Get year from query param
+
+  try {
+    let query = 'SELECT * FROM students WHERE department_code = $1';
+    let params = [departmentCode];
+
+    if (year) {
+      query += ' AND year = $2';
+      params.push(year);
+    }
+
+    const result = await pool.query(query, params);
+
+    // Optionally get department name (recommended for your sidebar)
+    const deptResult = await pool.query(
+      'SELECT name FROM departments WHERE code = $1',
+      [departmentCode]
+    );
+    const departmentName = deptResult.rows[0]?.name || '';
+
+    res.json({
+      students: result.rows,
+      department_name: departmentName,
+    });
+  } catch (err) {
+    console.error('Error fetching students:', err);
+    res.status(500).json({ error: 'Failed to fetch students' });
+  }
+});
+
 module.exports = router;
