@@ -594,8 +594,7 @@ async function loadStudents() {
   try {
     console.log('📡 Fetching students...');
     
-    const response = await fetch(
-      `${backendUrl}/api/college/${collegeCode}/departments/${departmentCode}/students/${year}`,
+    const response = await fetch(`${backendUrl}/api/departments/${departmentCode}/students?year=${year}`,
       {
         method: 'GET',
         headers: {
