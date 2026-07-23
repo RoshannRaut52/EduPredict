@@ -1,30 +1,26 @@
 const { Pool } = require('pg');
-const dns = require('dns');
+require('dotenv').config();
 
-// Force IPv4 only - THIS FIXES THE IPv6 ISSUE
-dns.setDefaultResultOrder('ipv4first');
+console.log('🚀 Connecting to Render PostgreSQL...');
 
-console.log('🚀 Connecting to Supabase (permanent database)...');
-
+// Use your Render PostgreSQL database
 const pool = new Pool({
-  host: 'db.eufhkibqqfswyhmnfchg.supabase.co',
-  port: 5432,
-  database: 'postgres',
-  user: 'postgres',
-  password: '123Roshan123@#',
-  ssl: { rejectUnauthorized: false },
+  connectionString: 'postgresql://roshan:I7u6c6YSS0VS7Bd19jVoRvTo5abKwkzz@dpg-d9gfc4f41pts738ovr9g-a.oregon-postgres.render.com/edupredict_jzzn',
+  ssl: {
+    rejectUnauthorized: false
+  },
   connectionTimeoutMillis: 10000,
-  // Force TCP keepalive
-  keepAlive: true,
-  keepAliveInitialDelayMillis: 0,
+  max: 20,
+  idleTimeoutMillis: 30000,
 });
 
 // Test connection
 pool.connect((err, client, release) => {
   if (err) {
-    console.error('❌ Supabase connection error:', err.message);
+    console.error('❌ Render PostgreSQL connection error:', err.message);
+    console.error('Please check your database credentials');
   } else {
-    console.log('✅ Connected to Supabase successfully!');
+    console.log('✅ Connected to Render PostgreSQL successfully!');
     release();
   }
 });
