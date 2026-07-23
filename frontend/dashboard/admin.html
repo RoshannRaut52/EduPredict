@@ -704,6 +704,7 @@
       <li><a href="index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
       <li><a href="#" class="active"><i class="fas fa-university" aria-hidden="true"></i> Admin</a></li>
       <li><button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout</button></li>
+      
     </ul>
   </header>
 
@@ -1006,6 +1007,20 @@
   </div>
 
   <script>
+     // Check admin authentication
+  (function checkAdminAuth() {
+    var token = localStorage.getItem('adminToken');
+    if (!token) {
+      window.location.href = 'admin-login.html';
+    }
+  })();
+
+  // Admin Logout Function
+  function adminLogout() {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminData');
+    window.location.href = 'admin-login.html';
+  }
     // ===== DATA STORE =====
     var colleges = [];
     var editIndex = -1;

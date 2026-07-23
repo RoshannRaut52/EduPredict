@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login - EduPredict</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
+
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
+
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 50px;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo i {
+      -webkit-text-fill-color: initial;
+      color: #10ac84;
+      font-size: 2rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 8px 0;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #10ac84, #ee7939);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.03);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 24px;
+      padding: 45px 40px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+      animation: fadeInUp 0.8s ease;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-header .icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .login-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .login-header p {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group label i {
+      color: #10ac84;
+      width: 16px;
+    }
+
+    .form-group input {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-group input::placeholder {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #10ac84;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(16, 172, 132, 0.1);
+    }
+
+    .btn-login {
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+      margin-top: 5px;
+      box-shadow: 0 4px 20px rgba(16, 172, 132, 0.2);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(16, 172, 132, 0.35);
+    }
+
+    .message {
+      margin-top: 18px;
+      text-align: center;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      color: #10ac84;
+      background: rgba(16, 172, 132, 0.1);
+      border: 1px solid rgba(16, 172, 132, 0.15);
+    }
+
+    .message.error {
+      color: #ff6b6b;
+      background: rgba(255, 0, 0, 0.05);
+      border: 1px solid rgba(255, 0, 0, 0.1);
+    }
+
+    .back-home {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .back-home a {
+      color: rgba(255, 255, 255, 0.3);
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+    }
+
+    .back-home a:hover {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .back-home a i {
+      margin-right: 6px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.85rem;
+    }
+
+    footer .heart {
+      color: #10ac84;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .logo { font-size: 1.5rem; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 0.8rem; }
+      .login-container { padding: 30px 25px; margin: 0 15px; }
+      .login-header h2 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <div class="logo">
+      <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+      EduPredict
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="help.html">Help</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </header>
+
+  <main>
+    <div class="login-container">
+      <div class="login-header">
+        <span class="icon">🛡️</span>
+        <h2>Admin Login</h2>
+        <p>Access the admin panel</p>
+      </div>
+
+      <form class="login-form" id="adminLoginForm">
+        <div class="form-group">
+          <label><i class="fas fa-envelope" aria-hidden="true"></i> Admin Email</label>
+          <input type="email" id="adminEmail" placeholder="Enter admin email" required />
+        </div>
+
+        <div class="form-group">
+          <label><i class="fas fa-lock" aria-hidden="true"></i> Password</label>
+          <input type="password" id="adminPassword" placeholder="Enter admin password" required />
+        </div>
+
+        <button type="submit" class="btn-login">
+          <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Login
+        </button>
+      </form>
+
+      <div class="message" id="statusMsg"></div>
+
+      <div class="back-home">
+        <a href="index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Home</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart heart" aria-hidden="true"></i> for education.
+  </footer>
+
+  <script>
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    })();
+
+    // ===== ADMIN LOGIN =====
+    var form = document.getElementById('adminLoginForm');
+    var msg = document.getElementById('statusMsg');
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
+
+    function showMessage(text, type) {
+      msg.textContent = text;
+      msg.className = 'message show ' + type;
+    }
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      showMessage('⏳ Logging in...', '');
+
+      var email = document.getElementById('adminEmail').value.trim();
+      var password = document.getElementById('adminPassword').value.trim();
+
+      if (!email || !password) {
+        showMessage('Please fill all fields', 'error');
+        return;
+      }
+
+      try {
+        var response = await fetch(backendUrl + '/api/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ email: email, password: password })
+        });
+
+        var data = await response.json();
+
+        if (!response.ok) {
+          showMessage(data.error || 'Login failed', 'error');
+          return;
+        }
+
+        // Store admin session
+        localStorage.setItem('adminToken', data.token);
+        localStorage.setItem('adminData', JSON.stringify(data.admin));
+        
+        showMessage('✅ Login successful! Redirecting...', 'success');
+
+        setTimeout(function() {
+          window.location.href = 'admin.html';
+        }, 1500);
+
+      } catch (err) {
+        console.error('Login error:', err);
+        showMessage('❌ Cannot connect to server: ' + err.message, 'error');
+      }
+    });
+
+    // Enter key support
+    form.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        form.dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+</html>
