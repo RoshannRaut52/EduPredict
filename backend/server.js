@@ -34,6 +34,115 @@ app.get('/', (req, res) => {
 });
 
 // ========================================
+// ADMIN ROUTES
+// ========================================
+
+// Admin Login
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password required' });
+    }
+
+    // Check if admin exists
+    const result = await pool.query(
+      'SELECT * FROM admins WHERE email = $1',
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid admin credentials' });
+    }
+
+    const admin = result.rows[0];
+    
+    // Verify password
+    const valid = await bcrypt.compare(password, admin.password_hash);
+    
+    if (!valid) {
+      return res.status(401).json({ error: 'Invalid admin credentials' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: admin.id, email: admin.email, role: 'admin' },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    const { password_hash, ...adminData } = admin;
+
+    res.json({
+      message: 'Admin login successful',
+      token,
+      admin: adminData
+    });
+
+  } catch (err) {
+    console.error('Admin login error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Verify Admin Token
+app.get('/api/admin/verify', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const result = await pool.query(
+      'SELECT id, name, email, created_at FROM admins WHERE id = $1',
+      [req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Admin not found' });
+    }
+
+    res.json({ admin: result.rows[0] });
+  } catch (err) {
+    console.error('Admin verify error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Create First Admin (Run once)
+app.post('/api/admin/setup', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'All fields required' });
+    }
+
+    // Check if admin already exists
+    const existing = await pool.query('SELECT * FROM admins WHERE email = $1', [email]);
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ error: 'Admin already exists' });
+    }
+
+    const password_hash = await bcrypt.hash(password, 10);
+
+    const result = await pool.query(
+      `INSERT INTO admins (name, email, password_hash) 
+       VALUES ($1, $2, $3) RETURNING id, name, email, created_at`,
+      [name, email, password_hash]
+    );
+
+    res.status(201).json({
+      message: 'Admin created successfully',
+      admin: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Admin setup error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ========================================
 // AUTHENTICATION MIDDLEWARE
 // ========================================
 const authenticateToken = (req, res, next) => {
