@@ -20,7 +20,84 @@
       min-height: 100vh;
     }
 
-    /* ===== HEADER ===== */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
+
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
+
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
     header {
       display: flex;
       justify-content: space-between;
@@ -104,7 +181,6 @@
       border-color: rgba(255, 0, 0, 0.4);
     }
 
-    /* ===== MAIN LAYOUT ===== */
     .admin-container {
       display: flex;
       padding: 30px 50px;
@@ -113,7 +189,6 @@
       margin: 0 auto;
     }
 
-    /* ===== SIDEBAR ===== */
     .sidebar {
       width: 260px;
       flex-shrink: 0;
@@ -177,7 +252,6 @@
       font-size: 0.7rem;
     }
 
-    /* ===== CONTENT ===== */
     .content {
       flex: 1;
       min-width: 0;
@@ -203,7 +277,6 @@
       margin-top: 4px;
     }
 
-    /* ===== STATS CARDS ===== */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -239,7 +312,6 @@
       margin-top: 4px;
     }
 
-    /* ===== FORM ===== */
     .form-card {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.05);
@@ -370,7 +442,16 @@
       background: rgba(255, 0, 0, 0.2);
     }
 
-    /* ===== COLLEGE CODE DISPLAY ===== */
+    .btn-success {
+      background: rgba(16, 172, 132, 0.15);
+      border: 1px solid rgba(16, 172, 132, 0.2);
+      color: #10ac84;
+    }
+
+    .btn-success:hover {
+      background: rgba(16, 172, 132, 0.25);
+    }
+
     .code-display {
       display: flex;
       align-items: center;
@@ -420,7 +501,6 @@
       background: rgba(238, 121, 57, 0.25);
     }
 
-    /* ===== TABLE ===== */
     .table-container {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.05);
@@ -547,29 +627,6 @@
       background: rgba(255, 0, 0, 0.2);
     }
 
-    /* ===== EMPTY STATE ===== */
-    .empty-state {
-      text-align: center;
-      color: rgba(255, 255, 255, 0.3);
-      padding: 40px;
-    }
-
-    .empty-state i {
-      font-size: 2rem;
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    /* ===== DANGER ZONE ===== */
-    .danger-zone {
-      border-color: rgba(255, 0, 0, 0.1);
-    }
-
-    .danger-zone h3 {
-      color: #ff6b6b;
-    }
-
-    /* ===== TOAST ===== */
     .toast {
       position: fixed;
       bottom: 30px;
@@ -593,32 +650,60 @@
       100% { transform: translateY(0); opacity: 1; }
     }
 
-    .toast.success {
-      border-color: rgba(16, 172, 132, 0.3);
+    .toast.success { border-color: rgba(16, 172, 132, 0.3); }
+    .toast.success i { color: #10ac84; }
+    .toast.error { border-color: rgba(255, 0, 0, 0.3); }
+    .toast.error i { color: #ff6b6b; }
+
+    .danger-zone {
+      border-color: rgba(255, 0, 0, 0.1);
     }
 
-    .toast.success i {
-      color: #10ac84;
-    }
-
-    .toast.error {
-      border-color: rgba(255, 0, 0, 0.3);
-    }
-
-    .toast.error i {
+    .danger-zone h3 {
       color: #ff6b6b;
     }
 
-    /* ===== TAB CONTENT ===== */
-    .tab-content {
-      display: block;
+    .empty-state {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.3);
+      padding: 40px;
     }
 
-    .tab-content.hidden {
+    .empty-state i {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .loading-spinner {
+      text-align: center;
+      padding: 40px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.05);
+      border-top: 3px solid #10ac84;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .tab-content {
       display: none;
     }
 
-    /* ===== RESPONSIVE ===== */
+    .tab-content.active {
+      display: block;
+    }
+
     @media (max-width: 1024px) {
       .admin-container {
         flex-direction: column;
@@ -693,7 +778,13 @@
 </head>
 <body>
 
-  <!-- ===== HEADER ===== -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+
   <header>
     <div class="logo">
       <i class="fas fa-graduation-cap" aria-hidden="true"></i>
@@ -703,40 +794,37 @@
     <ul class="nav-links">
       <li><a href="index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
       <li><a href="#" class="active"><i class="fas fa-university" aria-hidden="true"></i> Admin</a></li>
-      <li><button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout</button></li>
-      
+      <li><button class="logout-btn" onclick="adminLogout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout</button></li>
     </ul>
   </header>
 
-  <!-- ===== MAIN CONTENT ===== -->
   <div class="admin-container">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar" role="tablist" aria-label="Admin Navigation">
+    <aside class="sidebar" role="navigation" aria-label="Admin Navigation">
       <div class="sidebar-title">Navigation</div>
-      <button class="sidebar-item active" data-tab="dashboard" role="tab" aria-selected="true" aria-label="Dashboard">
-        <i class="fas fa-chart-pie" aria-hidden="true"></i> Dashboard
-      </button>
-      <button class="sidebar-item" data-tab="colleges" role="tab" aria-selected="false" aria-label="Colleges">
-        <i class="fas fa-university" aria-hidden="true"></i> Colleges
-        <span class="badge" id="collegeCount">0</span>
-      </button>
-      <button class="sidebar-item" data-tab="register" role="tab" aria-selected="false" aria-label="Register College">
-        <i class="fas fa-plus-circle" aria-hidden="true"></i> Register College
-      </button>
-      <button class="sidebar-item" data-tab="settings" role="tab" aria-selected="false" aria-label="Settings">
-        <i class="fas fa-cog" aria-hidden="true"></i> Settings
-      </button>
+      <!-- FIX: Added role="tablist" to the container of tab buttons -->
+      <div role="tablist" aria-label="Admin Tabs">
+        <button class="sidebar-item active" data-tab="dashboard" role="tab" aria-selected="true" aria-controls="tab-dashboard">
+          <i class="fas fa-chart-pie" aria-hidden="true"></i> Dashboard
+        </button>
+        <button class="sidebar-item" data-tab="colleges" role="tab" aria-selected="false" aria-controls="tab-colleges">
+          <i class="fas fa-university" aria-hidden="true"></i> Colleges
+          <span class="badge" id="collegeCount">0</span>
+        </button>
+        <button class="sidebar-item" data-tab="register" role="tab" aria-selected="false" aria-controls="tab-register">
+          <i class="fas fa-plus-circle" aria-hidden="true"></i> Register College
+        </button>
+        <button class="sidebar-item" data-tab="settings" role="tab" aria-selected="false" aria-controls="tab-settings">
+          <i class="fas fa-cog" aria-hidden="true"></i> Settings
+        </button>
+      </div>
     </aside>
 
-    <!-- CONTENT -->
     <main class="content">
-
-      <!-- ===== DASHBOARD TAB ===== -->
-      <section id="tab-dashboard" class="tab-content" role="tabpanel" aria-labelledby="dashboard-tab">
+      <!-- DASHBOARD TAB -->
+      <div id="tab-dashboard" class="tab-content active" role="tabpanel" aria-labelledby="tab-dashboard">
         <div class="page-header">
           <div>
-            <h2 id="dashboard-tab">Dashboard</h2>
+            <h2>Dashboard</h2>
             <p>Overview of all registered colleges</p>
           </div>
         </div>
@@ -747,16 +835,16 @@
             <div class="label">Total Colleges</div>
           </div>
           <div class="stat-card">
-            <div class="number" id="activeColleges">0</div>
-            <div class="label">Active Colleges</div>
-          </div>
-          <div class="stat-card">
-            <div class="number" id="pendingColleges">0</div>
-            <div class="label">Pending Registrations</div>
-          </div>
-          <div class="stat-card">
             <div class="number" id="totalStudents">0</div>
             <div class="label">Total Students</div>
+          </div>
+          <div class="stat-card">
+            <div class="number" id="totalTeachers">0</div>
+            <div class="label">Total Teachers</div>
+          </div>
+          <div class="stat-card">
+            <div class="number" id="totalDepartments">0</div>
+            <div class="label">Total Departments</div>
           </div>
         </div>
 
@@ -787,13 +875,13 @@
             </tbody>
           </table>
         </div>
-      </section>
+      </div>
 
-      <!-- ===== COLLEGES TAB ===== -->
-      <section id="tab-colleges" class="tab-content hidden" role="tabpanel" aria-labelledby="colleges-tab">
+      <!-- COLLEGES TAB -->
+      <div id="tab-colleges" class="tab-content" role="tabpanel" aria-labelledby="tab-colleges">
         <div class="page-header">
           <div>
-            <h2 id="colleges-tab">All Colleges</h2>
+            <h2>All Colleges</h2>
             <p>Manage all registered colleges</p>
           </div>
           <button class="btn btn-primary" onclick="switchTab('register')">
@@ -831,13 +919,13 @@
             </tbody>
           </table>
         </div>
-      </section>
+      </div>
 
-      <!-- ===== REGISTER COLLEGE TAB ===== -->
-      <section id="tab-register" class="tab-content hidden" role="tabpanel" aria-labelledby="register-tab">
+      <!-- REGISTER COLLEGE TAB -->
+      <div id="tab-register" class="tab-content" role="tabpanel" aria-labelledby="tab-register">
         <div class="page-header">
           <div>
-            <h2 id="register-tab">Register New College</h2>
+            <h2>Register New College</h2>
             <p>Generate a unique college code and register a new institution</p>
           </div>
         </div>
@@ -932,7 +1020,7 @@
 
               <div class="form-group">
                 <label for="collegePassword">Password <span class="required">*</span></label>
-                <input type="password" id="collegePassword" placeholder="Create a password" required aria-required="true" minlength="6" />
+                <input type="password" id="collegePassword" placeholder="Create a password (min 6 characters)" required aria-required="true" minlength="6" />
               </div>
 
               <div class="form-group">
@@ -951,13 +1039,13 @@
             </div>
           </form>
         </div>
-      </section>
+      </div>
 
-      <!-- ===== SETTINGS TAB ===== -->
-      <section id="tab-settings" class="tab-content hidden" role="tabpanel" aria-labelledby="settings-tab">
+      <!-- SETTINGS TAB -->
+      <div id="tab-settings" class="tab-content" role="tabpanel" aria-labelledby="tab-settings">
         <div class="page-header">
           <div>
-            <h2 id="settings-tab">Settings</h2>
+            <h2>Settings</h2>
             <p>Admin preferences and configuration</p>
           </div>
         </div>
@@ -995,54 +1083,74 @@
             <i class="fas fa-trash" aria-hidden="true"></i> Delete All Colleges
           </button>
         </div>
-      </section>
-
+      </div>
     </main>
   </div>
 
-  <!-- ===== TOAST ===== -->
   <div class="toast" id="toast" role="alert" aria-live="polite">
     <i class="fas fa-check-circle" aria-hidden="true"></i>
     <span id="toastMessage">Success!</span>
   </div>
 
   <script>
-     // Check admin authentication
-  (function checkAdminAuth() {
-    var token = localStorage.getItem('adminToken');
-    if (!token) {
-      window.location.href = 'admin-login.html';
-    }
-  })();
-
-  // Admin Logout Function
-  function adminLogout() {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminData');
-    window.location.href = 'admin-login.html';
-  }
-    // ===== DATA STORE =====
+    // ===== CONFIGURATION =====
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
     var colleges = [];
-    var editIndex = -1;
+    var filteredColleges = [];
 
-    // ===== INIT =====
-    document.addEventListener('DOMContentLoaded', function() {
-      loadColleges();
-      generateCode();
-      updateUI();
-      setupTabs();
-    });
-
-    // ===== LOCAL STORAGE =====
-    function loadColleges() {
-      var data = localStorage.getItem('edupredict_colleges');
-      if (data) {
-        colleges = JSON.parse(data);
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
       }
+    })();
+
+    // ===== TOAST =====
+    function showToast(message, type) {
+      var toast = document.getElementById('toast');
+      var toastMsg = document.getElementById('toastMessage');
+      toast.className = 'toast ' + (type || 'success');
+      toastMsg.textContent = message;
+      toast.style.display = 'flex';
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(function() {
+        toast.style.display = 'none';
+      }, 3000);
     }
 
-    function saveColleges() {
-      localStorage.setItem('edupredict_colleges', JSON.stringify(colleges));
+    // ===== AUTH CHECK =====
+    function checkAuth() {
+      var token = localStorage.getItem('adminToken');
+      if (!token) {
+        window.location.href = 'admin-login.html';
+        return false;
+      }
+      return token;
+    }
+
+    function getAuthHeaders() {
+      return {
+        'Authorization': 'Bearer ' + localStorage.getItem('adminToken'),
+        'Content-Type': 'application/json'
+      };
+    }
+
+    function adminLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminData');
+        window.location.href = 'admin-login.html';
+      }
     }
 
     // ===== GENERATE COLLEGE CODE =====
@@ -1075,8 +1183,130 @@
       }
     }
 
-    // ===== REGISTER COLLEGE =====
-    document.getElementById('collegeForm').addEventListener('submit', function(e) {
+    // ===== LOAD COLLEGES FROM API =====
+    async function loadColleges() {
+      var token = checkAuth();
+      if (!token) return;
+
+      try {
+        var response = await fetch(backendUrl + '/api/admin/colleges', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          adminLogout();
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error('Failed to load colleges');
+        }
+
+        var data = await response.json();
+        colleges = data.colleges || [];
+        filteredColleges = colleges;
+        updateUI();
+
+      } catch (error) {
+        console.error('Error loading colleges:', error);
+        showToast('Failed to load colleges', 'error');
+      }
+    }
+
+    // ===== LOAD STATS =====
+    async function loadStats() {
+      var token = checkAuth();
+      if (!token) return;
+
+      try {
+        var response = await fetch(backendUrl + '/api/admin/stats', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (response.ok) {
+          var data = await response.json();
+          document.getElementById('totalColleges').textContent = data.total_colleges || 0;
+          document.getElementById('totalStudents').textContent = data.total_students || 0;
+          document.getElementById('totalTeachers').textContent = data.total_teachers || 0;
+          document.getElementById('totalDepartments').textContent = data.total_departments || 0;
+          document.getElementById('collegeCount').textContent = data.total_colleges || 0;
+        }
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    // ===== UPDATE UI =====
+    function updateUI() {
+      renderRecentColleges();
+      renderAllColleges();
+      loadStats();
+    }
+
+    // ===== RENDER RECENT COLLEGES =====
+    function renderRecentColleges() {
+      var tbody = document.getElementById('recentCollegesTable');
+      var recent = colleges.slice(-5).reverse();
+
+      if (recent.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox" aria-hidden="true"></i>No colleges registered yet</div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = recent.map(function(c) {
+        var status = c.status || 'active';
+        return '<tr>' +
+          '<td><strong style="color:#10ac84;">' + c.code + '</strong></td>' +
+          '<td>' + c.name + '</td>' +
+          '<td>' + c.email + '</td>' +
+          '<td><span class="status-badge ' + status + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span></td>' +
+          '<td>' + new Date(c.created_at).toLocaleDateString() + '</td>' +
+          '<td><div class="action-btns">' +
+          '<button class="action-btn edit" onclick="editCollege(' + c.id + ')"><i class="fas fa-edit" aria-hidden="true"></i></button>' +
+          '<button class="action-btn delete" onclick="deleteCollege(' + c.id + ')"><i class="fas fa-trash" aria-hidden="true"></i></button>' +
+          '</div></td></tr>';
+      }).join('');
+    }
+
+    // ===== RENDER ALL COLLEGES =====
+    function renderAllColleges() {
+      var tbody = document.getElementById('allCollegesTable');
+      var data = filteredColleges.length > 0 ? filteredColleges : colleges;
+
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox" aria-hidden="true"></i>No colleges registered yet</div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = data.map(function(c) {
+        var status = c.status || 'active';
+        return '<tr>' +
+          '<td><strong style="color:#10ac84;">' + c.code + '</strong></td>' +
+          '<td>' + c.name + '</td>' +
+          '<td>' + c.email + '</td>' +
+          '<td>' + (c.city || 'N/A') + '</td>' +
+          '<td><span class="status-badge ' + status + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span></td>' +
+          '<td><div class="action-btns">' +
+          '<button class="action-btn edit" onclick="editCollege(' + c.id + ')"><i class="fas fa-edit" aria-hidden="true"></i></button>' +
+          '<button class="action-btn delete" onclick="deleteCollege(' + c.id + ')"><i class="fas fa-trash" aria-hidden="true"></i></button>' +
+          '</div></td></tr>';
+      }).join('');
+    }
+
+    // ===== FILTER COLLEGES =====
+    function filterColleges() {
+      var search = document.getElementById('searchCollege').value.toLowerCase();
+      filteredColleges = colleges.filter(function(c) {
+        return (c.name || '').toLowerCase().includes(search) ||
+               (c.code || '').toLowerCase().includes(search) ||
+               (c.email || '').toLowerCase().includes(search) ||
+               (c.city || '').toLowerCase().includes(search);
+      });
+      renderAllColleges();
+    }
+
+    // ===== ADD COLLEGE =====
+    document.getElementById('collegeForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       var name = document.getElementById('collegeName').value.trim();
@@ -1109,259 +1339,209 @@
         return;
       }
 
-      if (colleges.some(function(c) { return c.code === code; })) {
-        generateCode();
-        showToast('Code already exists, new code generated', 'error');
-        return;
+      var token = checkAuth();
+      if (!token) return;
+
+      var submitBtn = this.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Registering...';
+
+      try {
+        var response = await fetch(backendUrl + '/api/admin/colleges', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            name: name,
+            code: code,
+            address: address,
+            city: city,
+            state: state,
+            pincode: pincode,
+            email: email,
+            phone: phone,
+            principal_name: principal,
+            college_type: type,
+            category: category,
+            aided: aided === 'true',
+            password: password
+          })
+        });
+
+        var result = await response.json();
+
+        if (response.ok) {
+          showToast('College registered successfully! Code: ' + code, 'success');
+          this.reset();
+          generateCode();
+          await loadColleges();
+        } else {
+          showToast(result.error || 'Failed to register college', 'error');
+        }
+      } catch (error) {
+        console.error('Error adding college:', error);
+        showToast('Failed to register college. Please try again.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-save" aria-hidden="true"></i> Register College';
       }
-
-      if (colleges.some(function(c) { return c.email === email; })) {
-        showToast('Email already registered', 'error');
-        return;
-      }
-
-      var newCollege = {
-        id: Date.now(),
-        name: name,
-        type: type,
-        category: category,
-        aided: aided === 'true',
-        principal: principal,
-        email: email,
-        phone: phone,
-        city: city,
-        state: state,
-        pincode: pincode,
-        address: address,
-        code: code,
-        password: password,
-        status: 'active',
-        registeredAt: new Date().toISOString(),
-        students: 0
-      };
-
-      colleges.push(newCollege);
-      saveColleges();
-      updateUI();
-
-      this.reset();
-      generateCode();
-
-      showToast('College registered successfully! Code: ' + code, 'success');
     });
 
-    // ===== UPDATE UI =====
-    function updateUI() {
-      document.getElementById('totalColleges').textContent = colleges.length;
-      document.getElementById('activeColleges').textContent = colleges.filter(function(c) { return c.status === 'active'; }).length;
-      document.getElementById('pendingColleges').textContent = colleges.filter(function(c) { return c.status === 'pending'; }).length;
-      document.getElementById('collegeCount').textContent = colleges.length;
-
-      var totalStudents = colleges.reduce(function(sum, c) { return sum + (c.students || 0); }, 0);
-      document.getElementById('totalStudents').textContent = totalStudents;
-
-      renderRecentColleges();
-      renderAllColleges();
-    }
-
-    function renderRecentColleges() {
-      var tbody = document.getElementById('recentCollegesTable');
-      var recent = colleges.slice(-5).reverse();
-
-      if (recent.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox" aria-hidden="true"></i>No colleges registered yet</div></td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = recent.map(function(c) {
-        return '<tr>' +
-          '<td><span class="college-code">' + c.code + '</span></td>' +
-          '<td>' + c.name + '</td>' +
-          '<td>' + c.email + '</td>' +
-          '<td><span class="status-badge ' + c.status + '">' + c.status.charAt(0).toUpperCase() + c.status.slice(1) + '</span></td>' +
-          '<td>' + new Date(c.registeredAt).toLocaleDateString() + '</td>' +
-          '<td><div class="action-btns">' +
-          '<button class="action-btn edit" onclick="editCollege(\'' + c.id + '\')" aria-label="Edit college"><i class="fas fa-edit" aria-hidden="true"></i></button>' +
-          '<button class="action-btn delete" onclick="deleteCollege(\'' + c.id + '\')" aria-label="Delete college"><i class="fas fa-trash" aria-hidden="true"></i></button>' +
-          '</div></td></tr>';
-      }).join('');
-    }
-
-    function renderAllColleges() {
-      var tbody = document.getElementById('allCollegesTable');
-
-      if (colleges.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox" aria-hidden="true"></i>No colleges registered yet</div></td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = colleges.map(function(c) {
-        return '<tr>' +
-          '<td><span class="college-code">' + c.code + '</span></td>' +
-          '<td>' + c.name + '</td>' +
-          '<td>' + c.email + '</td>' +
-          '<td>' + c.city + '</td>' +
-          '<td><span class="status-badge ' + c.status + '">' + c.status.charAt(0).toUpperCase() + c.status.slice(1) + '</span></td>' +
-          '<td><div class="action-btns">' +
-          '<button class="action-btn edit" onclick="editCollege(\'' + c.id + '\')" aria-label="Edit college"><i class="fas fa-edit" aria-hidden="true"></i></button>' +
-          '<button class="action-btn delete" onclick="deleteCollege(\'' + c.id + '\')" aria-label="Delete college"><i class="fas fa-trash" aria-hidden="true"></i></button>' +
-          '</div></td></tr>';
-      }).join('');
-    }
-
-    function filterColleges() {
-      var search = document.getElementById('searchCollege').value.toLowerCase();
-      var tbody = document.getElementById('allCollegesTable');
-      
-      var filtered = colleges.filter(function(c) {
-        return c.name.toLowerCase().includes(search) ||
-          c.code.toLowerCase().includes(search) ||
-          c.email.toLowerCase().includes(search) ||
-          c.city.toLowerCase().includes(search);
-      });
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-search" aria-hidden="true"></i>No colleges found</div></td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(function(c) {
-        return '<tr>' +
-          '<td><span class="college-code">' + c.code + '</span></td>' +
-          '<td>' + c.name + '</td>' +
-          '<td>' + c.email + '</td>' +
-          '<td>' + c.city + '</td>' +
-          '<td><span class="status-badge ' + c.status + '">' + c.status.charAt(0).toUpperCase() + c.status.slice(1) + '</span></td>' +
-          '<td><div class="action-btns">' +
-          '<button class="action-btn edit" onclick="editCollege(\'' + c.id + '\')" aria-label="Edit college"><i class="fas fa-edit" aria-hidden="true"></i></button>' +
-          '<button class="action-btn delete" onclick="deleteCollege(\'' + c.id + '\')" aria-label="Delete college"><i class="fas fa-trash" aria-hidden="true"></i></button>' +
-          '</div></td></tr>';
-      }).join('');
-    }
-
     // ===== DELETE COLLEGE =====
-    function deleteCollege(id) {
-      if (confirm('Are you sure you want to delete this college?')) {
-        colleges = colleges.filter(function(c) { return c.id != id; });
-        saveColleges();
-        updateUI();
-        showToast('College deleted successfully', 'success');
+    async function deleteCollege(id) {
+      if (!confirm('Are you sure you want to delete this college?')) return;
+
+      var token = checkAuth();
+      if (!token) return;
+
+      try {
+        var response = await fetch(backendUrl + '/api/admin/colleges/' + id, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (response.ok) {
+          showToast('College deleted successfully', 'success');
+          await loadColleges();
+        } else {
+          var result = await response.json();
+          showToast(result.error || 'Failed to delete college', 'error');
+        }
+      } catch (error) {
+        console.error('Error deleting college:', error);
+        showToast('Failed to delete college', 'error');
       }
     }
 
+    // ===== DELETE ALL COLLEGES =====
     function confirmDeleteAll() {
       if (confirm('⚠️ Are you sure? This will delete ALL colleges permanently!')) {
         if (confirm('Final confirmation: Delete all colleges?')) {
-          colleges = [];
-          saveColleges();
-          updateUI();
-          showToast('All colleges deleted', 'success');
+          deleteAllColleges();
         }
       }
     }
 
-    // ===== EDIT COLLEGE =====
-    function editCollege(id) {
-      var college = colleges.find(function(c) { return c.id == id; });
-      if (!college) return;
+    async function deleteAllColleges() {
+      var token = checkAuth();
+      if (!token) return;
 
-      document.getElementById('collegeName').value = college.name;
-      document.getElementById('collegeType').value = college.type;
-      document.getElementById('category').value = college.category;
-      document.getElementById('aided').value = college.aided ? 'true' : 'false';
-      document.getElementById('principalName').value = college.principal;
-      document.getElementById('collegeEmail').value = college.email;
-      document.getElementById('collegePhone').value = college.phone;
-      document.getElementById('collegeCity').value = college.city;
-      document.getElementById('collegeState').value = college.state;
-      document.getElementById('collegePincode').value = college.pincode;
-      document.getElementById('collegeAddress').value = college.address;
-      document.getElementById('collegeCode').value = college.code;
-      document.getElementById('generatedCode').textContent = college.code;
+      try {
+        var response = await fetch(backendUrl + '/api/admin/colleges', {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
 
-      var index = colleges.findIndex(function(c) { return c.id == id; });
-      if (index > -1) {
-        colleges.splice(index, 1);
-        saveColleges();
-        updateUI();
-        switchTab('register');
-        showToast('Edit mode: Update the details and submit', 'success');
+        if (response.ok) {
+          showToast('All colleges deleted', 'success');
+          await loadColleges();
+        } else {
+          showToast('Failed to delete all colleges', 'error');
+        }
+      } catch (error) {
+        console.error('Error deleting all colleges:', error);
+        showToast('Failed to delete all colleges', 'error');
       }
     }
 
-    // ===== TAB SYSTEM =====
-    function setupTabs() {
-      var tabs = document.querySelectorAll('.sidebar-item[role="tab"]');
-      var panels = document.querySelectorAll('.tab-content');
+    // ===== EDIT COLLEGE =====
+    async function editCollege(id) {
+      var token = checkAuth();
+      if (!token) return;
 
-      tabs.forEach(function(tab) {
-        tab.addEventListener('click', function() {
-          var tabId = this.dataset.tab;
-          switchTab(tabId);
+      try {
+        var response = await fetch(backendUrl + '/api/admin/colleges/' + id, {
+          headers: { 'Authorization': 'Bearer ' + token }
         });
-      });
+
+        if (!response.ok) {
+          showToast('Failed to load college details', 'error');
+          return;
+        }
+
+        var result = await response.json();
+        var college = result.college;
+
+        document.getElementById('collegeName').value = college.name || '';
+        document.getElementById('collegeType').value = college.college_type || '';
+        document.getElementById('category').value = college.category || '';
+        document.getElementById('aided').value = college.aided ? 'true' : 'false';
+        document.getElementById('principalName').value = college.principal_name || '';
+        document.getElementById('collegeEmail').value = college.email || '';
+        document.getElementById('collegePhone').value = college.phone || '';
+        document.getElementById('collegeCity').value = college.city || '';
+        document.getElementById('collegeState').value = college.state || '';
+        document.getElementById('collegePincode').value = college.pincode || '';
+        document.getElementById('collegeAddress').value = college.address || '';
+        document.getElementById('collegeCode').value = college.code || '';
+        document.getElementById('generatedCode').textContent = college.code || '';
+
+        // Remove password requirements for edit
+        document.getElementById('collegePassword').removeAttribute('required');
+        document.getElementById('collegeConfirmPassword').removeAttribute('required');
+        document.getElementById('collegePassword').placeholder = 'Leave blank to keep current password';
+        document.getElementById('collegeConfirmPassword').placeholder = 'Leave blank to keep current password';
+
+        switchTab('register');
+        showToast('Edit mode: Update the details and submit', 'success');
+      } catch (error) {
+        console.error('Error loading college:', error);
+        showToast('Failed to load college details', 'error');
+      }
     }
 
-    function switchTab(tabId) {
-      // Update tabs
-      var tabs = document.querySelectorAll('.sidebar-item[role="tab"]');
-      tabs.forEach(function(tab) {
-        var isActive = tab.dataset.tab === tabId;
-        tab.setAttribute('aria-selected', isActive);
-        tab.classList.toggle('active', isActive);
+    // ===== TAB SWITCHING =====
+    function switchTab(tab) {
+      var tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach(function(el) {
+        el.classList.remove('active');
+      });
+      document.getElementById('tab-' + tab).classList.add('active');
+
+      var items = document.querySelectorAll('.sidebar-item');
+      items.forEach(function(el) {
+        el.classList.remove('active');
+      });
+      document.querySelector('.sidebar-item[data-tab="' + tab + '"]').classList.add('active');
+
+      // Update ARIA selected state
+      var tabButtons = document.querySelectorAll('[role="tab"]');
+      tabButtons.forEach(function(btn) {
+        var isActive = btn.dataset.tab === tab;
+        btn.setAttribute('aria-selected', isActive);
       });
 
-      // Update panels
-      var panels = document.querySelectorAll('.tab-content');
-      panels.forEach(function(panel) {
-        var isActive = panel.id === 'tab-' + tabId;
-        panel.classList.toggle('hidden', !isActive);
-      });
-
-      if (tabId === 'register') {
+      if (tab === 'register') {
         generateCode();
       }
     }
 
-    // ===== TOAST =====
-    function showToast(message, type) {
-      var toast = document.getElementById('toast');
-      var toastMsg = document.getElementById('toastMessage');
-      toast.className = 'toast ' + (type || 'success');
-      toastMsg.textContent = message;
-      toast.style.display = 'flex';
-
-      clearTimeout(toast._timeout);
-      toast._timeout = setTimeout(function() {
-        toast.style.display = 'none';
-      }, 3000);
-    }
-
-    // ===== LOGOUT =====
-    function logout() {
-      if (confirm('Are you sure you want to logout?')) {
-        window.location.href = 'index.html';
-      }
-    }
+    document.querySelectorAll('.sidebar-item').forEach(function(item) {
+      item.addEventListener('click', function() {
+        var tab = this.dataset.tab;
+        switchTab(tab);
+      });
+    });
 
     // ===== KEYBOARD SHORTCUT =====
     document.addEventListener('keydown', function(e) {
       if (e.ctrlKey && e.key === 'g') {
         e.preventDefault();
         var registerTab = document.getElementById('tab-register');
-        if (registerTab && !registerTab.classList.contains('hidden')) {
+        if (registerTab.classList.contains('active')) {
           generateCode();
           showToast('New code generated!', 'success');
         }
       }
     });
 
-    // ===== COLLEGE CODE STYLING =====
-    // Add CSS for college-code class
-    var style = document.createElement('style');
-    style.textContent = '.college-code { color: #10ac84; font-weight: 600; }';
-    document.head.appendChild(style);
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+      if (checkAuth()) {
+        loadColleges();
+        loadStats();
+        generateCode();
+      }
+    });
   </script>
-
 </body>
 </html>

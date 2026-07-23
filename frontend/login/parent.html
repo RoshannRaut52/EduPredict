@@ -440,11 +440,11 @@
   <!-- ===== HEADER ===== -->
   <header>
     <div class="logo">
-      <i class="fas fa-graduation-cap"></i>
+      <i class="fas fa-graduation-cap" aria-hidden="true"></i>
       EduPredict
     </div>
     <ul class="nav-links">
-      <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="../index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
       <li><a href="../about.html">About</a></li>
       <li><a href="../help.html">Help</a></li>
       <li><a href="../contact.html">Contact</a></li>
@@ -462,37 +462,37 @@
 
       <form class="login-form" id="parentLoginForm">
         <div class="form-group">
-          <label><i class="fas fa-envelope"></i> Parent Email</label>
-          <input type="email" id="email" placeholder="Enter your registered email" required />
+          <label><i class="fas fa-envelope" aria-hidden="true"></i> Parent Email</label>
+          <input type="email" id="email" placeholder="Enter your registered email" required aria-required="true" />
         </div>
 
         <div class="form-group">
-          <label><i class="fas fa-lock"></i> Password</label>
-          <input type="password" id="password" placeholder="Enter your password" required />
+          <label><i class="fas fa-lock" aria-hidden="true"></i> Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required aria-required="true" />
         </div>
 
         <button type="submit" class="btn-login">
-          <i class="fas fa-sign-in-alt"></i> Login
+          <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Login
         </button>
       </form>
 
       <div class="login-links">
-        <a href="parent-register.html"><i class="fas fa-user-plus"></i> Create Account</a>
+        <a href="parent-register.html"><i class="fas fa-user-plus" aria-hidden="true"></i> Create Account</a>
         <span class="separator">|</span>
-        <a href="parent-forgot-password.html"><i class="fas fa-key"></i> Forgot Password?</a>
+        <a href="parent-forgot-password.html"><i class="fas fa-key" aria-hidden="true"></i> Forgot Password?</a>
       </div>
 
-      <div class="message" id="statusMsg"></div>
+      <div class="message" id="statusMsg" role="alert" aria-live="polite"></div>
 
       <div class="back-home">
-        <a href="../index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <a href="../index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Home</a>
       </div>
     </div>
   </main>
 
   <!-- ===== FOOTER ===== -->
   <footer>
-    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart"></i> for education.
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart" aria-hidden="true"></i> for education.
   </footer>
 
   <script>
@@ -514,9 +514,9 @@
     })();
 
     // ===== LOGIN =====
-    const form = document.getElementById('parentLoginForm');
-    const msg = document.getElementById('statusMsg');
-    const backendUrl = 'https://edupredict-l9eg.onrender.com';
+    var form = document.getElementById('parentLoginForm');
+    var msg = document.getElementById('statusMsg');
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
 
     function showMessage(text, type) {
       msg.textContent = text;
@@ -525,11 +525,11 @@
 
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      
+
       showMessage('⏳ Logging in...', 'loading');
 
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+      var email = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value;
 
       if (!email || !password) {
         showMessage('❌ Please fill all fields', 'error');
@@ -537,25 +537,26 @@
       }
 
       try {
-        const res = await fetch(`${backendUrl}/login/parent`, {
+        // ✅ FIXED: Correct API endpoint for parent login
+        var res = await fetch(backendUrl + '/api/parent/login', {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email: email, password: password })
         });
 
-        const contentType = res.headers.get('content-type');
+        var contentType = res.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
           showMessage('❌ Server error: Invalid response', 'error');
           return;
         }
 
-        const data = await res.json();
+        var data = await res.json();
 
         if (!res.ok) {
-          showMessage(data.message || data.error || '❌ Login failed', 'error');
+          showMessage(data.error || data.message || '❌ Login failed', 'error');
           return;
         }
 
@@ -564,15 +565,16 @@
           return;
         }
 
-        localStorage.setItem('parent', JSON.stringify(data.parent));
+        // Store parent data for session
+        localStorage.setItem('parentData', JSON.stringify(data.parent));
         if (data.token) {
           localStorage.setItem('parentToken', data.token);
         }
-        
+
         showMessage('✅ Login successful! Redirecting...', 'success');
         form.reset();
 
-        setTimeout(() => {
+        setTimeout(function() {
           window.location.href = '../dashboard/parent.html';
         }, 1500);
 

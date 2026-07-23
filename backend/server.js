@@ -163,6 +163,214 @@ app.post('/api/admin/setup', async (req, res) => {
 });
 
 // ========================================
+// ADMIN COLLEGE MANAGEMENT ROUTES
+// ========================================
+
+// Get all colleges (Admin only)
+app.get('/api/admin/colleges', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const result = await pool.query(
+      `SELECT id, name, code, address, city, state, pincode, email, phone, 
+              principal_name, college_type, category, aided, created_at 
+       FROM colleges 
+       ORDER BY created_at DESC`
+    );
+
+    res.json({ colleges: result.rows });
+  } catch (err) {
+    console.error('Error fetching colleges:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get single college by ID (Admin only)
+app.get('/api/admin/colleges/:id', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const { id } = req.params;
+    const result = await pool.query(
+      `SELECT id, name, code, address, city, state, pincode, email, phone, 
+              principal_name, college_type, category, aided, created_at 
+       FROM colleges 
+       WHERE id = $1`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'College not found' });
+    }
+
+    res.json({ college: result.rows[0] });
+  } catch (err) {
+    console.error('Error fetching college:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Add new college (Admin only)
+app.post('/api/admin/colleges', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const { 
+      name, code, address, city, state, pincode, 
+      email, phone, principal_name, college_type, 
+      category, aided, password 
+    } = req.body;
+
+    // Validate required fields
+    if (!name || !code || !email || !password) {
+      return res.status(400).json({ error: 'Required fields missing' });
+    }
+
+    // Check if code or email exists
+    const existing = await pool.query(
+      'SELECT * FROM colleges WHERE code = $1 OR email = $2',
+      [code, email]
+    );
+
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ error: 'College code or email already exists' });
+    }
+
+    const password_hash = await bcrypt.hash(password, 10);
+
+    const result = await pool.query(
+      `INSERT INTO colleges (name, code, address, city, state, pincode, email, phone, 
+                            principal_name, college_type, category, aided, password_hash)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+       RETURNING id, name, code, email, created_at`,
+      [name, code, address, city, state, pincode, email, phone, 
+       principal_name, college_type, category, aided, password_hash]
+    );
+
+    res.status(201).json({ 
+      message: 'College added successfully',
+      college: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Error adding college:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update college (Admin only)
+app.put('/api/admin/colleges/:id', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const { id } = req.params;
+    const { 
+      name, address, city, state, pincode, 
+      email, phone, principal_name, college_type, 
+      category, aided 
+    } = req.body;
+
+    // Check if college exists
+    const checkResult = await pool.query(
+      'SELECT * FROM colleges WHERE id = $1',
+      [id]
+    );
+
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'College not found' });
+    }
+
+    // Check if email already exists for another college
+    const emailCheck = await pool.query(
+      'SELECT * FROM colleges WHERE email = $1 AND id != $2',
+      [email, id]
+    );
+
+    if (emailCheck.rows.length > 0) {
+      return res.status(400).json({ error: 'Email already in use by another college' });
+    }
+
+    const result = await pool.query(
+      `UPDATE colleges 
+       SET name = $1, address = $2, city = $3, state = $4, pincode = $5,
+           email = $6, phone = $7, principal_name = $8, college_type = $9, 
+           category = $10, aided = $11, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $12
+       RETURNING id, name, code, email, created_at`,
+      [name, address, city, state, pincode, email, phone, 
+       principal_name, college_type, category, aided, id]
+    );
+
+    res.json({ 
+      message: 'College updated successfully',
+      college: result.rows[0]
+    });
+  } catch (err) {
+    console.error('Error updating college:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete college (Admin only)
+app.delete('/api/admin/colleges/:id', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const { id } = req.params;
+
+    // Check if college exists
+    const checkResult = await pool.query(
+      'SELECT * FROM colleges WHERE id = $1',
+      [id]
+    );
+
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'College not found' });
+    }
+
+    await pool.query('DELETE FROM colleges WHERE id = $1', [id]);
+
+    res.json({ message: 'College deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting college:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get college statistics (Admin only)
+app.get('/api/admin/stats', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const totalColleges = await pool.query('SELECT COUNT(*) FROM colleges');
+    const totalStudents = await pool.query('SELECT COUNT(*) FROM students');
+    const totalTeachers = await pool.query('SELECT COUNT(*) FROM teachers');
+    const totalDepartments = await pool.query('SELECT COUNT(*) FROM departments');
+
+    res.json({
+      total_colleges: parseInt(totalColleges.rows[0].count),
+      total_students: parseInt(totalStudents.rows[0].count),
+      total_teachers: parseInt(totalTeachers.rows[0].count),
+      total_departments: parseInt(totalDepartments.rows[0].count)
+    });
+  } catch (err) {
+    console.error('Error fetching stats:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ========================================
 // COLLEGE REGISTRATION
 // ========================================
 app.post('/api/college/register', async (req, res) => {

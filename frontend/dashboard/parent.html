@@ -8,13 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    /* ===== SAME THEME AS INDEX ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
       background: #0a0a0f;
@@ -23,521 +17,202 @@
       display: flex;
       flex-direction: column;
     }
-
-    /* ===== ANIMATED BACKGROUND ===== */
     .bg-animation {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      overflow: hidden;
+      top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden;
     }
-
     .bg-animation .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
+      position: absolute; border-radius: 50%; filter: blur(80px);
       animation: orbFloat 15s ease-in-out infinite alternate;
     }
-
     .bg-animation .orb:nth-child(1) {
-      width: 400px;
-      height: 400px;
+      width: 400px; height: 400px;
       background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
-      top: -100px;
-      left: -100px;
-      animation-delay: 0s;
+      top: -100px; left: -100px; animation-delay: 0s;
     }
-
     .bg-animation .orb:nth-child(2) {
-      width: 500px;
-      height: 500px;
+      width: 500px; height: 500px;
       background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
-      bottom: -150px;
-      right: -150px;
-      animation-delay: -5s;
+      bottom: -150px; right: -150px; animation-delay: -5s;
     }
-
     .bg-animation .orb:nth-child(3) {
-      width: 300px;
-      height: 300px;
+      width: 300px; height: 300px;
       background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation-delay: -10s;
+      top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -10s;
     }
-
     @keyframes orbFloat {
       0% { transform: translate(0, 0) scale(1); }
       33% { transform: translate(100px, -50px) scale(1.1); }
       66% { transform: translate(-50px, 100px) scale(0.9); }
       100% { transform: translate(50px, -30px) scale(1.05); }
     }
-
-    /* ===== FLOATING PARTICLES ===== */
     .particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      pointer-events: none;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;
     }
-
     .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      animation: particleFloat 20s infinite linear;
+      position: absolute; width: 4px; height: 4px; background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%; animation: particleFloat 20s infinite linear;
     }
-
     @keyframes particleFloat {
       0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
+      10% { opacity: 1; } 90% { opacity: 1; }
       100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
     }
-
-    /* ===== HEADER ===== */
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 50px;
-      background: rgba(10, 10, 15, 0.7);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 50px; background: rgba(10, 10, 15, 0.7);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
       backdrop-filter: blur(20px) saturate(180%);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
     }
-
     .logo {
-      font-size: 1.8rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      font-size: 1.8rem; font-weight: 800; display: flex; align-items: center; gap: 12px;
       background: linear-gradient(135deg, #10ac84, #ee7939);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      cursor: pointer;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-
-    .logo i {
-      -webkit-text-fill-color: initial;
-      color: #10ac84;
-      font-size: 2rem;
+    .logo i { -webkit-text-fill-color: initial; color: #10ac84; font-size: 2rem; }
+    .header-right { display: flex; align-items: center; gap: 15px; }
+    .btn {
+      padding: 10px 20px; border-radius: 10px; font-weight: 600; border: none; cursor: pointer;
+      transition: all 0.3s ease; font-family: 'Inter', sans-serif; font-size: 0.9rem;
+      display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
     }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .header-right .btn {
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
     .btn-primary {
-      background: linear-gradient(135deg, #10ac84, #0d8c6b);
-      color: #fff;
+      background: linear-gradient(135deg, #10ac84, #0d8c6b); color: #fff;
     }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
-    }
-
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3); }
     .btn-danger {
-      background: rgba(255, 0, 0, 0.1);
-      border: 1px solid rgba(255, 0, 0, 0.2);
-      color: #ff6b6b;
+      background: rgba(255, 0, 0, 0.05); border: 1px solid rgba(255, 0, 0, 0.2); color: #ff6b6b;
     }
-
-    .btn-danger:hover {
-      background: rgba(255, 0, 0, 0.2);
-    }
-
-    /* ===== DASHBOARD ===== */
+    .btn-danger:hover { background: rgba(255, 0, 0, 0.1); border-color: rgba(255, 0, 0, 0.4); }
     .dashboard {
-      display: flex;
-      max-width: 1400px;
-      margin: 30px auto;
-      padding: 0 25px;
-      gap: 30px;
-      flex: 1;
+      display: flex; max-width: 1400px; margin: 30px auto; padding: 0 25px; gap: 30px; flex: 1;
     }
-
-    /* ===== SIDEBAR ===== */
     .parent-sidebar {
-      flex: 0 0 260px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 30px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: fit-content;
-      position: sticky;
-      top: 90px;
+      flex: 0 0 260px; background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px;
+      padding: 30px 20px; display: flex; flex-direction: column; align-items: center;
+      height: fit-content; position: sticky; top: 90px;
     }
-
     .parent-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
+      width: 100px; height: 100px; border-radius: 50%;
       background: linear-gradient(135deg, #10ac84, #ee7939);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #fff;
-      border: 3px solid rgba(255, 255, 255, 0.1);
-      margin-bottom: 15px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; font-weight: 700; color: #fff;
+      border: 3px solid rgba(255, 255, 255, 0.1); margin-bottom: 15px;
     }
-
-    .parent-sidebar h2 {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #10ac84;
-      margin-bottom: 4px;
-    }
-
-    .parent-sidebar .email {
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 0.85rem;
-      margin-bottom: 4px;
-    }
-
-    .parent-sidebar .phone {
-      color: rgba(255, 255, 255, 0.3);
-      font-size: 0.85rem;
-    }
-
-    /* ===== MAIN CONTENT ===== */
-    .main-content {
-      flex: 1;
-      min-width: 0;
-    }
-
+    .parent-sidebar h2 { font-size: 1.3rem; font-weight: 700; color: #10ac84; margin-bottom: 4px; }
+    .parent-sidebar .email { color: rgba(255, 255, 255, 0.4); font-size: 0.85rem; margin-bottom: 4px; }
+    .parent-sidebar .phone { color: rgba(255, 255, 255, 0.3); font-size: 0.85rem; }
+    .main-content { flex: 1; min-width: 0; }
     .welcome-banner {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 25px 30px;
-      margin-bottom: 25px;
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px; padding: 25px 30px; margin-bottom: 25px;
     }
-
-    .welcome-banner h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-    }
-
+    .welcome-banner h1 { font-size: 1.8rem; font-weight: 700; }
     .welcome-banner h1 span {
       background: linear-gradient(135deg, #10ac84, #ee7939);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-
-    .welcome-banner p {
-      color: rgba(255, 255, 255, 0.4);
-      margin-top: 4px;
-    }
-
-    /* ===== TABS ===== */
+    .welcome-banner p { color: rgba(255, 255, 255, 0.4); margin-top: 4px; }
     .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
+      display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;
     }
-
     .tab {
-      padding: 12px 24px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      color: rgba(255, 255, 255, 0.6);
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
+      padding: 12px 24px; border-radius: 10px; background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.6);
+      font-weight: 500; cursor: pointer; transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif; font-size: 0.9rem;
     }
-
-    .tab:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: #fff;
-    }
-
-    .tab.active {
-      background: rgba(16, 172, 132, 0.1);
-      color: #10ac84;
-      border-color: rgba(16, 172, 132, 0.2);
-    }
-
-    /* ===== TAB CONTENT ===== */
+    .tab:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+    .tab.active { background: rgba(16, 172, 132, 0.1); color: #10ac84; border-color: rgba(16, 172, 132, 0.2); }
     .tab-content {
-      display: none;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 25px;
-      margin-bottom: 25px;
+      display: none; background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px;
+      padding: 25px; margin-bottom: 25px;
     }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .tab-content h2 {
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .tab-content h2 i {
-      margin-right: 10px;
-      color: #10ac84;
-    }
-
-    /* ===== INFO CARDS ===== */
+    .tab-content.active { display: block; }
+    .tab-content h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 20px; color: rgba(255, 255, 255, 0.8); }
+    .tab-content h2 i { margin-right: 10px; color: #10ac84; }
     .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;
     }
-
     .info-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px; padding: 16px 20px;
     }
-
     .info-card h4 {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: rgba(255, 255, 255, 0.3);
-      font-weight: 600;
-      margin-bottom: 4px;
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.3); font-weight: 600; margin-bottom: 4px;
     }
-
-    .info-card p {
-      font-size: 1rem;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    /* ===== RISK LEVEL ===== */
+    .info-card p { font-size: 1rem; font-weight: 500; color: rgba(255, 255, 255, 0.8); }
     .risk-box {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 20px;
-      text-align: center;
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px; padding: 20px; margin-top: 20px; text-align: center;
     }
-
-    .risk-box h4 {
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.5);
-      margin-bottom: 8px;
-    }
-
-    .risk-box .risk-level {
-      font-size: 1.8rem;
-      font-weight: 800;
-    }
-
-    .risk-box .risk-level.medium {
-      color: #ee7939;
-    }
-
-    .risk-box .risk-level.low {
-      color: #10ac84;
-    }
-
-    .risk-box .risk-level.high {
-      color: #ff6b6b;
-    }
-
-    /* ===== CHART ===== */
-    .chart-container {
-      width: 100%;
-      max-width: 700px;
-      height: 280px;
-      margin: 0 auto 20px auto;
-    }
-
-    /* ===== TABLE ===== */
-    .table-wrap {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
+    .risk-box h4 { font-size: 0.9rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 8px; }
+    .risk-box .risk-level { font-size: 1.8rem; font-weight: 800; }
+    .risk-box .risk-level.medium { color: #ee7939; }
+    .risk-box .risk-level.low { color: #10ac84; }
+    .risk-box .risk-level.high { color: #ff6b6b; }
+    .chart-container { width: 100%; max-width: 700px; height: 280px; margin: 0 auto 20px auto; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
     table th {
-      text-align: left;
-      padding: 12px 16px;
-      background: rgba(16, 172, 132, 0.1);
-      color: #10ac84;
-      font-weight: 600;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      text-align: left; padding: 12px 16px; background: rgba(16, 172, 132, 0.1);
+      color: #10ac84; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;
     }
-
-    table td {
-      padding: 12px 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.9rem;
-    }
-
-    .status-submitted {
-      color: #10ac84;
-    }
-
-    .status-pending {
-      color: #ee7939;
-    }
-
-    /* ===== NOTIFICATIONS ===== */
+    table td { padding: 12px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; }
+    .status-submitted { color: #10ac84; }
+    .status-pending { color: #ee7939; }
     .notif {
-      background: rgba(255, 255, 255, 0.03);
-      padding: 14px 18px;
-      border-radius: 10px;
-      margin: 10px 0;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.03); padding: 14px 18px; border-radius: 10px;
+      margin: 10px 0; border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex; align-items: center; gap: 12px; color: rgba(255, 255, 255, 0.7);
     }
-
-    .notif strong {
-      color: #10ac84;
-    }
-
-    .notif .icon-warning {
-      color: #ee7939;
-    }
-
-    .notif .icon-success {
-      color: #10ac84;
-    }
-
-    /* ===== FEEDBACK ===== */
+    .notif strong { color: #10ac84; }
+    .notif .icon-warning { color: #ee7939; }
+    .notif .icon-success { color: #10ac84; }
     .feedback-box textarea {
-      width: 100%;
-      min-height: 100px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.05);
-      color: #fff;
-      padding: 14px 16px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      resize: vertical;
-      transition: all 0.3s ease;
+      width: 100%; min-height: 100px; border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.05);
+      color: #fff; padding: 14px 16px; font-family: 'Inter', sans-serif; font-size: 0.95rem;
+      resize: vertical; transition: all 0.3s ease;
     }
-
-    .feedback-box textarea::placeholder {
-      color: rgba(255, 255, 255, 0.25);
+    .feedback-box textarea::placeholder { color: rgba(255, 255, 255, 0.25); }
+    .feedback-box textarea:focus { outline: none; border-color: #10ac84; background: rgba(255, 255, 255, 0.08); }
+    .feedback-box .btn-submit { margin-top: 12px; }
+    footer {
+      text-align: center; padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.2); font-size: 0.85rem; margin-top: auto;
     }
-
-    .feedback-box textarea:focus {
-      outline: none;
-      border-color: #10ac84;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .feedback-box .btn-submit {
-      margin-top: 12px;
-    }
-
-    /* ===== TOAST ===== */
+    footer .heart { color: #10ac84; }
     .toast {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      padding: 16px 24px;
-      border-radius: 12px;
-      background: rgba(10, 10, 15, 0.95);
-      -webkit-backdrop-filter: blur(20px);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      display: none;
-      align-items: center;
-      gap: 12px;
-      z-index: 1000;
-      animation: slideUp 0.4s ease;
+      position: fixed; bottom: 30px; right: 30px; padding: 16px 24px; border-radius: 12px;
+      background: rgba(10, 10, 15, 0.95); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      display: none; align-items: center; gap: 12px; z-index: 1000; animation: slideUp 0.4s ease;
     }
-
     @keyframes slideUp {
       0% { transform: translateY(30px); opacity: 0; }
       100% { transform: translateY(0); opacity: 1; }
     }
-
     .toast.success { border-color: rgba(16, 172, 132, 0.3); }
     .toast.success i { color: #10ac84; }
     .toast.error { border-color: rgba(255, 0, 0, 0.3); }
     .toast.error i { color: #ff6b6b; }
-
-    /* ===== FOOTER ===== */
-    footer {
-      text-align: center;
-      padding: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      color: rgba(255, 255, 255, 0.2);
-      font-size: 0.85rem;
-    }
-
-    footer .heart {
-      color: #10ac84;
-    }
-
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 900px) {
       header { padding: 15px 20px; flex-wrap: wrap; gap: 10px; }
       .dashboard { flex-direction: column; padding: 15px; }
-      .parent-sidebar { position: relative; top: 0; width: 100%; flex: none; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 20px; }
+      .parent-sidebar {
+        position: relative; top: 0; width: 100%; flex: none;
+        flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 20px;
+      }
       .parent-avatar { width: 70px; height: 70px; font-size: 1.8rem; margin-bottom: 0; }
       .parent-sidebar h2 { font-size: 1rem; }
       .info-grid { grid-template-columns: 1fr 1fr; }
     }
-
     @media (max-width: 480px) {
       .info-grid { grid-template-columns: 1fr; }
       .tabs { flex-direction: column; }
@@ -548,47 +223,31 @@
 </head>
 <body>
 
-  <!-- ===== BACKGROUND EFFECTS ===== -->
-  <div class="bg-animation">
-    <div class="orb"></div>
-    <div class="orb"></div>
-    <div class="orb"></div>
-  </div>
+  <div class="bg-animation"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
   <div class="particles" id="particles"></div>
 
-  <!-- ===== HEADER ===== -->
   <header>
-    <div class="logo">
-      <i class="fas fa-graduation-cap" aria-hidden="true"></i>
-      EduPredict
-    </div>
+    <div class="logo"><i class="fas fa-graduation-cap" aria-hidden="true"></i> EduPredict</div>
     <div class="header-right">
       <button class="btn btn-primary" id="dashboardBtn"><i class="fas fa-home" aria-hidden="true"></i> Dashboard</button>
       <button class="btn btn-danger" id="logoutBtn"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout</button>
     </div>
   </header>
 
-  <!-- ===== DASHBOARD ===== -->
   <div class="dashboard">
-
-    <!-- SIDEBAR -->
     <aside class="parent-sidebar">
-      <div class="parent-avatar">P</div>
-      <h2 id="parentName">Ramesh Patil</h2>
-      <span class="email" id="parentEmail">ramesh@example.com</span>
-      <span class="phone" id="parentPhone">+91 9876543210</span>
+      <div class="parent-avatar" id="parentInitials">P</div>
+      <h2 id="parentName">Loading...</h2>
+      <span class="email" id="parentEmail">Loading...</span>
+      <span class="phone" id="parentPhone">Loading...</span>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
-
-      <!-- WELCOME -->
       <div class="welcome-banner">
-        <h1>Welcome, <span id="welcomeName">Ramesh Patil</span> 👋</h1>
+        <h1>Welcome, <span id="welcomeName">Loading...</span> 👋</h1>
         <p>Stay updated with your child's academic progress</p>
       </div>
 
-      <!-- TABS -->
       <div class="tabs" role="tablist">
         <button class="tab active" role="tab" aria-selected="true" data-tab="student">Student Info</button>
         <button class="tab" role="tab" aria-selected="false" data-tab="attendance">Attendance</button>
@@ -598,111 +257,65 @@
         <button class="tab" role="tab" aria-selected="false" data-tab="feedback">Feedback</button>
       </div>
 
-      <!-- STUDENT INFO -->
       <section class="tab-content active" id="student" role="tabpanel">
         <h2><i class="fas fa-user-graduate" aria-hidden="true"></i> Student Information</h2>
         <div class="info-grid">
-          <div class="info-card"><h4>Name</h4><p id="studentName">Aditi Patil</p></div>
-          <div class="info-card"><h4>Email</h4><p id="studentEmail">aditi@student.edu</p></div>
-          <div class="info-card"><h4>Roll Number</h4><p id="studentRoll">12345</p></div>
-          <div class="info-card"><h4>Year</h4><p id="studentYear">2nd Year</p></div>
-          <div class="info-card"><h4>Department</h4><p id="studentDept">Information Technology</p></div>
+          <div class="info-card"><h4>Name</h4><p id="studentName">Loading...</p></div>
+          <div class="info-card"><h4>Email</h4><p id="studentEmail">Loading...</p></div>
+          <div class="info-card"><h4>Roll Number</h4><p id="studentRoll">Loading...</p></div>
+          <div class="info-card"><h4>Year</h4><p id="studentYear">Loading...</p></div>
+          <div class="info-card"><h4>Department</h4><p id="studentDept">Loading...</p></div>
+          <div class="info-card"><h4>College</h4><p id="studentCollege">Loading...</p></div>
         </div>
-
         <div class="risk-box">
           <h4>📉 Dropout Risk Level</h4>
-          <div class="risk-level medium" id="riskLevel">Medium</div>
+          <div class="risk-level medium" id="riskLevel">Loading...</div>
         </div>
       </section>
 
-      <!-- ATTENDANCE -->
       <section class="tab-content" id="attendance" role="tabpanel">
-        <h2><i class="fas fa-calendar-check" aria-hidden="true"></i> Attendance (Subject-wise)</h2>
-        <div class="chart-container">
-          <canvas id="attendanceChart" role="img" aria-label="Attendance bar chart"></canvas>
-        </div>
+        <h2><i class="fas fa-calendar-check" aria-hidden="true"></i> Attendance</h2>
+        <div class="chart-container"><canvas id="attendanceChart" role="img"></canvas></div>
         <div id="attendance-alerts"></div>
       </section>
 
-      <!-- CGPA -->
       <section class="tab-content" id="cgpa" role="tabpanel">
         <h2><i class="fas fa-chart-line" aria-hidden="true"></i> Academic Progress</h2>
-        <div class="chart-container">
-          <canvas id="cgpaChart" role="img" aria-label="CGPA bar chart"></canvas>
-        </div>
+        <div class="chart-container"><canvas id="cgpaChart" role="img"></canvas></div>
       </section>
 
-      <!-- ASSIGNMENTS -->
       <section class="tab-content" id="assignments" role="tabpanel">
         <h2><i class="fas fa-tasks" aria-hidden="true"></i> Assignments</h2>
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Subject</th>
-                <th>Title</th>
-                <th>Due Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="assignmentsTable">
-              <tr>
-                <td>Math</td>
-                <td>Algebra Homework</td>
-                <td>15 Oct 2025</td>
-                <td class="status-submitted">✅ Submitted</td>
-              </tr>
-              <tr>
-                <td>Science</td>
-                <td>Lab Report</td>
-                <td>18 Oct 2025</td>
-                <td class="status-pending">❌ Pending</td>
-              </tr>
-              <tr>
-                <td>English</td>
-                <td>Essay on Shakespeare</td>
-                <td>20 Oct 2025</td>
-                <td class="status-pending">❌ Pending</td>
-              </tr>
-            </tbody>
-          </table>
+          <table><thead><tr><th>Subject</th><th>Title</th><th>Due Date</th><th>Status</th></tr></thead>
+          <tbody id="assignmentsTable"></tbody></table>
         </div>
       </section>
 
-      <!-- NOTIFICATIONS -->
       <section class="tab-content" id="notifications" role="tabpanel">
         <h2><i class="fas fa-bell" aria-hidden="true"></i> Notifications</h2>
-        <div class="notif"><i class="fas fa-calendar" aria-hidden="true"></i> Parent-Teacher Meeting: <strong>20 Oct 2025</strong></div>
-        <div class="notif"><i class="fas fa-check-circle icon-success" aria-hidden="true"></i> Mid-term results are now available.</div>
-        <div class="notif"><i class="fas fa-exclamation-triangle icon-warning" aria-hidden="true"></i> Attendance alert: below 80% in September.</div>
+        <div id="notificationsContainer"></div>
       </section>
 
-      <!-- FEEDBACK -->
       <section class="tab-content" id="feedback" role="tabpanel">
         <h2><i class="fas fa-comment" aria-hidden="true"></i> Feedback</h2>
         <div class="feedback-box">
           <textarea id="feedbackText" placeholder="Write your feedback here..." aria-label="Feedback message"></textarea>
-          <button class="btn btn-primary btn-submit" onclick="submitFeedback()">
-            <i class="fas fa-paper-plane" aria-hidden="true"></i> Submit Feedback
-          </button>
+          <button class="btn btn-primary btn-submit" onclick="submitFeedback()"><i class="fas fa-paper-plane" aria-hidden="true"></i> Submit Feedback</button>
         </div>
       </section>
-
     </main>
   </div>
 
-  <!-- ===== FOOTER ===== -->
-  <footer>
-    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart heart" aria-hidden="true"></i> for education.
-  </footer>
+  <footer>&copy; 2025 EduPredict. Built with <i class="fas fa-heart heart" aria-hidden="true"></i> for education.</footer>
 
-  <!-- ===== TOAST ===== -->
   <div class="toast" id="toast" role="alert" aria-live="polite">
-    <i class="fas fa-check-circle" aria-hidden="true"></i>
-    <span id="toastMessage">Success!</span>
+    <i class="fas fa-check-circle" aria-hidden="true"></i><span id="toastMessage">Success!</span>
   </div>
 
   <script>
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
+
     // ===== PARTICLES =====
     (function createParticles() {
       var container = document.getElementById('particles');
@@ -720,27 +333,6 @@
       }
     })();
 
-    // ===== TAB SWITCHING =====
-    var tabs = document.querySelectorAll('.tab');
-    var contents = document.querySelectorAll('.tab-content');
-
-    tabs.forEach(function(tab) {
-      tab.addEventListener('click', function() {
-        tabs.forEach(function(t) {
-          t.classList.remove('active');
-          t.setAttribute('aria-selected', 'false');
-        });
-        this.classList.add('active');
-        this.setAttribute('aria-selected', 'true');
-
-        var target = this.dataset.tab;
-        contents.forEach(function(c) {
-          c.classList.remove('active');
-        });
-        document.getElementById(target).classList.add('active');
-      });
-    });
-
     // ===== TOAST =====
     function showToast(message, type) {
       var toast = document.getElementById('toast');
@@ -749,21 +341,23 @@
       msg.textContent = message;
       toast.style.display = 'flex';
       clearTimeout(toast._timeout);
-      toast._timeout = setTimeout(function() {
-        toast.style.display = 'none';
-      }, 3000);
+      toast._timeout = setTimeout(function() { toast.style.display = 'none'; }, 3000);
     }
 
-    // ===== FEEDBACK =====
-    function submitFeedback() {
-      var text = document.getElementById('feedbackText').value.trim();
-      if (text) {
-        showToast('Feedback submitted successfully! ✅', 'success');
-        document.getElementById('feedbackText').value = '';
-      } else {
-        showToast('Please write some feedback before submitting.', 'error');
-      }
-    }
+    // ===== TAB SWITCHING =====
+    document.querySelectorAll('.tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(function(t) {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        this.classList.add('active');
+        this.setAttribute('aria-selected', 'true');
+        var target = this.dataset.tab;
+        document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+        document.getElementById(target).classList.add('active');
+      });
+    });
 
     // ===== LOGOUT =====
     document.getElementById('logoutBtn').addEventListener('click', function() {
@@ -778,70 +372,206 @@
       showToast('You are already on Parent Dashboard', 'success');
     });
 
-    // ===== ATTENDANCE CHART =====
-    var subjects = ['Math', 'Science', 'English', 'History', 'Computer'];
-    var attendanceData = [90, 85, 72, 80, 68];
-    var teachers = ['Mr. Sharma', 'Ms. Verma', 'Mr. Joshi', 'Mrs. Iyer', 'Mr. Khan'];
+    // ===== LOAD PARENT DATA FROM API =====
+    function loadParentData() {
+      var token = localStorage.getItem('parentToken');
+      var parentData = JSON.parse(localStorage.getItem('parentData'));
 
-    new Chart(document.getElementById('attendanceChart'), {
-      type: 'bar',
-      data: {
-        labels: subjects,
-        datasets: [{
-          label: 'Attendance %',
-          data: attendanceData,
-          backgroundColor: ['#2e86de', '#42a5f5', '#64b5f6', '#1565c0', '#00bcd4'],
-          borderRadius: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: { beginAtZero: true, max: 100, title: { display: true, text: 'Percentage (%)', color: 'rgba(255,255,255,0.3)' } },
-          x: { ticks: { color: 'rgba(255,255,255,0.5)' } }
-        },
-        plugins: {
-          legend: { display: false }
+      if (!token || !parentData) {
+        showToast('Please login first', 'error');
+        setTimeout(function() { window.location.href = '../login/parent.html'; }, 1500);
+        return;
+      }
+
+      // Update sidebar with stored data
+      document.getElementById('parentName').textContent = parentData.name || 'Parent';
+      document.getElementById('parentEmail').textContent = parentData.email || '';
+      document.getElementById('parentPhone').textContent = parentData.phone || '';
+      document.getElementById('parentInitials').textContent = (parentData.name || 'P').charAt(0).toUpperCase();
+      document.getElementById('welcomeName').textContent = parentData.name || 'Parent';
+
+      // Fetch fresh data from API
+      fetch(backendUrl + '/api/parent/dashboard', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+      .then(function(response) {
+        if (response.status === 401 || response.status === 403) {
+          showToast('Session expired. Please login again.', 'error');
+          setTimeout(function() {
+            localStorage.clear();
+            window.location.href = '../login/parent.html';
+          }, 1500);
+          return;
         }
-      }
-    });
-
-    // ===== ATTENDANCE ALERTS =====
-    var alertDiv = document.getElementById('attendance-alerts');
-    attendanceData.forEach(function(percent, i) {
-      if (percent < 75) {
-        var alertMsg = document.createElement('div');
-        alertMsg.className = 'notif';
-        alertMsg.innerHTML = '<i class="fas fa-exclamation-triangle icon-warning" aria-hidden="true"></i> Low attendance in <strong>' + subjects[i] + '</strong> (' + percent + '%) - Teacher: ' + teachers[i];
-        alertDiv.appendChild(alertMsg);
-      }
-    });
-
-    // ===== CGPA CHART =====
-    var cgpaData = [7.8, 8.1, 8.5, 8.7];
-    new Chart(document.getElementById('cgpaChart'), {
-      type: 'bar',
-      data: {
-        labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
-        datasets: [{
-          label: 'CGPA',
-          data: cgpaData,
-          backgroundColor: ['#2e86de', '#42a5f5', '#64b5f6', '#1565c0'],
-          borderRadius: 8
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: { beginAtZero: true, max: 10, title: { display: true, text: 'CGPA', color: 'rgba(255,255,255,0.3)' } },
-          x: { ticks: { color: 'rgba(255,255,255,0.5)' } }
-        },
-        plugins: {
-          legend: { display: false }
+        return response.json();
+      })
+      .then(function(data) {
+        if (data) {
+          updateParentUI(data);
+        } else {
+          useFallbackData(parentData);
         }
+      })
+      .catch(function(error) {
+        console.error('Error loading parent data:', error);
+        useFallbackData(parentData);
+      });
+    }
+
+    function useFallbackData(data) {
+      var fallbackData = {
+        student_name: data.student_name || 'N/A',
+        student_email: data.student_email || 'N/A',
+        student_roll: data.student_roll || 'N/A',
+        student_year: data.student_year || 'N/A',
+        student_department: data.student_department || 'N/A',
+        student_college: data.student_college || 'N/A',
+        risk_level: data.risk_level || 'Low',
+        attendance_data: data.attendance_data || [],
+        cgpa_data: data.cgpa_data || [],
+        assignments: data.assignments || [],
+        notifications: data.notifications || []
+      };
+      updateParentUI(fallbackData);
+    }
+
+    function updateParentUI(data) {
+      document.getElementById('studentName').textContent = data.student_name || 'N/A';
+      document.getElementById('studentEmail').textContent = data.student_email || 'N/A';
+      document.getElementById('studentRoll').textContent = data.student_roll || 'N/A';
+      document.getElementById('studentYear').textContent = data.student_year || 'N/A';
+      document.getElementById('studentDept').textContent = data.student_department || 'N/A';
+      document.getElementById('studentCollege').textContent = data.student_college || 'N/A';
+
+      var riskLevel = data.risk_level || 'Low';
+      var riskElement = document.getElementById('riskLevel');
+      riskElement.textContent = riskLevel;
+      riskElement.className = 'risk-level ' + riskLevel.toLowerCase();
+
+      renderAssignments(data.assignments || []);
+      renderNotifications(data.notifications || []);
+      createCharts(data.attendance_data || [], data.cgpa_data || []);
+    }
+
+    // ===== RENDER ASSIGNMENTS =====
+    function renderAssignments(assignments) {
+      var tbody = document.getElementById('assignmentsTable');
+      if (!assignments || assignments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;">No assignments found</td></tr>';
+        return;
       }
+      tbody.innerHTML = assignments.map(function(a) {
+        var statusClass = a.status === 'submitted' ? 'status-submitted' : 'status-pending';
+        var statusText = a.status === 'submitted' ? '✅ Submitted' : '❌ Pending';
+        return '<tr><td>' + a.subject + '</td><td>' + a.title + '</td><td>' + a.due_date + '</td><td class="' + statusClass + '">' + statusText + '</td></tr>';
+      }).join('');
+    }
+
+    // ===== RENDER NOTIFICATIONS =====
+    function renderNotifications(notifications) {
+      var container = document.getElementById('notificationsContainer');
+      if (!notifications || notifications.length === 0) {
+        container.innerHTML = '<div class="notif">No notifications</div>';
+        return;
+      }
+      container.innerHTML = notifications.map(function(n) {
+        var icon = n.type === 'alert' ? 'fas fa-exclamation-triangle icon-warning' : 'fas fa-check-circle icon-success';
+        return '<div class="notif"><i class="' + icon + '" aria-hidden="true"></i> ' + n.message + ' <strong>' + n.date + '</strong></div>';
+      }).join('');
+    }
+
+    // ===== CREATE CHARTS =====
+    function createCharts(attendanceData, cgpaData) {
+      var subjects = attendanceData.map(function(a) { return a.subject; });
+      var attendanceValues = attendanceData.map(function(a) { return a.percentage; });
+
+      new Chart(document.getElementById('attendanceChart'), {
+        type: 'bar',
+        data: {
+          labels: subjects.length ? subjects : ['Math', 'Science', 'English', 'History', 'Computer'],
+          datasets: [{
+            label: 'Attendance %',
+            data: attendanceValues.length ? attendanceValues : [90, 85, 72, 80, 68],
+            backgroundColor: ['#2e86de', '#42a5f5', '#64b5f6', '#1565c0', '#00bcd4'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, max: 100, ticks: { color: 'rgba(255,255,255,0.5)' } },
+            x: { ticks: { color: 'rgba(255,255,255,0.5)', maxRotation: 45 } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      var cgpaValues = cgpaData.length ? cgpaData.map(function(c) { return c.gpa; }) : [7.8, 8.1, 8.5, 8.7];
+      var cgpaLabels = cgpaData.length ? cgpaData.map(function(c) { return c.semester; }) : ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
+
+      new Chart(document.getElementById('cgpaChart'), {
+        type: 'line',
+        data: {
+          labels: cgpaLabels,
+          datasets: [{
+            label: 'CGPA',
+            data: cgpaValues,
+            backgroundColor: 'rgba(16, 172, 132, 0.2)',
+            borderColor: '#10ac84',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 6,
+            pointBackgroundColor: '#10ac84',
+            pointBorderColor: '#0a0a0f',
+            pointBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: false, min: 6, max: 10, ticks: { color: 'rgba(255,255,255,0.5)' } },
+            x: { ticks: { color: 'rgba(255,255,255,0.5)' } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    // ===== FEEDBACK =====
+    function submitFeedback() {
+      var text = document.getElementById('feedbackText').value.trim();
+      if (!text) { showToast('Please write some feedback.', 'error'); return; }
+
+      var token = localStorage.getItem('parentToken');
+      if (!token) { showToast('Please login first.', 'error'); return; }
+
+      fetch(backendUrl + '/api/parent/feedback', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: text })
+      })
+      .then(function(response) { return response.json(); })
+      .then(function(data) {
+        if (data.success) {
+          showToast('Feedback submitted successfully! ✅', 'success');
+          document.getElementById('feedbackText').value = '';
+        } else {
+          showToast(data.error || 'Failed to submit feedback', 'error');
+        }
+      })
+      .catch(function(error) {
+        console.error('Error submitting feedback:', error);
+        showToast('Failed to submit feedback', 'error');
+      });
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+      loadParentData();
     });
   </script>
 </body>

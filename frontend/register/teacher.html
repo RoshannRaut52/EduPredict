@@ -520,11 +520,11 @@
   <!-- ===== HEADER ===== -->
   <header>
     <div class="logo">
-      <i class="fas fa-graduation-cap"></i>
+      <i class="fas fa-graduation-cap" aria-hidden="true"></i>
       EduPredict
     </div>
     <ul class="nav-links">
-      <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="../index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
       <li><a href="../about.html">About</a></li>
       <li><a href="../help.html">Help</a></li>
       <li><a href="../contact.html">Contact</a></li>
@@ -561,7 +561,7 @@
         </button>
       </div>
       <div class="back-home">
-        <a href="../index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <a href="../index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Home</a>
       </div>
     </div>
 
@@ -574,38 +574,38 @@
       </div>
 
       <button class="back-btn" onclick="goBack()">
-        <i class="fas fa-arrow-left"></i> Back to Departments
+        <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Departments
       </button>
 
       <div class="dept-tag" id="departmentTag">
-        <i class="fas fa-check-circle"></i> Department: <span id="deptName">--</span>
+        <i class="fas fa-check-circle" aria-hidden="true"></i> Department: <span id="deptName">--</span>
       </div>
 
       <form class="register-form" id="teacherRegisterForm" novalidate>
         <div class="form-group">
           <label for="name">
-            <i class="fas fa-user"></i> Full Name <span class="required">*</span>
+            <i class="fas fa-user" aria-hidden="true"></i> Full Name <span class="required">*</span>
           </label>
           <input type="text" id="name" name="name" placeholder="Enter your full name" required aria-required="true" />
         </div>
 
         <div class="form-group">
           <label for="email">
-            <i class="fas fa-envelope"></i> Email Address <span class="required">*</span>
+            <i class="fas fa-envelope" aria-hidden="true"></i> Email Address <span class="required">*</span>
           </label>
           <input type="email" id="email" name="email" placeholder="Enter valid email" required aria-required="true" />
         </div>
 
         <div class="form-group">
           <label for="subject">
-            <i class="fas fa-book"></i> Subject <span class="required">*</span>
+            <i class="fas fa-book" aria-hidden="true"></i> Subject <span class="required">*</span>
           </label>
           <input type="text" id="subject" name="subject" placeholder="e.g., Data Structures, Mathematics" required aria-required="true" />
         </div>
 
         <div class="form-group">
           <label for="password">
-            <i class="fas fa-lock"></i> Password <span class="required">*</span>
+            <i class="fas fa-lock" aria-hidden="true"></i> Password <span class="required">*</span>
           </label>
           <input type="password" id="password" name="password" placeholder="Create password (min 6 characters)" required aria-required="true" minlength="6" />
           <span class="form-hint">Minimum 6 characters</span>
@@ -613,13 +613,13 @@
 
         <div class="form-group">
           <label for="confirm_password">
-            <i class="fas fa-check-circle"></i> Confirm Password <span class="required">*</span>
+            <i class="fas fa-check-circle" aria-hidden="true"></i> Confirm Password <span class="required">*</span>
           </label>
           <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required aria-required="true" minlength="6" />
         </div>
 
         <button type="submit" class="btn-register" id="submitBtn">
-          <i class="fas fa-user-plus"></i> Register
+          <i class="fas fa-user-plus" aria-hidden="true"></i> Register
         </button>
       </form>
 
@@ -633,7 +633,7 @@
 
   <!-- ===== FOOTER ===== -->
   <footer>
-    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart"></i> for education.
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart" aria-hidden="true"></i> for education.
   </footer>
 
   <script>
@@ -657,24 +657,19 @@
     // ===== DEPARTMENT SELECTION =====
     var deptContainer = document.getElementById('departmentContainer');
     var regContainer = document.getElementById('registerContainer');
-    var deptTag = document.getElementById('departmentTag');
-    var deptName = document.getElementById('deptName');
+    var deptNameEl = document.getElementById('deptName');
     var selectedDept = '';
 
     function selectDepartment(dept) {
       selectedDept = dept;
-      deptName.textContent = dept;
+      deptNameEl.textContent = dept;
       deptContainer.classList.add('hidden');
       regContainer.classList.remove('hidden');
-      document.getElementById('departmentContainer').style.display = 'none';
-      document.getElementById('registerContainer').style.display = 'block';
     }
 
     function goBack() {
       regContainer.classList.add('hidden');
       deptContainer.classList.remove('hidden');
-      document.getElementById('registerContainer').style.display = 'none';
-      document.getElementById('departmentContainer').style.display = 'block';
     }
 
     // ===== REGISTRATION =====
@@ -690,10 +685,10 @@
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      
+
       showMessage('⏳ Processing your registration...', 'loading');
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Registering...';
 
       var name = document.getElementById('name').value.trim();
       var email = document.getElementById('email').value.trim();
@@ -705,21 +700,21 @@
       if (!name || !email || !subject || !password || !confirm_password) {
         showMessage('❌ Please fill all fields', 'error');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+        submitBtn.innerHTML = '<i class="fas fa-user-plus" aria-hidden="true"></i> Register';
         return;
       }
 
       if (password.length < 6) {
         showMessage('❌ Password must be at least 6 characters', 'error');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+        submitBtn.innerHTML = '<i class="fas fa-user-plus" aria-hidden="true"></i> Register';
         return;
       }
 
       if (password !== confirm_password) {
         showMessage('❌ Passwords do not match', 'error');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+        submitBtn.innerHTML = '<i class="fas fa-user-plus" aria-hidden="true"></i> Register';
         return;
       }
 
@@ -734,9 +729,10 @@
 
       console.log('📤 Submitting registration for:', email);
 
-      fetch(backendUrl + '/register/teacher', {
+      // ✅ FIXED: Correct API endpoint for teacher registration
+      fetch(backendUrl + '/api/teacher/register', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
@@ -754,7 +750,7 @@
         console.log('📨 Server response:', result);
         showMessage(result.message || '✅ Registration successful!', 'success');
         form.reset();
-        
+
         setTimeout(function() {
           window.location.href = 'teacherlogin.html';
         }, 2000);
@@ -763,7 +759,7 @@
         console.error('❌ Registration error:', err);
         showMessage('❌ ' + err.message, 'error');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+        submitBtn.innerHTML = '<i class="fas fa-user-plus" aria-hidden="true"></i> Register';
       });
     });
 
@@ -776,8 +772,8 @@
 
     // Initial state: show department container
     document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('departmentContainer').style.display = 'block';
-      document.getElementById('registerContainer').style.display = 'none';
+      deptContainer.classList.remove('hidden');
+      regContainer.classList.add('hidden');
     });
   </script>
 </body>

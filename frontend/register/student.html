@@ -471,11 +471,11 @@
   <!-- ===== HEADER ===== -->
   <header>
     <div class="logo">
-      <i class="fas fa-graduation-cap"></i>
+      <i class="fas fa-graduation-cap" aria-hidden="true"></i>
       EduPredict
     </div>
     <ul class="nav-links">
-      <li><a href="../../index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="../../index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
       <li><a href="../../about.html">About</a></li>
       <li><a href="../../help.html">Help</a></li>
       <li><a href="../../contact.html">Contact</a></li>
@@ -494,28 +494,28 @@
       <form class="register-form" id="studentRegisterForm" novalidate>
         <div class="form-group">
           <label for="name">
-            <i class="fas fa-user"></i> Full Name <span class="required">*</span>
+            <i class="fas fa-user" aria-hidden="true"></i> Full Name <span class="required">*</span>
           </label>
           <input type="text" id="name" name="name" placeholder="Enter your full name" required aria-required="true" />
         </div>
 
         <div class="form-group">
           <label for="email">
-            <i class="fas fa-envelope"></i> Email Address <span class="required">*</span>
+            <i class="fas fa-envelope" aria-hidden="true"></i> Email Address <span class="required">*</span>
           </label>
           <input type="email" id="email" name="email" placeholder="Enter valid email" required aria-required="true" />
         </div>
 
         <div class="form-group">
           <label for="contact">
-            <i class="fas fa-phone"></i> Contact Number <span class="required">*</span>
+            <i class="fas fa-phone" aria-hidden="true"></i> Contact Number <span class="required">*</span>
           </label>
           <input type="tel" id="contact" name="contact" placeholder="Enter your phone number" required aria-required="true" />
         </div>
 
         <div class="form-group">
           <label for="collegeSelect">
-            <i class="fas fa-university"></i> Select College <span class="required">*</span>
+            <i class="fas fa-university" aria-hidden="true"></i> Select College <span class="required">*</span>
           </label>
           <select id="collegeSelect" name="college_code" required aria-required="true" title="Select your college">
             <option value="">-- Select Your College --</option>
@@ -524,7 +524,7 @@
 
         <div class="form-group">
           <label for="departmentSelect">
-            <i class="fas fa-building"></i> Select Department <span class="required">*</span>
+            <i class="fas fa-building" aria-hidden="true"></i> Select Department <span class="required">*</span>
           </label>
           <select id="departmentSelect" name="department_code" required aria-required="true" title="Select your department" disabled>
             <option value="">-- First Select College --</option>
@@ -533,7 +533,7 @@
 
         <div class="form-group">
           <label for="password">
-            <i class="fas fa-lock"></i> Password <span class="required">*</span>
+            <i class="fas fa-lock" aria-hidden="true"></i> Password <span class="required">*</span>
           </label>
           <input type="password" id="password" name="password" placeholder="Create password (min 6 characters)" required aria-required="true" minlength="6" />
           <span class="form-hint">Minimum 6 characters</span>
@@ -541,13 +541,13 @@
 
         <div class="form-group">
           <label for="confirm_password">
-            <i class="fas fa-check-circle"></i> Confirm Password <span class="required">*</span>
+            <i class="fas fa-check-circle" aria-hidden="true"></i> Confirm Password <span class="required">*</span>
           </label>
           <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm password" required aria-required="true" minlength="6" />
         </div>
 
         <button type="submit" class="btn-register" id="submitBtn">
-          <i class="fas fa-user-plus"></i> Register
+          <i class="fas fa-user-plus" aria-hidden="true"></i> Register
         </button>
       </form>
 
@@ -558,14 +558,14 @@
       <div class="message" id="statusMsg" role="alert" aria-live="polite"></div>
 
       <div class="back-home">
-        <a href="../../index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <a href="../../index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Home</a>
       </div>
     </div>
   </main>
 
   <!-- ===== FOOTER ===== -->
   <footer>
-    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart"></i> for education.
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart" aria-hidden="true"></i> for education.
   </footer>
 
   <script>
@@ -604,16 +604,16 @@
       try {
         console.log('📡 Loading colleges...');
         var res = await fetch(backendUrl + '/api/student-requests/colleges');
-        
+
         if (!res.ok) {
           throw new Error('HTTP ' + res.status + ': ' + res.statusText);
         }
-        
+
         var data = await res.json();
 
         if (data.colleges && data.colleges.length > 0) {
           collegeSelect.innerHTML = '<option value="">-- Select Your College --</option>';
-          
+
           data.colleges.forEach(function(college) {
             var option = document.createElement('option');
             option.value = college.code;
@@ -636,7 +636,7 @@
     // Load Departments when College is Selected
     collegeSelect.addEventListener('change', function(e) {
       var collegeCode = e.target.value;
-      
+
       departmentSelect.innerHTML = '<option value="">-- Loading Departments... --</option>';
       departmentSelect.disabled = true;
       msg.textContent = '';
@@ -657,7 +657,7 @@
         .then(function(data) {
           if (data.departments && data.departments.length > 0) {
             departmentSelect.innerHTML = '<option value="">-- Select Your Department --</option>';
-            
+
             data.departments.forEach(function(dept) {
               var option = document.createElement('option');
               option.value = dept.code;
@@ -682,10 +682,10 @@
     // Form Submission
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      
+
       showMessage('⏳ Processing your registration...', 'loading');
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Registering...';
 
       var formData = new FormData(form);
       var data = Object.fromEntries(formData.entries());
@@ -694,21 +694,22 @@
       if (data.password !== data.confirm_password) {
         showMessage('❌ Passwords do not match', 'error');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+        submitBtn.innerHTML = '<i class="fas fa-user-plus" aria-hidden="true"></i> Register';
         return;
       }
 
       // Remove confirm_password before sending
       delete data.confirm_password;
 
-      console.log('📤 Submitting registration:', { 
-        name: data.name, 
-        email: data.email, 
+      console.log('📤 Submitting registration:', {
+        name: data.name,
+        email: data.email,
         college_code: data.college_code,
         department_code: data.department_code
       });
 
-      fetch(backendUrl + '/api/student-requests/submit', {
+      // ✅ FIXED: Correct API endpoint for student registration
+      fetch(backendUrl + '/api/student/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -723,13 +724,13 @@
       })
       .then(function(result) {
         console.log('📨 Server response:', result);
-        showMessage(result.message || '✅ Registration request submitted! Please wait for college approval.', 'success');
+        showMessage(result.message || '✅ Registration successful!', 'success');
         form.reset();
-        
+
         // Reset department dropdown
         departmentSelect.disabled = true;
         departmentSelect.innerHTML = '<option value="">-- First Select College --</option>';
-        
+
         // Redirect to login after 3 seconds
         setTimeout(function() {
           window.location.href = '../login/student.html';
@@ -739,7 +740,7 @@
         console.error('❌ Registration error:', err);
         showMessage('❌ ' + err.message, 'error');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+        submitBtn.innerHTML = '<i class="fas fa-user-plus" aria-hidden="true"></i> Register';
       });
     });
 

@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>College Login | EduPredict</title>
+  <title>College Login - EduPredict</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    /* ===== SAME THEME AS INDEX ===== */
     * {
       margin: 0;
       padding: 0;
@@ -23,7 +22,6 @@
       flex-direction: column;
     }
 
-    /* ===== ANIMATED BACKGROUND ===== */
     .bg-animation {
       position: fixed;
       top: 0;
@@ -76,7 +74,6 @@
       100% { transform: translate(50px, -30px) scale(1.05); }
     }
 
-    /* ===== FLOATING PARTICLES ===== */
     .particles {
       position: fixed;
       top: 0;
@@ -103,7 +100,6 @@
       100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
     }
 
-    /* ===== HEADER ===== */
     header {
       display: flex;
       justify-content: space-between;
@@ -116,18 +112,11 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      animation: slideDown 0.8s ease;
-    }
-
-    @keyframes slideDown {
-      0% { transform: translateY(-100%); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
     }
 
     .logo {
       font-size: 1.8rem;
       font-weight: 800;
-      letter-spacing: -0.5px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -135,11 +124,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      transition: transform 0.3s ease;
-    }
-
-    .logo:hover {
-      transform: scale(1.05);
     }
 
     .logo i {
@@ -184,7 +168,6 @@
       width: 100%;
     }
 
-    /* ===== MAIN ===== */
     main {
       flex: 1;
       display: flex;
@@ -193,7 +176,6 @@
       padding: 40px 20px;
     }
 
-    /* ===== LOGIN CONTAINER ===== */
     .login-container {
       background: rgba(255, 255, 255, 0.03);
       -webkit-backdrop-filter: blur(20px);
@@ -238,7 +220,6 @@
       margin-top: 4px;
     }
 
-    /* ===== FORM ===== */
     .login-form {
       display: flex;
       flex-direction: column;
@@ -287,7 +268,6 @@
       box-shadow: 0 0 0 4px rgba(16, 172, 132, 0.1);
     }
 
-    /* ===== BUTTON ===== */
     .btn-login {
       padding: 14px;
       border-radius: 12px;
@@ -312,40 +292,6 @@
       box-shadow: 0 8px 30px rgba(16, 172, 132, 0.35);
     }
 
-    .btn-login:active {
-      transform: translateY(0);
-    }
-
-    .btn-login i {
-      font-size: 1rem;
-    }
-
-    /* ===== LINKS ===== */
-    .login-links {
-      text-align: center;
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-      font-size: 0.85rem;
-    }
-
-    .login-links a {
-      color: rgba(255, 255, 255, 0.4);
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-
-    .login-links a:hover {
-      color: #10ac84;
-    }
-
-    .login-links .separator {
-      color: rgba(255, 255, 255, 0.1);
-    }
-
-    /* ===== MESSAGE ===== */
     .message {
       margin-top: 18px;
       text-align: center;
@@ -372,13 +318,6 @@
       border: 1px solid rgba(255, 0, 0, 0.1);
     }
 
-    .message.loading {
-      color: #ee7939;
-      background: rgba(238, 121, 57, 0.05);
-      border: 1px solid rgba(238, 121, 57, 0.1);
-    }
-
-    /* ===== BACK TO HOME ===== */
     .back-home {
       text-align: center;
       margin-top: 15px;
@@ -399,7 +338,6 @@
       margin-right: 6px;
     }
 
-    /* ===== FOOTER ===== */
     footer {
       text-align: center;
       padding: 20px;
@@ -408,11 +346,10 @@
       font-size: 0.85rem;
     }
 
-    footer i {
+    footer .heart {
       color: #10ac84;
     }
 
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 600px) {
       header {
         padding: 15px 20px;
@@ -429,7 +366,6 @@
 </head>
 <body>
 
-  <!-- ===== BACKGROUND EFFECTS ===== -->
   <div class="bg-animation">
     <div class="orb"></div>
     <div class="orb"></div>
@@ -437,21 +373,19 @@
   </div>
   <div class="particles" id="particles"></div>
 
-  <!-- ===== HEADER ===== -->
   <header>
     <div class="logo">
-      <i class="fas fa-graduation-cap"></i>
+      <i class="fas fa-graduation-cap" aria-hidden="true"></i>
       EduPredict
     </div>
     <ul class="nav-links">
-      <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="../index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
       <li><a href="../about.html">About</a></li>
       <li><a href="../help.html">Help</a></li>
       <li><a href="../contact.html">Contact</a></li>
     </ul>
   </header>
 
-  <!-- ===== MAIN ===== -->
   <main>
     <div class="login-container">
       <div class="login-header">
@@ -460,44 +394,32 @@
         <p>Access your college dashboard</p>
       </div>
 
-      <form class="login-form" id="loginForm">
+      <form class="login-form" id="collegeLoginForm">
         <div class="form-group">
-          <label><i class="fas fa-qrcode"></i> College Code</label>
-          <input type="text" id="code" placeholder="Enter college code (e.g., EDU-ABC12)" required />
-        </div>
-
-        <div class="form-group">
-          <label><i class="fas fa-envelope"></i> Email Address</label>
+          <label><i class="fas fa-envelope" aria-hidden="true"></i> Email Address</label>
           <input type="email" id="email" placeholder="Enter your registered email" required />
         </div>
 
         <div class="form-group">
-          <label><i class="fas fa-lock"></i> Password</label>
+          <label><i class="fas fa-lock" aria-hidden="true"></i> Password</label>
           <input type="password" id="password" placeholder="Enter your password" required />
         </div>
 
         <button type="submit" class="btn-login">
-          <i class="fas fa-sign-in-alt"></i> Login
+          <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Login
         </button>
       </form>
-
-      <div class="login-links">
-        <a href="college-register.html"><i class="fas fa-user-plus"></i> Create Account</a>
-        <span class="separator">|</span>
-        <a href="forgotpassword.html"><i class="fas fa-key"></i> Forgot Password?</a>
-      </div>
 
       <div class="message" id="statusMsg"></div>
 
       <div class="back-home">
-        <a href="../index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <a href="../index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Home</a>
       </div>
     </div>
   </main>
 
-  <!-- ===== FOOTER ===== -->
   <footer>
-    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart"></i> for education.
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart heart" aria-hidden="true"></i> for education.
   </footer>
 
   <script>
@@ -518,10 +440,10 @@
       }
     })();
 
-    // ===== LOGIN =====
-    const form = document.getElementById('loginForm');
-    const msg = document.getElementById('statusMsg');
-    const backendUrl = 'https://edupredict-l9eg.onrender.com';
+    // ===== COLLEGE LOGIN =====
+    var form = document.getElementById('collegeLoginForm');
+    var msg = document.getElementById('statusMsg');
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
 
     function showMessage(text, type) {
       msg.textContent = text;
@@ -530,44 +452,31 @@
 
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      
-      showMessage('⏳ Logging in...', 'loading');
 
-      const code = document.getElementById('code').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+      showMessage('⏳ Logging in...', '');
 
-      if (!code || !email || !password) {
-        showMessage('❌ Please fill all fields', 'error');
+      var email = document.getElementById('email').value.trim();
+      var password = document.getElementById('password').value.trim();
+
+      if (!email || !password) {
+        showMessage('Please fill all fields', 'error');
         return;
       }
 
       try {
-        const res = await fetch(`${backendUrl}/api/college/login`, {
+        var response = await fetch(backendUrl + '/api/college/login', {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
-          body: JSON.stringify({ code, email, password })
+          body: JSON.stringify({ email: email, password: password })
         });
 
-        const contentType = res.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          const text = await res.text();
-          showMessage('❌ Server error: Invalid response', 'error');
-          return;
-        }
+        var data = await response.json();
 
-        const data = await res.json();
-
-        if (!res.ok) {
-          showMessage(data.error || '❌ Login failed', 'error');
-          return;
-        }
-
-        if (!data.token || !data.college) {
-          showMessage('❌ Invalid server response', 'error');
+        if (!response.ok) {
+          showMessage(data.error || 'Login failed', 'error');
           return;
         }
 
@@ -575,19 +484,17 @@
         localStorage.setItem('collegeData', JSON.stringify(data.college));
         
         showMessage('✅ Login successful! Redirecting...', 'success');
-        form.reset();
 
-        setTimeout(() => {
+        setTimeout(function() {
           window.location.href = '../dashboard/college.html';
         }, 1500);
 
       } catch (err) {
-        console.error('❌ Login error:', err);
+        console.error('Login error:', err);
         showMessage('❌ Cannot connect to server: ' + err.message, 'error');
       }
     });
 
-    // Enter key support
     form.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         form.dispatchEvent(new Event('submit'));

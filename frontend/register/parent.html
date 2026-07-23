@@ -469,11 +469,11 @@
   <!-- ===== HEADER ===== -->
   <header>
     <div class="logo">
-      <i class="fas fa-graduation-cap"></i>
+      <i class="fas fa-graduation-cap" aria-hidden="true"></i>
       EduPredict
     </div>
     <ul class="nav-links">
-      <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="../index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
       <li><a href="../about.html">About</a></li>
       <li><a href="../help.html">Help</a></li>
       <li><a href="../contact.html">Contact</a></li>
@@ -492,28 +492,28 @@
       <form class="register-form" id="parentRegisterForm" novalidate>
         <div class="form-group">
           <label for="name">
-            <i class="fas fa-user"></i> Parent Name <span class="required">*</span>
+            <i class="fas fa-user" aria-hidden="true"></i> Parent Name <span class="required">*</span>
           </label>
           <input type="text" id="name" name="name" placeholder="Enter parent's full name" required aria-required="true" />
         </div>
 
         <div class="form-group">
           <label for="email">
-            <i class="fas fa-envelope"></i> Parent Email <span class="required">*</span>
+            <i class="fas fa-envelope" aria-hidden="true"></i> Parent Email <span class="required">*</span>
           </label>
           <input type="email" id="email" name="email" placeholder="Enter parent's email" required aria-required="true" />
         </div>
 
         <div class="form-group">
           <label for="phone">
-            <i class="fas fa-phone"></i> Parent Phone <span class="required">*</span>
+            <i class="fas fa-phone" aria-hidden="true"></i> Parent Phone <span class="required">*</span>
           </label>
           <input type="tel" id="phone" name="phone" placeholder="Enter parent's phone number" required aria-required="true" />
         </div>
 
         <div class="form-group">
           <label for="student_email">
-            <i class="fas fa-user-graduate"></i> Student Email <span class="required">*</span>
+            <i class="fas fa-user-graduate" aria-hidden="true"></i> Student Email <span class="required">*</span>
           </label>
           <input type="email" id="student_email" name="student_email" placeholder="Enter student's registered email" required aria-required="true" />
           <span class="form-hint">Student must be registered first</span>
@@ -521,7 +521,7 @@
 
         <div class="form-group">
           <label for="relationship">
-            <i class="fas fa-users"></i> Relationship <span class="required">*</span>
+            <i class="fas fa-users" aria-hidden="true"></i> Relationship <span class="required">*</span>
           </label>
           <select id="relationship" name="relationship" required aria-required="true" title="Select your relationship to the student">
             <option value="">Select relationship</option>
@@ -534,38 +534,38 @@
 
         <div class="form-group">
           <label for="password">
-            <i class="fas fa-lock"></i> Password <span class="required">*</span>
+            <i class="fas fa-lock" aria-hidden="true"></i> Password <span class="required">*</span>
           </label>
           <input type="password" id="password" name="password" placeholder="Create a password (min 6 characters)" required aria-required="true" minlength="6" />
         </div>
 
         <div class="form-group">
           <label for="confirm_password">
-            <i class="fas fa-check-circle"></i> Confirm Password <span class="required">*</span>
+            <i class="fas fa-check-circle" aria-hidden="true"></i> Confirm Password <span class="required">*</span>
           </label>
           <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required aria-required="true" minlength="6" />
         </div>
 
         <button type="submit" class="btn-register">
-          <i class="fas fa-user-plus"></i> Register
+          <i class="fas fa-user-plus" aria-hidden="true"></i> Register
         </button>
       </form>
 
       <div class="register-links">
-        <a href="parent.html"><i class="fas fa-sign-in-alt"></i> Already have an account? Login</a>
+        <a href="parent.html"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> Already have an account? Login</a>
       </div>
 
       <div class="message" id="statusMsg" role="alert" aria-live="polite"></div>
 
       <div class="back-home">
-        <a href="../index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <a href="../index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Home</a>
       </div>
     </div>
   </main>
 
   <!-- ===== FOOTER ===== -->
   <footer>
-    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart"></i> for education.
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart" aria-hidden="true"></i> for education.
   </footer>
 
   <script>
@@ -598,7 +598,7 @@
 
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      
+
       showMessage('⏳ Registering...', 'loading');
 
       var name = document.getElementById('name').value.trim();
@@ -636,9 +636,10 @@
       };
 
       try {
-        var res = await fetch(backendUrl + '/register/parent', {
+        // ✅ FIXED: Correct API endpoint for parent registration
+        var res = await fetch(backendUrl + '/api/parent/register', {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
@@ -656,12 +657,12 @@
         if (res.ok) {
           showMessage('✅ ' + (data.message || 'Registration successful!'), 'success');
           form.reset();
-          
+
           setTimeout(function() {
             window.location.href = 'parent.html';
           }, 2000);
         } else {
-          showMessage(data.message || data.error || '❌ Registration failed', 'error');
+          showMessage(data.error || data.message || '❌ Registration failed', 'error');
         }
       } catch (err) {
         console.error('❌ Registration error:', err);
