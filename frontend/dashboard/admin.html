@@ -1130,13 +1130,16 @@
 
     // ===== AUTH CHECK =====
     function checkAuth() {
-      var token = localStorage.getItem('adminToken');
-      if (!token) {
-        window.location.href = 'admin.html';
-        return false;
-      }
-      return token;
-    }
+  var token = localStorage.getItem('adminToken');
+  
+  // If no token, redirect to admin login page
+  if (!token) {
+    // Go back to login folder
+    window.location.href = '../login/admin-login.html';
+    return false;
+  }
+  return token;
+}
 
     function getAuthHeaders() {
       return {
@@ -1146,12 +1149,13 @@
     }
 
     function adminLogout() {
-      if (confirm('Are you sure you want to logout?')) {
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('adminData');
-        window.location.href = 'admin.html';
-      }
-    }
+  if (confirm('Are you sure you want to logout?')) {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminData');
+    // Redirect to admin login page
+    window.location.href = '../login/admin-login.html';
+  }
+}
 
     // ===== GENERATE COLLEGE CODE =====
     function generateCode() {

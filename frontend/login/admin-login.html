@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
+    /* ===== SAME THEME AS INDEX ===== */
     * {
       margin: 0;
       padding: 0;
@@ -292,6 +293,14 @@
       box-shadow: 0 8px 30px rgba(16, 172, 132, 0.35);
     }
 
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .btn-login i {
+      font-size: 1rem;
+    }
+
     .message {
       margin-top: 18px;
       text-align: center;
@@ -379,10 +388,10 @@
       EduPredict
     </div>
     <ul class="nav-links">
-      <li><a href="index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="help.html">Help</a></li>
-      <li><a href="contact.html">Contact</a></li>
+      <li><a href="../index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../help.html">Help</a></li>
+      <li><a href="../contact.html">Contact</a></li>
     </ul>
   </header>
 
@@ -410,10 +419,10 @@
         </button>
       </form>
 
-      <div class="message" id="statusMsg"></div>
+      <div class="message" id="statusMsg" role="alert" aria-live="polite"></div>
 
       <div class="back-home">
-        <a href="index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Home</a>
+        <a href="../index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Home</a>
       </div>
     </div>
   </main>
@@ -480,13 +489,15 @@
           return;
         }
 
+        // Store admin session
         localStorage.setItem('adminToken', data.token);
         localStorage.setItem('adminData', JSON.stringify(data.admin));
-        
+
         showMessage('✅ Login successful! Redirecting...', 'success');
 
         setTimeout(function() {
-          window.location.href = '..dashboard/admin.html';
+          // Redirect to admin panel in dashboard folder
+          window.location.href = '../dashboard/admin.html';
         }, 1500);
 
       } catch (err) {
@@ -495,6 +506,7 @@
       }
     });
 
+    // Enter key support
     form.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         form.dispatchEvent(new Event('submit'));
