@@ -34,6 +34,26 @@ app.get('/', (req, res) => {
 });
 
 // ========================================
+// AUTHENTICATION MIDDLEWARE - MOVED HERE (BEFORE ADMIN ROUTES)
+// ========================================
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid or expired token' });
+    }
+    req.user = decoded;
+    next();
+  });
+};
+
+// ========================================
 // ADMIN ROUTES
 // ========================================
 
@@ -86,7 +106,7 @@ app.post('/api/admin/login', async (req, res) => {
   }
 });
 
-// Verify Admin Token
+// Verify Admin Token (uses authenticateToken middleware)
 app.get('/api/admin/verify', authenticateToken, async (req, res) => {
   try {
     if (req.user.role !== 'admin') {
@@ -143,26 +163,6 @@ app.post('/api/admin/setup', async (req, res) => {
 });
 
 // ========================================
-// AUTHENTICATION MIDDLEWARE
-// ========================================
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ error: 'Access token required' });
-  }
-
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ error: 'Invalid or expired token' });
-    }
-    req.college = decoded;
-    next();
-  });
-};
-
-// ========================================
 // COLLEGE REGISTRATION
 // ========================================
 app.post('/api/college/register', async (req, res) => {
@@ -193,7 +193,6 @@ app.post('/api/college/register', async (req, res) => {
     return res.status(500).json({ error: 'Server error', message: err.message });
   }
 });
-
 
 // ========================================
 // COLLEGE LOGIN
@@ -226,7 +225,6 @@ app.post('/api/college/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // ✅ college.code is already a number from database
     const token = jwt.sign(
       { college_code: college.code, email: college.email, name: college.name },
       JWT_SECRET,
@@ -249,11 +247,8 @@ app.post('/api/college/login', async (req, res) => {
   }
 });
 
-
-
 // ========================================
 // IMPORT COLLEGE DASHBOARD ROUTES
-// ✅ FIXED: Changed from collegeDepartments to collegeDashboard
 // ========================================
 const collegeDashboardRoutes = require('./routes/collegeDashboard');
 app.use('/api/college', collegeDashboardRoutes);
@@ -269,7 +264,6 @@ app.use('/api/student-requests', studentRequestsRoutes);
 // ========================================
 const departmentRoutes = require('./routes/department');
 app.use('/api/departments', departmentRoutes);
-
 
 // ========================================
 // STUDENT REGISTRATION & LOGIN
