@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teachers - EduPredict</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
+
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
+
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 50px;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .college-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+    }
+
+    .college-brand .logo-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .college-brand h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-back {
+      background: rgba(16, 172, 132, 0.15);
+      border: 1px solid rgba(16, 172, 132, 0.2);
+      color: #10ac84;
+    }
+
+    .btn-back:hover {
+      background: rgba(16, 172, 132, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .btn-logout {
+      background: rgba(255, 0, 0, 0.05);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      color: #ff6b6b;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 0, 0, 0.1);
+      border-color: rgba(255, 0, 0, 0.4);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
+    }
+
+    .btn-danger {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      color: #ff6b6b;
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 0, 0, 0.2);
+    }
+
+    .btn-small {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-small-success {
+      background: rgba(16, 172, 132, 0.15);
+      border: 1px solid rgba(16, 172, 132, 0.2);
+      color: #10ac84;
+    }
+
+    .btn-small-success:hover {
+      background: rgba(16, 172, 132, 0.25);
+    }
+
+    .btn-small-danger {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      color: #ff6b6b;
+    }
+
+    .btn-small-danger:hover {
+      background: rgba(255, 0, 0, 0.2);
+    }
+
+    .btn-small-primary {
+      background: rgba(16, 172, 132, 0.1);
+      border: 1px solid rgba(16, 172, 132, 0.15);
+      color: #10ac84;
+    }
+
+    .btn-small-primary:hover {
+      background: rgba(16, 172, 132, 0.2);
+    }
+
+    #menuToggleBtn {
+      display: none;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #menuToggleBtn:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .container {
+      display: flex;
+      gap: 30px;
+      max-width: 1400px;
+      margin: 25px auto;
+      padding: 0 25px;
+      min-height: calc(100vh - 100px);
+    }
+
+    .sidebar {
+      flex: 0 0 260px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 25px 15px;
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar .sidebar-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.2);
+      padding: 0 15px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .sidebar a.active {
+      background: rgba(16, 172, 132, 0.1);
+      color: #10ac84;
+      border: 1px solid rgba(16, 172, 132, 0.2);
+    }
+
+    .sidebar a i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-280px);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      min-width: 0;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .page-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .page-header h2 i {
+      color: #10ac84;
+      margin-right: 10px;
+    }
+
+    .page-header p {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .table-container {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 25px;
+      flex: 1;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .table-header .search-box {
+      display: flex;
+      gap: 10px;
+    }
+
+    .table-header .search-box input {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      width: 200px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .table-header .search-box input:focus {
+      outline: none;
+      border-color: #10ac84;
+    }
+
+    .teacher-count {
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.85rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.3);
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.3);
+      padding: 40px;
+    }
+
+    .empty-state i {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.05);
+      border-top: 3px solid #10ac84;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: rgba(20, 20, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      width: 460px;
+      max-width: 92vw;
+      padding: 30px 35px;
+      box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+      animation: fadeInUp 0.4s ease;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .modal h3 i {
+      color: #10ac84;
+      margin-right: 10px;
+    }
+
+    .modal label {
+      font-weight: 500;
+      display: block;
+      margin-bottom: 5px;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
+    }
+
+    .modal label .required {
+      color: #ff6b6b;
+    }
+
+    .modal input,
+    .modal select {
+      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .modal input:focus,
+    .modal select:focus {
+      border-color: #10ac84;
+      box-shadow: 0 0 0 4px rgba(16, 172, 132, 0.1);
+    }
+
+    .modal select option {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .modal-actions .btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.85rem;
+      margin-top: auto;
+    }
+
+    footer .heart {
+      color: #10ac84;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: rgba(10, 10, 15, 0.95);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 3000;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .toast.success {
+      border-color: rgba(16, 172, 132, 0.3);
+    }
+    .toast.success i {
+      color: #10ac84;
+    }
+    .toast.error {
+      border-color: rgba(255, 0, 0, 0.3);
+    }
+    .toast.error i {
+      color: #ff6b6b;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .college-brand h1 {
+        font-size: 1.2rem;
+      }
+      .container {
+        padding: 15px;
+        flex-direction: column;
+      }
+      .sidebar {
+        position: fixed;
+        height: 100%;
+        z-index: 999;
+        top: 70px;
+        left: 0;
+        width: 280px;
+        border-radius: 0;
+      }
+      .sidebar.hidden {
+        transform: translateX(-300px);
+      }
+      #menuToggleBtn {
+        display: inline-block;
+      }
+      .modal {
+        padding: 25px 20px;
+      }
+      .table-container {
+        overflow-x: auto;
+      }
+      .header-actions .btn span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .modal-actions {
+        flex-direction: column;
+      }
+      .modal-actions .btn {
+        width: 100%;
+      }
+      .page-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .btn-group {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <div class="header-left">
+      <button id="menuToggleBtn" aria-label="Toggle Menu"><i class="fas fa-bars" aria-hidden="true"></i></button>
+      <div class="college-brand">
+        <div class="logo-icon"><i class="fas fa-university" aria-hidden="true"></i></div>
+        <h1 id="collegeName">EduPredict College</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="dashboard.html" class="btn btn-back"><i class="fas fa-arrow-left" aria-hidden="true"></i> Dashboard</a>
+      <button class="btn btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
+      <div class="sidebar-title">Main Navigation</div>
+      <a href="dashboard.html"><i class="fas fa-home" aria-hidden="true"></i> Dashboard</a>
+      <a href="departments.html"><i class="fas fa-building" aria-hidden="true"></i> Departments</a>
+      <a href="teachers.html" class="active" aria-current="page"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Teachers</a>
+      <a href="students.html"><i class="fas fa-user-graduate" aria-hidden="true"></i> Students</a>
+      <a href="requests.html"><i class="fas fa-inbox" aria-hidden="true"></i> Requests</a>
+      <a href="analytics.html"><i class="fas fa-chart-line" aria-hidden="true"></i> Analytics</a>
+      <a href="settings.html"><i class="fas fa-cog" aria-hidden="true"></i> Settings</a>
+    </nav>
+
+    <main>
+      <div class="page-header">
+        <div>
+          <h2><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Teachers</h2>
+          <p>Manage all teachers in your college</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" id="addTeacherBtn"><i class="fas fa-plus" aria-hidden="true"></i> Add Teacher</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search teachers..." aria-label="Search teachers" />
+          </div>
+          <span class="teacher-count" id="teacherCount">0 teachers</span>
+        </div>
+
+        <div id="loadingState" class="loading">
+          <div class="spinner"></div>
+          <p>Loading teachers...</p>
+        </div>
+
+        <table id="teachersTable" class="hidden">
+          <thead>
+            <tr>
+              <th>Teacher ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Department</th>
+              <th>Designation</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="teachersBody">
+            <!-- Teachers inserted here dynamically -->
+          </tbody>
+        </table>
+
+        <div id="emptyState" class="empty-state hidden">
+          <i class="fas fa-chalkboard-teacher" aria-hidden="true"></i>
+          <p>No teachers found. Add your first teacher!</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart heart" aria-hidden="true"></i> for education.
+  </footer>
+
+  <!-- ADD TEACHER MODAL -->
+  <div class="modal-overlay" id="addTeacherModal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3><i class="fas fa-user-plus" aria-hidden="true"></i> Add New Teacher</h3>
+      <form id="addTeacherForm">
+        <label for="teacherName">Full Name <span class="required">*</span></label>
+        <input type="text" id="teacherName" required placeholder="Enter teacher's full name" />
+
+        <label for="teacherEmail">Email <span class="required">*</span></label>
+        <input type="email" id="teacherEmail" required placeholder="Enter teacher's email" />
+
+        <label for="teacherId">Teacher ID <span class="required">*</span></label>
+        <input type="text" id="teacherId" required placeholder="Enter unique teacher ID" />
+
+        <label for="teacherDepartment">Department <span class="required">*</span></label>
+        <select id="teacherDepartment" required>
+          <option value="">Select Department</option>
+        </select>
+
+        <label for="teacherDesignation">Designation <span class="required">*</span></label>
+        <select id="teacherDesignation" required>
+          <option value="">Select Designation</option>
+          <option value="Professor">Professor</option>
+          <option value="Associate Professor">Associate Professor</option>
+          <option value="Assistant Professor">Assistant Professor</option>
+          <option value="Lecturer">Lecturer</option>
+          <option value="Senior Lecturer">Senior Lecturer</option>
+          <option value="HOD">Head of Department</option>
+        </select>
+
+        <label for="teacherPassword">Password <span class="required">*</span></label>
+        <input type="password" id="teacherPassword" required placeholder="Create password (min 6 characters)" minlength="6" />
+
+        <label for="teacherConfirmPassword">Confirm Password <span class="required">*</span></label>
+        <input type="password" id="teacherConfirmPassword" required placeholder="Confirm password" minlength="6" />
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary" id="submitTeacherBtn"><i class="fas fa-save" aria-hidden="true"></i> Add Teacher</button>
+          <button type="button" class="btn btn-danger" id="cancelAddTeacherBtn"><i class="fas fa-times" aria-hidden="true"></i> Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="alert" aria-live="polite">
+    <i class="fas fa-check-circle" aria-hidden="true"></i>
+    <span id="toastMessage">Success!</span>
+  </div>
+
+  <script>
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
+    var authToken = null;
+    var collegeCode = null;
+    var teachers = [];
+    var departments = [];
+
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    })();
+
+    // ===== TOAST =====
+    function showToast(message, type) {
+      var toast = document.getElementById('toast');
+      var msg = document.getElementById('toastMessage');
+      toast.className = 'toast ' + (type || 'success');
+      msg.textContent = message;
+      toast.style.display = 'flex';
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(function() {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // ===== SIDEBAR TOGGLE =====
+    var menuToggle = document.getElementById('menuToggleBtn');
+    var sidebar = document.getElementById('sidebar');
+
+    menuToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('hidden');
+    });
+
+    sidebar.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (window.innerWidth <= 900) {
+          sidebar.classList.add('hidden');
+        }
+      });
+    });
+
+    // ===== LOGOUT =====
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('collegeToken');
+        localStorage.removeItem('collegeData');
+        window.location.href = '../login/college.html';
+      }
+    }
+
+    // ===== CHECK AUTH =====
+    function checkAuth() {
+      authToken = localStorage.getItem('collegeToken');
+      var collegeDataStr = localStorage.getItem('collegeData');
+
+      if (!authToken || !collegeDataStr) {
+        showToast('Please login first', 'error');
+        setTimeout(function() {
+          window.location.href = '../login/college.html';
+        }, 1500);
+        return false;
+      }
+
+      try {
+        var collegeData = JSON.parse(collegeDataStr);
+        collegeCode = collegeData.code;
+        document.getElementById('collegeName').textContent = collegeData.name || 'EduPredict College';
+        return true;
+      } catch (error) {
+        console.error('Error parsing college data:', error);
+        showToast('Session error. Please login again.', 'error');
+        localStorage.clear();
+        setTimeout(function() {
+          window.location.href = '../login/college.html';
+        }, 1500);
+        return false;
+      }
+    }
+
+    // ===== LOAD DEPARTMENTS =====
+    async function loadDepartments() {
+      try {
+        var response = await fetch(backendUrl + '/api/college/' + collegeCode + '/departments', {
+          headers: { 'Authorization': 'Bearer ' + authToken }
+        });
+
+        if (response.ok) {
+          var data = await response.json();
+          departments = data.departments || [];
+          populateDepartmentSelect();
+        }
+      } catch (error) {
+        console.error('Error loading departments:', error);
+      }
+    }
+
+    function populateDepartmentSelect() {
+      var select = document.getElementById('teacherDepartment');
+      select.innerHTML = '<option value="">Select Department</option>';
+      departments.forEach(function(dept) {
+        var option = document.createElement('option');
+        option.value = dept.code;
+        option.textContent = dept.name;
+        select.appendChild(option);
+      });
+    }
+
+    // ===== LOAD TEACHERS =====
+    async function loadTeachers() {
+      if (!checkAuth()) return;
+
+      try {
+        var response = await fetch(backendUrl + '/api/college/' + collegeCode + '/teachers', {
+          headers: { 'Authorization': 'Bearer ' + authToken }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          showToast('Session expired. Please login again.', 'error');
+          setTimeout(function() {
+            localStorage.clear();
+            window.location.href = '../login/college.html';
+          }, 1500);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error('Failed to load teachers');
+        }
+
+        var data = await response.json();
+        teachers = data.teachers || [];
+        renderTeachers();
+
+      } catch (error) {
+        console.error('Error loading teachers:', error);
+        showEmptyState();
+      } finally {
+        document.getElementById('loadingState').classList.add('hidden');
+      }
+    }
+
+    // ===== RENDER TEACHERS =====
+    function renderTeachers() {
+      var tbody = document.getElementById('teachersBody');
+      var table = document.getElementById('teachersTable');
+      var empty = document.getElementById('emptyState');
+
+      if (teachers.length === 0) {
+        table.classList.add('hidden');
+        empty.classList.remove('hidden');
+        document.getElementById('teacherCount').textContent = '0 teachers';
+        return;
+      }
+
+      table.classList.remove('hidden');
+      empty.classList.add('hidden');
+      document.getElementById('teacherCount').textContent = teachers.length + ' teachers';
+
+      tbody.innerHTML = teachers.map(function(t) {
+        var deptName = departments.find(function(d) { return d.code === t.department_code; });
+        return '<tr>' +
+          '<td><strong>' + (t.teacher_id || 'N/A') + '</strong></td>' +
+          '<td>' + (t.name || 'N/A') + '</td>' +
+          '<td>' + (t.email || 'N/A') + '</td>' +
+          '<td>' + (deptName ? deptName.name : (t.department || 'N/A')) + '</td>' +
+          '<td>' + (t.designation || 'N/A') + '</td>' +
+          '<td><div class="action-btns">' +
+          '<button class="btn btn-small btn-small-danger" onclick="deleteTeacher(' + t.id + ')"><i class="fas fa-trash" aria-hidden="true"></i></button>' +
+          '</div></td></tr>';
+      }).join('');
+    }
+
+    // ===== SHOW EMPTY STATE =====
+    function showEmptyState() {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('teachersTable').classList.add('hidden');
+      document.getElementById('emptyState').classList.remove('hidden');
+      document.getElementById('teacherCount').textContent = '0 teachers';
+    }
+
+    // ===== ADD TEACHER =====
+    document.getElementById('addTeacherForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      var name = document.getElementById('teacherName').value.trim();
+      var email = document.getElementById('teacherEmail').value.trim();
+      var teacherId = document.getElementById('teacherId').value.trim();
+      var department = document.getElementById('teacherDepartment').value;
+      var designation = document.getElementById('teacherDesignation').value;
+      var password = document.getElementById('teacherPassword').value;
+      var confirm = document.getElementById('teacherConfirmPassword').value;
+
+      if (!name || !email || !teacherId || !department || !designation || !password) {
+        showToast('Please fill all required fields', 'error');
+        return;
+      }
+
+      if (password !== confirm) {
+        showToast('Passwords do not match', 'error');
+        return;
+      }
+
+      if (password.length < 6) {
+        showToast('Password must be at least 6 characters', 'error');
+        return;
+      }
+
+      var submitBtn = document.getElementById('submitTeacherBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Adding...';
+
+      try {
+        var response = await fetch(backendUrl + '/api/college/' + collegeCode + '/teachers', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + authToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            teacher_id: teacherId,
+            department_code: department,
+            designation: designation,
+            password: password
+          })
+        });
+
+        var result = await response.json();
+
+        if (response.ok) {
+          showToast('Teacher added successfully!', 'success');
+          this.reset();
+          closeAddTeacherModal();
+          loadTeachers();
+        } else {
+          showToast(result.error || 'Failed to add teacher', 'error');
+        }
+      } catch (error) {
+        console.error('Error adding teacher:', error);
+        showToast('Failed to add teacher. Please try again.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-save" aria-hidden="true"></i> Add Teacher';
+      }
+    });
+
+    // ===== DELETE TEACHER =====
+    async function deleteTeacher(id) {
+      if (!confirm('Are you sure you want to delete this teacher?')) return;
+
+      try {
+        var response = await fetch(backendUrl + '/api/college/' + collegeCode + '/teachers/' + id, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + authToken }
+        });
+
+        if (response.ok) {
+          showToast('Teacher deleted successfully', 'success');
+          loadTeachers();
+        } else {
+          var result = await response.json();
+          showToast(result.error || 'Failed to delete teacher', 'error');
+        }
+      } catch (error) {
+        console.error('Error deleting teacher:', error);
+        showToast('Failed to delete teacher', 'error');
+      }
+    }
+
+    // ===== SEARCH TEACHERS =====
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      var search = e.target.value.toLowerCase();
+      var rows = document.querySelectorAll('#teachersBody tr');
+
+      rows.forEach(function(row) {
+        var text = row.textContent.toLowerCase();
+        row.style.display = text.includes(search) ? '' : 'none';
+      });
+    });
+
+    // ===== MODAL CONTROLS =====
+    var addModal = document.getElementById('addTeacherModal');
+    var addBtn = document.getElementById('addTeacherBtn');
+    var cancelBtn = document.getElementById('cancelAddTeacherBtn');
+
+    addBtn.onclick = function() {
+      addModal.classList.add('active');
+      document.getElementById('teacherName').focus();
+    };
+
+    function closeAddTeacherModal() {
+      addModal.classList.remove('active');
+      document.getElementById('addTeacherForm').reset();
+    }
+
+    cancelBtn.onclick = closeAddTeacherModal;
+
+    addModal.onclick = function(e) {
+      if (e.target === addModal) closeAddTeacherModal();
+    };
+
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeAddTeacherModal();
+    });
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+      if (checkAuth()) {
+        loadDepartments();
+        loadTeachers();
+      }
+    });
+  </script>
+</body>
+</html>

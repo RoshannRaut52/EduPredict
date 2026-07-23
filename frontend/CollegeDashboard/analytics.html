@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics - EduPredict</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
+
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
+
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 50px;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .college-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+    }
+
+    .college-brand .logo-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .college-brand h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-back {
+      background: rgba(16, 172, 132, 0.15);
+      border: 1px solid rgba(16, 172, 132, 0.2);
+      color: #10ac84;
+    }
+
+    .btn-back:hover {
+      background: rgba(16, 172, 132, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .btn-logout {
+      background: rgba(255, 0, 0, 0.05);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      color: #ff6b6b;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 0, 0, 0.1);
+      border-color: rgba(255, 0, 0, 0.4);
+    }
+
+    #menuToggleBtn {
+      display: none;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #menuToggleBtn:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .container {
+      display: flex;
+      gap: 30px;
+      max-width: 1400px;
+      margin: 25px auto;
+      padding: 0 25px;
+      min-height: calc(100vh - 100px);
+    }
+
+    .sidebar {
+      flex: 0 0 260px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 25px 15px;
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar .sidebar-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.2);
+      padding: 0 15px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .sidebar a.active {
+      background: rgba(16, 172, 132, 0.1);
+      color: #10ac84;
+      border: 1px solid rgba(16, 172, 132, 0.2);
+    }
+
+    .sidebar a i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-280px);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      min-width: 0;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .page-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .page-header h2 i {
+      color: #10ac84;
+      margin-right: 10px;
+    }
+
+    .page-header p {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 18px 22px;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .stat-card .number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-card .label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 4px;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+
+    .chart-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .chart-box h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 15px;
+    }
+
+    .chart-box h3 i {
+      color: #10ac84;
+      margin-right: 8px;
+    }
+
+    .chart-container {
+      height: 250px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.85rem;
+      margin-top: auto;
+    }
+
+    footer .heart {
+      color: #10ac84;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: rgba(10, 10, 15, 0.95);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 3000;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .toast.success {
+      border-color: rgba(16, 172, 132, 0.3);
+    }
+    .toast.success i {
+      color: #10ac84;
+    }
+    .toast.error {
+      border-color: rgba(255, 0, 0, 0.3);
+    }
+    .toast.error i {
+      color: #ff6b6b;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.05);
+      border-top: 3px solid #10ac84;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 1024px) {
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .college-brand h1 {
+        font-size: 1.2rem;
+      }
+      .container {
+        padding: 15px;
+        flex-direction: column;
+      }
+      .sidebar {
+        position: fixed;
+        height: 100%;
+        z-index: 999;
+        top: 70px;
+        left: 0;
+        width: 280px;
+        border-radius: 0;
+      }
+      .sidebar.hidden {
+        transform: translateX(-300px);
+      }
+      #menuToggleBtn {
+        display: inline-block;
+      }
+      .header-actions .btn span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <div class="header-left">
+      <button id="menuToggleBtn" aria-label="Toggle Menu"><i class="fas fa-bars" aria-hidden="true"></i></button>
+      <div class="college-brand">
+        <div class="logo-icon"><i class="fas fa-university" aria-hidden="true"></i></div>
+        <h1 id="collegeName">EduPredict College</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="dashboard.html" class="btn btn-back"><i class="fas fa-arrow-left" aria-hidden="true"></i> Dashboard</a>
+      <button class="btn btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
+      <div class="sidebar-title">Main Navigation</div>
+      <a href="dashboard.html"><i class="fas fa-home" aria-hidden="true"></i> Dashboard</a>
+      <a href="departments.html"><i class="fas fa-building" aria-hidden="true"></i> Departments</a>
+      <a href="teachers.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Teachers</a>
+      <a href="students.html"><i class="fas fa-user-graduate" aria-hidden="true"></i> Students</a>
+      <a href="requests.html"><i class="fas fa-inbox" aria-hidden="true"></i> Requests</a>
+      <a href="analytics.html" class="active" aria-current="page"><i class="fas fa-chart-line" aria-hidden="true"></i> Analytics</a>
+      <a href="settings.html"><i class="fas fa-cog" aria-hidden="true"></i> Settings</a>
+    </nav>
+
+    <main>
+      <div class="page-header">
+        <div>
+          <h2><i class="fas fa-chart-line" aria-hidden="true"></i> Analytics</h2>
+          <p>View insights and statistics about your college</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="number" id="statTotalStudents">0</div>
+          <div class="label">Total Students</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="statTotalTeachers">0</div>
+          <div class="label">Total Teachers</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="statTotalDepartments">0</div>
+          <div class="label">Departments</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="statAvgAttendance">0%</div>
+          <div class="label">Avg Attendance</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="statAtRisk">0</div>
+          <div class="label">At Risk Students</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="statSaved">0</div>
+          <div class="label">Students Saved</div>
+        </div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-box">
+          <h3><i class="fas fa-chart-bar" aria-hidden="true"></i> Department-wise Students</h3>
+          <div class="chart-container"><canvas id="deptChart" aria-label="Department-wise students bar chart"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <h3><i class="fas fa-chart-pie" aria-hidden="true"></i> Risk Distribution</h3>
+          <div class="chart-container"><canvas id="riskChart" aria-label="Risk distribution pie chart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <h3><i class="fas fa-chart-line" aria-hidden="true"></i> Monthly Attendance Trend</h3>
+        <div class="chart-container"><canvas id="attendanceTrend" aria-label="Attendance trend line chart"></canvas></div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart heart" aria-hidden="true"></i> for education.
+  </footer>
+
+  <div class="toast" id="toast" role="alert" aria-live="polite">
+    <i class="fas fa-check-circle" aria-hidden="true"></i>
+    <span id="toastMessage">Success!</span>
+  </div>
+
+  <script>
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
+
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    })();
+
+    // ===== TOAST =====
+    function showToast(message, type) {
+      var toast = document.getElementById('toast');
+      var msg = document.getElementById('toastMessage');
+      toast.className = 'toast ' + (type || 'success');
+      msg.textContent = message;
+      toast.style.display = 'flex';
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(function() {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // ===== SIDEBAR TOGGLE =====
+    var menuToggle = document.getElementById('menuToggleBtn');
+    var sidebar = document.getElementById('sidebar');
+
+    menuToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('hidden');
+    });
+
+    sidebar.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (window.innerWidth <= 900) {
+          sidebar.classList.add('hidden');
+        }
+      });
+    });
+
+    // ===== LOGOUT =====
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('collegeToken');
+        localStorage.removeItem('collegeData');
+        window.location.href = '../login/college.html';
+      }
+    }
+
+    // ===== CHECK AUTH =====
+    function checkAuth() {
+      var token = localStorage.getItem('collegeToken');
+      var storedData = localStorage.getItem('collegeData');
+
+      if (!token || !storedData) {
+        showToast('Please login first', 'error');
+        setTimeout(function() {
+          window.location.href = '../login/college.html';
+        }, 1500);
+        return false;
+      }
+
+      try {
+        var data = JSON.parse(storedData);
+        document.getElementById('collegeName').textContent = data.name || 'EduPredict College';
+        return true;
+      } catch (error) {
+        console.error('Error parsing college data:', error);
+        showToast('Session error. Please login again.', 'error');
+        localStorage.clear();
+        setTimeout(function() {
+          window.location.href = '../login/college.html';
+        }, 1500);
+        return false;
+      }
+    }
+
+    // ===== LOAD ANALYTICS =====
+    function loadAnalytics() {
+      var token = localStorage.getItem('collegeToken');
+      if (!token) return;
+
+      var collegeData = JSON.parse(localStorage.getItem('collegeData'));
+
+      fetch(backendUrl + '/api/college/' + collegeData.code + '/analytics', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+      .then(function(response) {
+        if (response.status === 401 || response.status === 403) {
+          showToast('Session expired. Please login again.', 'error');
+          setTimeout(function() {
+            localStorage.clear();
+            window.location.href = '../login/college.html';
+          }, 1500);
+          return;
+        }
+        return response.json();
+      })
+      .then(function(data) {
+        if (data) {
+          updateAnalyticsUI(data);
+        }
+      })
+      .catch(function(error) {
+        console.error('Error loading analytics:', error);
+        // Load sample data for demo
+        loadSampleData();
+      });
+    }
+
+    function loadSampleData() {
+      var sampleData = {
+        total_students: 1247,
+        total_teachers: 85,
+        total_departments: 6,
+        avg_attendance: 78.5,
+        at_risk_students: 89,
+        saved_students: 156,
+        department_data: [
+          { name: 'CS', count: 320 },
+          { name: 'IT', count: 280 },
+          { name: 'Mechanical', count: 250 },
+          { name: 'Civil', count: 220 },
+          { name: 'ENTC', count: 177 },
+          { name: 'Electrical', count: 200 }
+        ],
+        risk_data: [
+          { label: 'Low Risk', value: 850 },
+          { label: 'Medium Risk', value: 280 },
+          { label: 'High Risk', value: 89 },
+          { label: 'Critical', value: 28 }
+        ],
+        attendance_trend: [65, 70, 72, 78, 75, 80, 82, 78, 85, 88, 90, 85]
+      };
+      updateAnalyticsUI(sampleData);
+    }
+
+    function updateAnalyticsUI(data) {
+      document.getElementById('statTotalStudents').textContent = data.total_students || 0;
+      document.getElementById('statTotalTeachers').textContent = data.total_teachers || 0;
+      document.getElementById('statTotalDepartments').textContent = data.total_departments || 0;
+      document.getElementById('statAvgAttendance').textContent = (data.avg_attendance || 0) + '%';
+      document.getElementById('statAtRisk').textContent = data.at_risk_students || 0;
+      document.getElementById('statSaved').textContent = data.saved_students || 0;
+
+      createDeptChart(data.department_data || []);
+      createRiskChart(data.risk_data || []);
+      createAttendanceTrend(data.attendance_trend || []);
+    }
+
+    // ===== CHARTS =====
+    function createDeptChart(deptData) {
+      var ctx = document.getElementById('deptChart').getContext('2d');
+      var labels = deptData.map(function(d) { return d.name; });
+      var values = deptData.map(function(d) { return d.count; });
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Students',
+            data: values,
+            backgroundColor: ['#10ac84', '#2e86de', '#ee7939', '#a29bfe', '#fd79a8', '#00cec9'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { ticks: { color: 'rgba(255,255,255,0.5)', beginAtZero: true } },
+            x: { ticks: { color: 'rgba(255,255,255,0.5)', maxRotation: 45 } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    function createRiskChart(riskData) {
+      var ctx = document.getElementById('riskChart').getContext('2d');
+      var labels = riskData.map(function(d) { return d.label; });
+      var values = riskData.map(function(d) { return d.value; });
+
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: ['#10ac84', '#2e86de', '#ee7939', '#ff6b6b']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,0.7)' } }
+          }
+        }
+      });
+    }
+
+    function createAttendanceTrend(trendData) {
+      var ctx = document.getElementById('attendanceTrend').getContext('2d');
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: [{
+            label: 'Attendance %',
+            data: trendData,
+            backgroundColor: 'rgba(16, 172, 132, 0.2)',
+            borderColor: '#10ac84',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointBackgroundColor: '#10ac84',
+            pointBorderColor: '#0a0a0f',
+            pointBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, max: 100, ticks: { color: 'rgba(255,255,255,0.5)' } },
+            x: { ticks: { color: 'rgba(255,255,255,0.5)' } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+      if (checkAuth()) {
+        loadAnalytics();
+      }
+    });
+  </script>
+</body>
+</html>

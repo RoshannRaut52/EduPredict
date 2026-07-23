@@ -203,6 +203,13 @@
       margin-bottom: 2.5rem;
     }
 
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.3);
+      padding: 20px;
+    }
+
     /* ===== FORM ===== */
     form {
       display: grid;
@@ -652,7 +659,7 @@
     function renderDepartments() {
       var tbody = document.getElementById('departmentsBody');
       if (departments.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;">No departments found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="2" class="empty-state">No departments found</td></tr>';
         return;
       }
       tbody.innerHTML = departments.map(function(d) {
@@ -666,7 +673,7 @@
     function renderTeachers() {
       var tbody = document.getElementById('teachersBody');
       if (teachers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;">No teachers found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No teachers found</td></tr>';
         return;
       }
       tbody.innerHTML = teachers.map(function(t) {
@@ -682,7 +689,7 @@
     function renderStudents() {
       var tbody = document.getElementById('studentsBody');
       if (students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;">No students found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No students found</td></tr>';
         return;
       }
       tbody.innerHTML = students.map(function(s) {
@@ -816,6 +823,5 @@
       renderStudents();
     });
   </script>
-
 </body>
 </html>

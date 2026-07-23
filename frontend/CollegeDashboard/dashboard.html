@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>College Dashboard - EduPredict</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 50px;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-left { display: flex; align-items: center; gap: 15px; }
+    .college-brand { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+    .college-brand .logo-icon {
+      width: 50px; height: 50px; border-radius: 50%;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .college-brand h1 {
+      font-size: 1.8rem; font-weight: 800;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-right { display: flex; align-items: center; gap: 15px; }
+    .edit-btn {
+      padding: 10px 20px; border-radius: 10px;
+      background: rgba(16, 172, 132, 0.15);
+      border: 1px solid rgba(16, 172, 132, 0.2);
+      color: #10ac84; font-weight: 600;
+      cursor: pointer; transition: all 0.3s ease;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Inter', sans-serif; font-size: 0.9rem;
+    }
+    .edit-btn:hover { background: rgba(16, 172, 132, 0.25); transform: translateY(-2px); }
+    .logout-btn {
+      padding: 8px 18px; border-radius: 10px;
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      background: rgba(255, 0, 0, 0.05);
+      color: #ff6b6b; cursor: pointer; font-weight: 500;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif; font-size: 0.9rem;
+    }
+    .logout-btn:hover { background: rgba(255, 0, 0, 0.1); border-color: rgba(255, 0, 0, 0.4); }
+    #menuToggleBtn {
+      display: none; background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 14px; border-radius: 10px;
+      color: #fff; font-size: 1.2rem; cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    #menuToggleBtn:hover { background: rgba(255, 255, 255, 0.05); }
+    .container {
+      display: flex; gap: 30px;
+      max-width: 1400px; margin: 25px auto;
+      padding: 0 25px; min-height: calc(100vh - 100px);
+    }
+    .sidebar {
+      flex: 0 0 250px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px; padding: 25px 15px;
+      height: fit-content; position: sticky; top: 90px;
+      transition: transform 0.3s ease;
+    }
+    .sidebar .sidebar-title {
+      font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 2px; color: rgba(255, 255, 255, 0.2);
+      padding: 0 15px; margin-bottom: 20px; font-weight: 600;
+    }
+    .sidebar a {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; border-radius: 10px;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none; font-weight: 500;
+      transition: all 0.3s ease; margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+    .sidebar a:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+    .sidebar a.active {
+      background: rgba(16, 172, 132, 0.1);
+      color: #10ac84;
+      border: 1px solid rgba(16, 172, 132, 0.2);
+    }
+    .sidebar a i { width: 20px; font-size: 1.1rem; }
+    .sidebar a .badge {
+      margin-left: auto;
+      background: rgba(16, 172, 132, 0.15);
+      color: #10ac84; padding: 2px 10px;
+      border-radius: 50px; font-size: 0.7rem;
+    }
+    .sidebar.hidden { transform: translateX(-280px); }
+    main { flex: 1; display: flex; flex-direction: column; gap: 25px; min-width: 0; }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px; padding: 20px 24px;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover { background: rgba(255, 255, 255, 0.05); transform: translateY(-2px); }
+    .stat-card .number {
+      font-size: 2rem; font-weight: 800;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-card .label { font-size: 0.8rem; color: rgba(255, 255, 255, 0.4); margin-top: 4px; }
+    .top-section { display: flex; gap: 25px; flex-wrap: wrap; }
+    .chart-box, .notification-box {
+      flex: 1; min-width: 300px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px; padding: 25px;
+    }
+    .chart-box h2, .notification-box h2 {
+      font-size: 1.1rem; font-weight: 600;
+      margin-bottom: 20px; color: rgba(255, 255, 255, 0.8);
+    }
+    .chart-box h2 i, .notification-box h2 i { margin-right: 8px; }
+    .icon-green { color: #10ac84; }
+    .icon-orange { color: #ee7939; }
+    .chart-wrapper {
+      display: flex; align-items: center; gap: 30px;
+      justify-content: center; flex-wrap: wrap;
+    }
+    .chart-wrapper canvas { max-width: 220px; max-height: 220px; }
+    .chart-legend { display: flex; flex-direction: column; gap: 10px; }
+    .legend-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);
+    }
+    .legend-color { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .legend-color-blue { background: #2e86de; }
+    .legend-color-red { background: #ee5253; }
+    .legend-color-orange { background: #ff9f43; }
+    .legend-color-green { background: #10ac84; }
+    .notif {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 14px 18px; border-radius: 10px;
+      margin: 10px 0;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .notif strong { color: #10ac84; font-size: 1.2rem; }
+    .quick-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .action-btn {
+      padding: 12px 24px; border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none; font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.9rem; cursor: pointer; font-family: 'Inter', sans-serif;
+    }
+    .action-btn:hover {
+      background: rgba(16, 172, 132, 0.1);
+      border-color: rgba(16, 172, 132, 0.2);
+      color: #fff; transform: translateY(-2px);
+    }
+    .action-btn.primary {
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      border-color: transparent; color: #fff;
+    }
+    .action-btn.primary:hover { box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3); }
+    .departments {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px; padding: 25px;
+    }
+    .departments h2 {
+      font-size: 1.1rem; font-weight: 600;
+      margin-bottom: 20px; color: rgba(255, 255, 255, 0.8);
+    }
+    .departments h2 i { color: #10ac84; margin-right: 8px; }
+    .department {
+      padding: 14px 18px; border-radius: 10px;
+      margin-bottom: 8px; cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex; justify-content: space-between; align-items: center;
+      color: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .department:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
+    .year-list {
+      display: none; padding-left: 25px;
+      margin: 5px 0 15px 0;
+      border-left: 2px solid rgba(16, 172, 132, 0.3);
+    }
+    .year-list a {
+      display: block; padding: 8px 15px;
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none; border-radius: 8px;
+      transition: all 0.3s ease; font-size: 0.9rem;
+    }
+    .year-list a:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+    footer {
+      text-align: center; padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.2); font-size: 0.85rem;
+    }
+    footer .heart { color: #10ac84; }
+    .toast {
+      position: fixed; bottom: 30px; right: 30px;
+      padding: 16px 24px; border-radius: 12px;
+      background: rgba(10, 10, 15, 0.95);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      display: none; align-items: center; gap: 12px;
+      z-index: 1000; animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    .toast.success { border-color: rgba(16, 172, 132, 0.3); }
+    .toast.success i { color: #10ac84; }
+    .toast.error { border-color: rgba(255, 0, 0, 0.3); }
+    .toast.error i { color: #ff6b6b; }
+    @media (max-width: 900px) {
+      header { padding: 15px 20px; flex-wrap: wrap; gap: 10px; }
+      .college-brand h1 { font-size: 1.2rem; }
+      .container { padding: 15px; flex-direction: column; }
+      .sidebar { position: fixed; height: 100%; z-index: 999; top: 70px; left: 0; width: 280px; border-radius: 0; }
+      .sidebar.hidden { transform: translateX(-300px); }
+      #menuToggleBtn { display: inline-block; }
+      .top-section { flex-direction: column; }
+      .chart-wrapper { flex-direction: column; }
+      .chart-box, .notification-box { min-width: auto; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .header-right .edit-btn span { display: none; }
+      .quick-actions .action-btn { flex: 1; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <div class="header-left">
+      <button id="menuToggleBtn" aria-label="Toggle Menu"><i class="fas fa-bars" aria-hidden="true"></i></button>
+      <div class="college-brand">
+        <div class="logo-icon"><i class="fas fa-university" aria-hidden="true"></i></div>
+        <h1 id="collegeName">EduPredict College</h1>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="editprofile.html" class="edit-btn"><i class="fas fa-edit" aria-hidden="true"></i> <span>Edit Profile</span></a>
+      <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
+      <div class="sidebar-title">Main Navigation</div>
+      <a href="#" class="active" aria-current="page"><i class="fas fa-home" aria-hidden="true"></i> Dashboard</a>
+      <a href="departments.html"><i class="fas fa-building" aria-hidden="true"></i> Departments</a>
+      <a href="studentList.html"><i class="fas fa-user-graduate" aria-hidden="true"></i> Students</a>
+      <a href="teachersList.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Teachers</a>
+      <a href="StudentRequest.html"><i class="fas fa-inbox" aria-hidden="true"></i> Requests <span class="badge" id="requestBadge">0</span></a>
+      <a href="analytics.html"><i class="fas fa-chart-line" aria-hidden="true"></i> Analytics</a>
+      <a href="settings.html"><i class="fas fa-cog" aria-hidden="true"></i> Settings</a>
+    </nav>
+
+    <main>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="number" id="totalStudents">0</div>
+          <div class="label">Total Students</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="atRiskStudents">0</div>
+          <div class="label">At Risk</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="dropoutStudents">0</div>
+          <div class="label">Dropouts</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="savedStudents">0</div>
+          <div class="label">Saved</div>
+        </div>
+      </div>
+
+      <section class="top-section">
+        <div class="chart-box">
+          <h2><i class="fas fa-chart-pie icon-green" aria-hidden="true"></i> Student Distribution</h2>
+          <div class="chart-wrapper">
+            <canvas id="studentChart" role="img" aria-label="Student distribution pie chart"></canvas>
+            <div class="chart-legend">
+              <div class="legend-item"><span class="legend-color legend-color-blue"></span> Total (<span id="legendTotal">0</span>)</div>
+              <div class="legend-item"><span class="legend-color legend-color-red"></span> At Risk (<span id="legendAtRisk">0</span>)</div>
+              <div class="legend-item"><span class="legend-color legend-color-orange"></span> Dropout (<span id="legendDropout">0</span>)</div>
+              <div class="legend-item"><span class="legend-color legend-color-green"></span> Saved (<span id="legendSaved">0</span>)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="notification-box">
+          <h2><i class="fas fa-bell icon-orange" aria-hidden="true"></i> Notifications Sent</h2>
+          <div class="notif"><span>📩 To Parents</span> <strong id="toParents">0</strong></div>
+          <div class="notif"><span>👨‍🏫 To Teachers</span> <strong id="toTeachers">0</strong></div>
+          <div class="notif"><span>📱 To Students</span> <strong id="toStudents">0</strong></div>
+        </div>
+      </section>
+
+      <section class="quick-actions">
+        <a href="#" class="action-btn primary"><i class="fas fa-user-plus" aria-hidden="true"></i> Add Student</a>
+        <a href="#" class="action-btn"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Add Teacher</a>
+        <a href="#" class="action-btn"><i class="fas fa-chart-bar" aria-hidden="true"></i> View Reports</a>
+        <a href="#" class="action-btn"><i class="fas fa-bell" aria-hidden="true"></i> Send Alert</a>
+        <a href="#" class="action-btn"><i class="fas fa-download" aria-hidden="true"></i> Export Data</a>
+      </section>
+
+      <section class="departments">
+        <h2><i class="fas fa-building" aria-hidden="true"></i> Departments</h2>
+        <div id="departmentsList">
+          <div class="department" onclick="toggleYears('cse')" role="button" tabindex="0" aria-expanded="false">
+            <span>💻 Computer Science & Engineering</span>
+            <span aria-hidden="true">▼</span>
+          </div>
+          <div class="year-list" id="cse" role="list">
+            <a href="#" role="listitem">1st Year</a>
+            <a href="#" role="listitem">2nd Year</a>
+            <a href="#" role="listitem">3rd Year</a>
+            <a href="#" role="listitem">4th Year</a>
+          </div>
+
+          <div class="department" onclick="toggleYears('it')" role="button" tabindex="0" aria-expanded="false">
+            <span>🌐 Information Technology</span>
+            <span aria-hidden="true">▼</span>
+          </div>
+          <div class="year-list" id="it" role="list">
+            <a href="#" role="listitem">1st Year</a>
+            <a href="#" role="listitem">2nd Year</a>
+            <a href="#" role="listitem">3rd Year</a>
+            <a href="#" role="listitem">4th Year</a>
+          </div>
+
+          <div class="department" onclick="toggleYears('mech')" role="button" tabindex="0" aria-expanded="false">
+            <span>⚙️ Mechanical Engineering</span>
+            <span aria-hidden="true">▼</span>
+          </div>
+          <div class="year-list" id="mech" role="list">
+            <a href="#" role="listitem">1st Year</a>
+            <a href="#" role="listitem">2nd Year</a>
+            <a href="#" role="listitem">3rd Year</a>
+            <a href="#" role="listitem">4th Year</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart heart" aria-hidden="true"></i> for education.
+  </footer>
+
+  <div class="toast" id="toast" role="alert" aria-live="polite">
+    <i class="fas fa-check-circle" aria-hidden="true"></i>
+    <span id="toastMessage">Success!</span>
+  </div>
+
+  <script>
+    // ===== CONFIGURATION =====
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
+    var chartInstance = null;
+
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    })();
+
+    // ===== TOAST =====
+    function showToast(message, type) {
+      var toast = document.getElementById('toast');
+      var msg = document.getElementById('toastMessage');
+      toast.className = 'toast ' + (type || 'success');
+      msg.textContent = message;
+      toast.style.display = 'flex';
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(function() {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // ===== SIDEBAR TOGGLE =====
+    var menuToggle = document.getElementById('menuToggleBtn');
+    var sidebar = document.getElementById('sidebar');
+
+    menuToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('hidden');
+    });
+
+    sidebar.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (window.innerWidth <= 900) {
+          sidebar.classList.add('hidden');
+        }
+      });
+    });
+
+    // ===== TOGGLE YEARS =====
+    function toggleYears(id) {
+      var list = document.getElementById(id);
+      if (list) {
+        var isVisible = list.style.display === 'block';
+        list.style.display = isVisible ? 'none' : 'block';
+        var parentDept = list.previousElementSibling;
+        if (parentDept && parentDept.classList.contains('department')) {
+          parentDept.setAttribute('aria-expanded', !isVisible);
+        }
+      }
+    }
+
+    // ===== LOGOUT =====
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('collegeToken');
+        localStorage.removeItem('collegeData');
+        window.location.href = '../login/college.html';
+      }
+    }
+
+    // ===== LOAD DASHBOARD DATA FROM API =====
+    function loadDashboardData() {
+      var token = localStorage.getItem('collegeToken');
+      var storedData = localStorage.getItem('collegeData');
+      
+      if (!token || !storedData) {
+        showToast('Please login first', 'error');
+        setTimeout(function() {
+          window.location.href = '../login/college.html';
+        }, 1500);
+        return;
+      }
+
+      var collegeData = JSON.parse(storedData);
+      document.getElementById('collegeName').textContent = collegeData.name || 'EduPredict College';
+
+      // Try to fetch fresh data from API
+      fetch(backendUrl + '/api/college/dashboard', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+      .then(function(response) {
+        if (response.status === 401 || response.status === 403) {
+          showToast('Session expired. Please login again.', 'error');
+          setTimeout(function() {
+            localStorage.clear();
+            window.location.href = '../login/college.html';
+          }, 1500);
+          return;
+        }
+        return response.json();
+      })
+      .then(function(data) {
+        if (data) {
+          updateDashboardUI(data);
+        } else {
+          // Use fallback data from localStorage
+          useFallbackData(collegeData);
+        }
+      })
+      .catch(function(error) {
+        console.error('Error loading dashboard:', error);
+        useFallbackData(collegeData);
+      });
+    }
+
+    function useFallbackData(data) {
+      var fallbackData = {
+        total_students: data.total_students || 0,
+        at_risk_students: data.at_risk_students || 0,
+        dropout_students: data.dropout_students || 0,
+        saved_students: data.saved_students || 0,
+        notifications_to_parents: data.notifications_to_parents || 0,
+        notifications_to_teachers: data.notifications_to_teachers || 0,
+        notifications_to_students: data.notifications_to_students || 0
+      };
+      updateDashboardUI(fallbackData);
+    }
+
+    function updateDashboardUI(data) {
+      document.getElementById('totalStudents').textContent = data.total_students || 0;
+      document.getElementById('atRiskStudents').textContent = data.at_risk_students || 0;
+      document.getElementById('dropoutStudents').textContent = data.dropout_students || 0;
+      document.getElementById('savedStudents').textContent = data.saved_students || 0;
+
+      document.getElementById('legendTotal').textContent = data.total_students || 0;
+      document.getElementById('legendAtRisk').textContent = data.at_risk_students || 0;
+      document.getElementById('legendDropout').textContent = data.dropout_students || 0;
+      document.getElementById('legendSaved').textContent = data.saved_students || 0;
+
+      document.getElementById('toParents').textContent = data.notifications_to_parents || 0;
+      document.getElementById('toTeachers').textContent = data.notifications_to_teachers || 0;
+      document.getElementById('toStudents').textContent = data.notifications_to_students || 0;
+
+      createChart(data);
+      loadRequestsCount();
+    }
+
+    function createChart(data) {
+      var ctx = document.getElementById('studentChart').getContext('2d');
+      if (chartInstance) { chartInstance.destroy(); }
+
+      var total = data.total_students || 0;
+      var atRisk = data.at_risk_students || 0;
+      var dropout = data.dropout_students || 0;
+      var saved = data.saved_students || 0;
+
+      chartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Total Students', 'At Risk', 'Dropout', 'Saved'],
+          datasets: [{
+            data: [total, atRisk, dropout, saved],
+            backgroundColor: ['#2e86de', '#ee5253', '#ff9f43', '#10ac84'],
+            borderWidth: 2,
+            borderColor: '#0a0a0f'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  var totalSum = context.dataset.data.reduce(function(a, b) { return a + b; }, 0);
+                  var percentage = totalSum > 0 ? (context.parsed / totalSum * 100).toFixed(1) : 0;
+                  return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                }
+              }
+            }
+          },
+          animation: { animateRotate: true, duration: 1000 }
+        }
+      });
+    }
+
+    // ===== LOAD REQUESTS COUNT =====
+    function loadRequestsCount() {
+      var token = localStorage.getItem('collegeToken');
+      var collegeData = JSON.parse(localStorage.getItem('collegeData'));
+      if (!token || !collegeData) return;
+
+      fetch(backendUrl + '/api/student-requests/' + collegeData.code + '/pending/count', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+      .then(function(response) {
+        if (response.ok) return response.json();
+        return { count: 0 };
+      })
+      .then(function(data) {
+        var badge = document.querySelector('#requestBadge');
+        if (badge) {
+          badge.textContent = data.count || 0;
+          badge.style.display = (data.count > 0) ? 'inline' : 'none';
+        }
+      })
+      .catch(function(error) {
+        console.error('Error loading requests count:', error);
+      });
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+      loadDashboardData();
+    });
+
+    // Auto-refresh every 5 minutes
+    setInterval(loadDashboardData, 300000);
+  </script>
+</body>
+</html>

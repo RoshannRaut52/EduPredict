@@ -373,6 +373,15 @@
       font-size: 1.1rem;
     }
 
+    /* ===== RETRY BUTTON ===== */
+    .retry-btn {
+      margin-top: 20px;
+    }
+
+    .retry-btn i {
+      margin-right: 8px;
+    }
+
     /* ===== LOADING ===== */
     .loading {
       text-align: center;
@@ -771,7 +780,7 @@
       } catch (error) {
         console.error('Error loading departments:', error);
         document.getElementById('departmentsList').innerHTML =
-          '<div class="empty-state"><i class="fas fa-exclamation-circle" aria-hidden="true"></i><p>Failed to load departments. Please try again.</p><button class="btn btn-primary" onclick="loadDepartments()" style="margin-top:20px;"><i class="fas fa-sync" aria-hidden="true"></i> Retry</button></div>';
+          '<div class="empty-state"><i class="fas fa-exclamation-circle" aria-hidden="true"></i><p>Failed to load departments. Please try again.</p><button class="btn btn-primary retry-btn" onclick="loadDepartments()"><i class="fas fa-sync" aria-hidden="true"></i> Retry</button></div>';
       }
     }
 
@@ -786,7 +795,6 @@
         return;
       }
 
-      // Use document fragment for better performance
       var fragment = document.createDocumentFragment();
       departmentsData.forEach(function(dept) {
         fragment.appendChild(createDepartmentElement(dept));
@@ -1041,6 +1049,5 @@
     // ===== INITIALIZE =====
     window.addEventListener('DOMContentLoaded', loadDepartments);
   </script>
-
 </body>
 </html>

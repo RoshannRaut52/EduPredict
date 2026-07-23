@@ -444,6 +444,11 @@
       border-bottom: none;
     }
 
+    /* ===== EMPTY STATE MESSAGE ===== */
+    .empty-message {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
     /* ===== BADGES ===== */
     .alert-badge {
       display: inline-block;
@@ -778,7 +783,7 @@
         <div id="emptyState" class="empty-state hidden">
           <i class="fas fa-users empty-icon" aria-hidden="true"></i>
           <h3>No students found</h3>
-          <p>No students are enrolled in this year yet.</p>
+          <p class="empty-message">No students are enrolled in this year yet.</p>
         </div>
       </div>
     </main>
