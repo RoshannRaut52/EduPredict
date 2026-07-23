@@ -4,37 +4,187 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teacher Registration | EduPredict</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
+    /* ===== SAME THEME AS INDEX ===== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, #b3b4b5 100%);
-      color: #000;
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
+
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
+
+    /* ===== FLOATING PARTICLES ===== */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ===== HEADER ===== */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 50px;
-      background: #000;
-      color: #fff;
+      padding: 18px 50px;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: slideDown 0.8s ease;
+    }
+
+    @keyframes slideDown {
+      0% { transform: translateY(-100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
     }
 
     .logo {
-      font-size: 2rem;
-      font-weight: bold;
-      letter-spacing: 2px;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: transform 0.3s ease;
     }
 
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .logo i {
+      -webkit-text-fill-color: initial;
+      color: #10ac84;
+      font-size: 2rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 8px 0;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #10ac84, #ee7939);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* ===== MAIN ===== */
     main {
       flex: 1;
       display: flex;
@@ -43,221 +193,592 @@
       padding: 40px 20px;
     }
 
+    /* ===== CONTAINER ===== */
     .container {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      background: rgba(255, 255, 255, 0.03);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 24px;
+      padding: 45px 40px;
       max-width: 500px;
       width: 100%;
-      text-align: center;
-      animation: fadeIn 0.8s ease forwards;
+      box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+      animation: fadeInUp 0.8s ease;
     }
 
-    h2 {
-      margin-bottom: 20px;
-      font-size: 2rem;
-      color: #000;
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
-    .departments {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
-    }
-
-    .departments button {
-      background: #000;
-      color: #fff;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .departments button:hover {
-      background: #10ac84;
-      transform: scale(1.05);
-    }
-
-    .hidden {
+    .container.hidden {
       display: none;
     }
 
-    form {
+    .header-icon {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .header-icon .icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .header-icon h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-icon p {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    /* ===== DEPARTMENT GRID ===== */
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .dept-btn {
+      padding: 16px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .dept-btn:hover {
+      background: rgba(16, 172, 132, 0.1);
+      border-color: rgba(16, 172, 132, 0.3);
+      color: #fff;
+      transform: translateY(-3px);
+    }
+
+    .dept-btn .dept-icon {
+      display: block;
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    /* ===== FORM ===== */
+    .register-form {
       display: flex;
       flex-direction: column;
-      gap: 15px;
-      text-align: left;
+      gap: 16px;
     }
 
-    label {
-      font-weight: 600;
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
 
-    input {
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      outline: none;
-      font-size: 1rem;
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    input:focus {
-      border: 2px solid #000;
+    .form-group label i {
+      color: #10ac84;
+      width: 16px;
     }
 
-    button {
-      background: #000;
+    .form-group label .required {
+      color: #ff6b6b;
+      font-size: 0.8rem;
+    }
+
+    .form-group input {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
       color: #fff;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      width: 100%;
+    }
+
+    .form-group input::placeholder {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #10ac84;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(16, 172, 132, 0.1);
+    }
+
+    .form-hint {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.3);
+      margin-top: 2px;
+    }
+
+    /* ===== DEPARTMENT TAG ===== */
+    .dept-tag {
+      text-align: center;
       padding: 12px;
+      border-radius: 10px;
+      background: rgba(16, 172, 132, 0.1);
+      border: 1px solid rgba(16, 172, 132, 0.15);
+      color: #10ac84;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    /* ===== BUTTON ===== */
+    .btn-register {
+      padding: 14px;
+      border-radius: 12px;
       border: none;
-      border-radius: 8px;
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      color: #fff;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+      margin-top: 10px;
+      box-shadow: 0 4px 20px rgba(16, 172, 132, 0.2);
     }
 
-    button:hover {
-      background: #10ac84;
-      transform: scale(1.05);
+    .btn-register:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(16, 172, 132, 0.35);
     }
 
-    .department-tag {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #10ac84;
-      margin-bottom: 20px;
+    .btn-register:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .message {
-      margin-top: 15px;
-      text-align: center;
-      font-weight: 600;
+    .btn-register i {
       font-size: 1rem;
     }
 
-    .success { color: #007f00; }
-    .error { color: #b30000; }
+    /* ===== BACK BUTTON ===== */
+    .back-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.5);
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
 
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    /* ===== LINKS ===== */
+    .register-links {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .register-links a {
+      color: #10ac84;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .register-links a:hover {
+      color: #1dd1a1;
+      text-decoration: underline;
+    }
+
+    /* ===== MESSAGE ===== */
+    .message {
+      margin-top: 18px;
+      text-align: center;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      color: #10ac84;
+      background: rgba(16, 172, 132, 0.1);
+      border: 1px solid rgba(16, 172, 132, 0.15);
+    }
+
+    .message.error {
+      color: #ff6b6b;
+      background: rgba(255, 0, 0, 0.05);
+      border: 1px solid rgba(255, 0, 0, 0.1);
+    }
+
+    .message.loading {
+      color: #ee7939;
+      background: rgba(238, 121, 57, 0.05);
+      border: 1px solid rgba(238, 121, 57, 0.1);
+    }
+
+    /* ===== BACK TO HOME ===== */
+    .back-home {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .back-home a {
+      color: rgba(255, 255, 255, 0.3);
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+    }
+
+    .back-home a:hover {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .back-home a i {
+      margin-right: 6px;
+    }
+
+    /* ===== FOOTER ===== */
     footer {
       text-align: center;
       padding: 20px;
-      color: #eee;
-      background: #000;
-      font-size: 0.9rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.85rem;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+    footer i {
+      color: #10ac84;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .logo { font-size: 1.5rem; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 0.8rem; }
+      .container { padding: 30px 25px; margin: 0 15px; }
+      .header-icon h2 { font-size: 1.5rem; }
+      .dept-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
+
+  <!-- ===== BACKGROUND EFFECTS ===== -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+
+  <!-- ===== HEADER ===== -->
   <header>
-    <div class="logo">EduPredict</div>
+    <div class="logo">
+      <i class="fas fa-graduation-cap"></i>
+      EduPredict
+    </div>
+    <ul class="nav-links">
+      <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../help.html">Help</a></li>
+      <li><a href="../contact.html">Contact</a></li>
+    </ul>
   </header>
 
+  <!-- ===== MAIN ===== -->
   <main>
     <!-- Department Selection -->
     <div class="container" id="departmentContainer">
-      <h2>🏫 Select Your Department</h2>
-      <div class="departments">
-        <button onclick="selectDepartment('IT')">IT</button>
-        <button onclick="selectDepartment('ENTC')">ENTC</button>
-        <button onclick="selectDepartment('MECHANICAL')">MECHANICAL</button>
-        <button onclick="selectDepartment('CIVIL')">CIVIL</button>
+      <div class="header-icon">
+        <span class="icon">🏫</span>
+        <h2>Select Your Department</h2>
+        <p>Choose the department you teach in</p>
+      </div>
+      <div class="dept-grid">
+        <button class="dept-btn" onclick="selectDepartment('IT')" aria-label="Select IT department">
+          <span class="dept-icon">💻</span> IT
+        </button>
+        <button class="dept-btn" onclick="selectDepartment('ENTC')" aria-label="Select ENTC department">
+          <span class="dept-icon">📡</span> ENTC
+        </button>
+        <button class="dept-btn" onclick="selectDepartment('MECHANICAL')" aria-label="Select Mechanical department">
+          <span class="dept-icon">⚙️</span> Mechanical
+        </button>
+        <button class="dept-btn" onclick="selectDepartment('CIVIL')" aria-label="Select Civil department">
+          <span class="dept-icon">🏗️</span> Civil
+        </button>
+        <button class="dept-btn" onclick="selectDepartment('COMPUTER')" aria-label="Select Computer department">
+          <span class="dept-icon">🖥️</span> Computer
+        </button>
+        <button class="dept-btn" onclick="selectDepartment('ELECTRICAL')" aria-label="Select Electrical department">
+          <span class="dept-icon">⚡</span> Electrical
+        </button>
+      </div>
+      <div class="back-home">
+        <a href="../index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
       </div>
     </div>
 
     <!-- Registration Form -->
     <div class="container hidden" id="registerContainer">
-      <h2>👨‍🏫 Teacher Registration</h2>
-      <div class="department-tag" id="departmentTag"></div>
+      <div class="header-icon">
+        <span class="icon">👨‍🏫</span>
+        <h2>Teacher Registration</h2>
+        <p>Complete your profile to get started</p>
+      </div>
 
-      <form id="teacherRegisterForm" autocomplete="off">
-        <label>Full Name</label>
-        <input type="text" name="name" placeholder="Enter your name" required>
+      <button class="back-btn" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Departments
+      </button>
 
-        <label>Email Address</label>
-        <input type="email" name="email" placeholder="Enter valid email" required>
+      <div class="dept-tag" id="departmentTag">
+        <i class="fas fa-check-circle"></i> Department: <span id="deptName">--</span>
+      </div>
 
-        <label>Subject</label>
-        <input type="text" name="subject" placeholder="e.g., Data Structures" required>
+      <form class="register-form" id="teacherRegisterForm" novalidate>
+        <div class="form-group">
+          <label for="name">
+            <i class="fas fa-user"></i> Full Name <span class="required">*</span>
+          </label>
+          <input type="text" id="name" name="name" placeholder="Enter your full name" required aria-required="true" />
+        </div>
 
-        <label>Password</label>
-        <input type="password" name="password" placeholder="Create password" required>
+        <div class="form-group">
+          <label for="email">
+            <i class="fas fa-envelope"></i> Email Address <span class="required">*</span>
+          </label>
+          <input type="email" id="email" name="email" placeholder="Enter valid email" required aria-required="true" />
+        </div>
 
-        <label>Confirm Password</label>
-        <input type="password" name="confirm_password" placeholder="Confirm password" required>
+        <div class="form-group">
+          <label for="subject">
+            <i class="fas fa-book"></i> Subject <span class="required">*</span>
+          </label>
+          <input type="text" id="subject" name="subject" placeholder="e.g., Data Structures, Mathematics" required aria-required="true" />
+        </div>
 
-        <button type="submit">Register</button>
+        <div class="form-group">
+          <label for="password">
+            <i class="fas fa-lock"></i> Password <span class="required">*</span>
+          </label>
+          <input type="password" id="password" name="password" placeholder="Create password (min 6 characters)" required aria-required="true" minlength="6" />
+          <span class="form-hint">Minimum 6 characters</span>
+        </div>
+
+        <div class="form-group">
+          <label for="confirm_password">
+            <i class="fas fa-check-circle"></i> Confirm Password <span class="required">*</span>
+          </label>
+          <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required aria-required="true" minlength="6" />
+        </div>
+
+        <button type="submit" class="btn-register" id="submitBtn">
+          <i class="fas fa-user-plus"></i> Register
+        </button>
       </form>
-      <div class="message" id="statusMsg"></div>
+
+      <div class="register-links">
+        Already have an account? <a href="teacherlogin.html">Login here</a>
+      </div>
+
+      <div class="message" id="statusMsg" role="alert" aria-live="polite"></div>
     </div>
   </main>
 
+  <!-- ===== FOOTER ===== -->
   <footer>
-    &copy; 2025 EduPredict. All rights reserved.
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart"></i> for education.
   </footer>
 
   <script>
-    const backendUrl = 'https://edupredict-l9eg.onrender.com';
-    const deptContainer = document.getElementById('departmentContainer');
-    const regContainer = document.getElementById('registerContainer');
-    const deptTag = document.getElementById('departmentTag');
-    const form = document.getElementById("teacherRegisterForm");
-    const msg = document.getElementById("statusMsg");
-    let selectedDept = "";
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    })();
+
+    // ===== DEPARTMENT SELECTION =====
+    var deptContainer = document.getElementById('departmentContainer');
+    var regContainer = document.getElementById('registerContainer');
+    var deptTag = document.getElementById('departmentTag');
+    var deptName = document.getElementById('deptName');
+    var selectedDept = '';
 
     function selectDepartment(dept) {
       selectedDept = dept;
-      deptTag.textContent = `Department: ${dept}`;
+      deptName.textContent = dept;
       deptContainer.classList.add('hidden');
       regContainer.classList.remove('hidden');
+      document.getElementById('departmentContainer').style.display = 'none';
+      document.getElementById('registerContainer').style.display = 'block';
     }
 
-    form.onsubmit = async (e) => {
+    function goBack() {
+      regContainer.classList.add('hidden');
+      deptContainer.classList.remove('hidden');
+      document.getElementById('registerContainer').style.display = 'none';
+      document.getElementById('departmentContainer').style.display = 'block';
+    }
+
+    // ===== REGISTRATION =====
+    var form = document.getElementById('teacherRegisterForm');
+    var msg = document.getElementById('statusMsg');
+    var submitBtn = document.getElementById('submitBtn');
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
+
+    function showMessage(text, type) {
+      msg.textContent = text;
+      msg.className = 'message show ' + type;
+    }
+
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
-      msg.textContent = "⏳ Processing...";
-      msg.className = "message";
+      
+      showMessage('⏳ Processing your registration...', 'loading');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
 
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
-      data.department = selectedDept;
+      var name = document.getElementById('name').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var subject = document.getElementById('subject').value.trim();
+      var password = document.getElementById('password').value;
+      var confirm_password = document.getElementById('confirm_password').value;
 
-      try {
-        const res = await fetch(`${backendUrl}/register/teacher`, {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        const result = await res.json();
-
-        if (res.ok) {
-          msg.textContent = result.message || "✅ Registration successful!";
-          msg.classList.add("success");
-          form.reset();
-          setTimeout(() => {
-            window.location.href = "teacherlogin.html";
-          }, 2000);
-        } else {
-          msg.textContent = result.message || "❌ Registration failed";
-          msg.classList.add("error");
-        }
-      } catch (err) {
-        console.error('Error:', err);
-        msg.textContent = "❌ Cannot connect to server. Please try again.";
-        msg.classList.add("error");
+      // Validation
+      if (!name || !email || !subject || !password || !confirm_password) {
+        showMessage('❌ Please fill all fields', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+        return;
       }
-    };
+
+      if (password.length < 6) {
+        showMessage('❌ Password must be at least 6 characters', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+        return;
+      }
+
+      if (password !== confirm_password) {
+        showMessage('❌ Passwords do not match', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+        return;
+      }
+
+      var data = {
+        name: name,
+        email: email,
+        subject: subject,
+        department: selectedDept,
+        password: password,
+        confirm_password: confirm_password
+      };
+
+      console.log('📤 Submitting registration for:', email);
+
+      fetch(backendUrl + '/register/teacher', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(function(res) {
+        return res.json().then(function(result) {
+          if (!res.ok) {
+            throw new Error(result.message || result.error || 'Registration failed');
+          }
+          return result;
+        });
+      })
+      .then(function(result) {
+        console.log('📨 Server response:', result);
+        showMessage(result.message || '✅ Registration successful!', 'success');
+        form.reset();
+        
+        setTimeout(function() {
+          window.location.href = 'teacherlogin.html';
+        }, 2000);
+      })
+      .catch(function(err) {
+        console.error('❌ Registration error:', err);
+        showMessage('❌ ' + err.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+      });
+    });
+
+    // Enter key support
+    form.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        form.dispatchEvent(new Event('submit'));
+      }
+    });
+
+    // Initial state: show department container
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('departmentContainer').style.display = 'block';
+      document.getElementById('registerContainer').style.display = 'none';
+    });
   </script>
 </body>
 </html>

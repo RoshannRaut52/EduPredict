@@ -1,944 +1,1242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Student Dashboard - EduPredict</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif;}
-body {
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-color: #141313; min-height: 100vh;
-overflow-y: scroll;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard - EduPredict</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* ===== SAME THEME AS INDEX ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.sticky-bar {
-position: sticky;
-top: 0;
-z-index: 10;
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 15px 48px 15px 48px;
-background: #000c;
-backdrop-filter: blur(7px);
-min-height: 75px;
-box-shadow: 0 2px 20px #0001;
-}
-.profile-area {
-display: flex;
-align-items: center;
-gap: 16px;
-color: #fff;
-}
-.profile-pic {
-width: 54px;
-height: 54px;
-border-radius: 50%;
-object-fit: cover;
-border: 3px solid #fff;
-cursor: pointer;
-background: #f3f3f3;
-box-shadow: 0 2px 10px #10ac8455;
-transition: box-shadow 0.3s;
-}
-.profile-pic:hover {
-box-shadow: 0 0 0 3px #10ac84;
-}
-.stud-details {
-display: flex;
-flex-direction: column;
-}
-.stud-name {
-font-size: 1.6rem;
-font-weight: 700;
-color: #fff;
-}
-.college-row {
-font-weight: 500;
-font-size: 1.05rem;
-text-shadow: 0 1px 5px #0a080892;
-color: #f6fff6;
-}
-.edit-btn {
-background: #10ac84;
-padding: 12px 26px;
-border-radius: 9px;
-color: #fff;
-font-weight: 600;
-border: none;
-font-size: 1rem;
-cursor: pointer;
-transition: background 0.18s;
-}
-.edit-btn:hover {
-background: #1dd1a1;
-}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-main {
-padding: 46px 14px 30px 14px;
-display: flex;
-justify-content: center;
-align-items: flex-start;
-gap: 40px;
-min-height: 90vh;
-width: 100%;
-max-width: 1400px;
-margin: 0 auto;
-flex-wrap: wrap;
-}
-.dashboard-side {
-flex: 3 1 0%;
-min-width: 0;
-max-width: 920px;
-}
-.dashboard-content {
-background: rgba(255, 255, 255, 0.95);
-box-shadow: 0 6px 32px #0006;
-padding: 44px 38px 24px 38px;
-border-radius: 22px;
-margin-top: 24px;
-}
-.info-row {
-display: flex;
-gap: 34px;
-margin-bottom: 23px;
-flex-wrap: wrap;
-align-items: stretch;
-}
-.card {
-background: rgba(255, 255, 255, 0.9);
-border-radius: 13px;
-flex: 1 1 272px;
-box-shadow: 0 2px 16px rgba(0, 0, 0, 0.09);
-padding: 25px 24px 25px 24px;
-margin-bottom: 21px;
-border: 2px solid #f0f0f0;
-transition: transform 0.2s, box-shadow 0.2s;
-}
-.card:hover {
-transform: translateY(-5px);
-box-shadow: 0 4px 20px rgba(16, 172, 132, 0.3);
-}
-.card h3 {
-font-size: 1.13rem;
-font-weight: 700;
-color: #222;
-margin-bottom: 10px;
-}
-.card .value {
-font-size: 1.7rem;
-font-weight: 700;
-color: #10ac84;
-margin-bottom: 5px;
-}
-.card .label {
-color: #226;
-font-size: 1rem;
-}
-.probability-chance {
-background: linear-gradient(135deg, rgba(16, 172, 132, 0.95), rgba(29, 209, 161, 0.95));
-color: #fff;
-border-radius: 13px;
-font-size: 1.23rem;
-font-weight: 700;
-padding: 25px;
-text-align: center;
-box-shadow: 0 4px 15px #10ac8444;
-margin-top: 18px;
-letter-spacing: 0.8px;
-}
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
 
-/* Notification/news side bar - sticky */
-.notification-panel {
-flex: 1 1 0%;
-display: flex;
-flex-direction: column;
-gap: 18px;
-margin-top: 24px;
-min-width: 280px;
-max-width: 350px;
-position: sticky;
-top: 85px;
-align-self: flex-start;
-max-height: calc(100vh - 95px);
-overflow-y: auto;
-padding-right: 10px;
-scrollbar-width: thin;
-scrollbar-color: #10ac84 transparent;
-}
-.notification-panel::-webkit-scrollbar {
-width: 8px;
-}
-.notification-panel::-webkit-scrollbar-thumb {
-background-color: #10ac84;
-border-radius: 10px;
-}
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
 
-.notification-box {
-background: rgba(255, 255, 255, 0.95);
-border-radius: 20px;
-padding: 20px 16px;
-box-shadow: 0 4px 12px rgba(39, 85, 160, 0.15);
-margin-bottom: 0;
-transition: box-shadow 0.2s;
-}
-.notification-box:hover {
-box-shadow: 0 6px 18px rgba(39, 85, 160, 0.25);
-}
-.notification-box h2 {
-font-size: 1.15em;
-color: #2755a0;
-margin-bottom: 10px;
-letter-spacing: 0.8px;
-}
-.notification-box ul {
-list-style: none;
-padding: 0;
-margin: 0;
-}
-.notification-box ul li {
-padding: 7px 0;
-border-bottom: 1px solid #cfdbe7;
-font-size: 0.97em;
-transition: background 0.14s;
-cursor: pointer;
-}
-.notification-box ul li:last-child {
-border-bottom: none;
-}
-.notification-box ul li:hover {
-background: #d0e7ff80;
-border-radius: 7px;
-}
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
 
-/* New Widgets for suggested features */
-.widget {
-background: rgba(255, 255, 255, 0.9);
-border-radius: 18px;
-padding: 25px 20px;
-margin-bottom: 24px;
-box-shadow: 0 4px 22px #a8b9d822;
-border: 2px solid #f0f0f0;
-}
-.widget h2 {
-font-weight: 700;
-color: #244a91;
-margin-bottom: 16px;
-font-size: 1.25rem;
-letter-spacing: 1px;
-border-bottom: 2px solid #10ac84;
-padding-bottom: 8px;
-max-width: max-content;
-}
-.overview-grid {
-display: flex;
-gap: 18px;
-flex-wrap: wrap;
-}
-.overview-item {
-background: linear-gradient(135deg, #10ac84, #1dd1a1);
-border-radius: 12px;
-flex: 1 1 130px;
-padding: 18px 15px;
-text-align: center;
-box-shadow: 0 3px 15px rgba(16, 172, 132, 0.3);
-font-weight: 700;
-color: #fff;
-font-size: 1.9rem;
-user-select: none;
-transition: transform 0.25s, box-shadow 0.25s;
-}
-.overview-item:hover {
-transform: translateY(-5px);
-box-shadow: 0 6px 20px rgba(16, 172, 132, 0.5);
-}
-.overview-item span {
-display: block;
-font-weight: 500;
-font-size: 0.85rem;
-color: #fff;
-margin-top: 6px;
-user-select: text;
-}
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
 
-/* Calendar styles */
-.calendar {
-background: #fff;
-border-radius: 18px;
-padding: 20px 24px;
-box-shadow: 0 3px 15px rgba(100, 116, 139, 0.12);
-margin-bottom: 24px;
-font-size: 0.925rem;
-}
-.calendar-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 12px;
-font-weight: 700;
-color: #244a91;
-font-size: 1.15rem;
-}
-.calendar-grid {
-display: grid;
-grid-template-columns: repeat(7, 1fr);
-gap: 10px;
-}
-.calendar-day {
-font-weight: 600;
-color: #10ac84;
-text-align: center;
-}
-.calendar-date {
-text-align: center;
-padding: 6px 8px;
-border-radius: 50%;
-cursor: pointer;
-transition: background-color 0.3s;
-}
-.calendar-date.today {
-background: #10ac84;
-color: white;
-font-weight: 700;
-}
-.calendar-date:hover {
-background: #1dd1a1;
-color: white;
-}
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
 
-/* Quick actions */
-.quick-actions {
-display: flex;
-flex-wrap: wrap;
-gap: 18px;
-margin-bottom: 24px;
-}
-.quick-action-btn {
-flex: 1 1 120px;
-background: #10ac84;
-color: #fff;
-border-radius: 14px;
-padding: 16px 10px;
-font-weight: 700;
-text-align: center;
-cursor: pointer;
-user-select: none;
-transition: all 0.25s ease;
-border: none;
-}
-.quick-action-btn:hover {
-background: #1dd1a1;
-transform: translateY(-3px);
-box-shadow: 0 5px 15px rgba(16, 172, 132, 0.4);
-}
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
 
-/* Achievements */
-.achievements {
-display: flex;
-flex-wrap: wrap;
-gap: 12px;
-justify-content: flex-start;
-}
-.achievement-badge {
-background: linear-gradient(135deg, #10ac84, #1dd1a1);
-color: white;
-padding: 14px 18px;
-border-radius: 22px;
-font-weight: 600;
-font-size: 0.95rem;
-user-select: none;
-box-shadow: 0 3px 10px #10ac8490;
-cursor: default;
-transition: transform 0.2s ease;
-}
-.achievement-badge:hover {
-transform: scale(1.05);
-}
+    /* ===== FLOATING PARTICLES ===== */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
 
-/* Notes/To-dos */
-.notes-box {
-background: #fff;
-border-radius: 18px;
-padding: 20px 24px;
-box-shadow: 0 2px 8px #bbb3;
-margin-bottom: 24px;
-min-height: 100px;
-font-size: 0.95rem;
-color: #444;
-resize: vertical;
-width: 100%;
-font-family: 'Poppins', sans-serif;
-border: 1px solid #ddd;
-}
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
 
-/* Chart container */
-.chart-container {
-background: #fff;
-border-radius: 15px;
-padding: 20px;
-margin-bottom: 20px;
-box-shadow: 0 3px 12px rgba(0,0,0,0.1);
-}
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
 
-@media (max-width: 1200px) {
-main {
-flex-direction: column;
-gap: 36px;
-align-items: stretch;
-}
-.dashboard-side, .notification-panel {
-max-width: 100%;
-position: relative;
-max-height: none;
-overflow: visible;
-}
-}
-@media (max-width: 900px) {
-.dashboard-content {padding: 20px 2vw;}
-.info-row { flex-direction: column; gap: 0;}
-.notification-panel { flex-direction: row; gap: 14px; min-width: 0; max-width: 100%;}
-.notification-box { flex: 1; min-width: 140px;}
-}
-@media (max-width: 700px) {
-.sticky-bar { flex-direction: column; align-items: flex-start; gap: 14px; padding: 15px 20px; min-height: auto;}
-.profile-area { gap: 16px;}
-}
-@media (max-width: 600px) {
-main { padding: 0 3px; }
-.dashboard-content { padding: 10px; }
-.notification-panel { flex-direction: column; gap: 10px;}
-.notification-box {padding: 14px 10px;}
-}
-footer {
-margin: 36px auto 0 auto;
-padding: 24px;
-width: 100%;
-text-align: center;
-background: rgba(0,0,0,0.08);
-border-top: 1px solid #e2e6ec;
-font-size: 0.98em;
-color: #222a;
-border-radius: 0 0 25px 25px;
-}
-.popup-overlay {
-position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-display: none; justify-content: center; align-items: center; z-index: 3000;
-}
-.popup {
-background: #fff;
-border-radius: 15px;
-padding: 40px 34px 28px;
-box-shadow: 0 6px 32px #0005;
-display: flex;
-flex-direction: column;
-align-items: center;
-max-width: 320px;
-width: 90%;
-}
-.popup h3 {
-margin-bottom: 19px;
-color: #141313;
-}
-.popup input[type="file"] {
-margin-bottom: 20px;
-}
-.popup button {
-background: #10ac84;
-border: none;
-color: #fff;
-padding: 12px 28px;
-border-radius: 8px;
-font-weight: 600;
-cursor: pointer;
-transition: background 0.13s;
-margin: 0 7px;
-}
-.popup button:hover {
-background: #1dd1a1;
-}
-</style>
+    /* ===== HEADER ===== */
+    .sticky-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 50px;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .profile-area {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .profile-pic {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .profile-pic:hover {
+      border-color: #10ac84;
+      box-shadow: 0 0 20px rgba(16, 172, 132, 0.3);
+    }
+
+    .stud-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stud-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .college-row {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .edit-btn {
+      padding: 10px 24px;
+      border-radius: 10px;
+      background: rgba(16, 172, 132, 0.15);
+      border: 1px solid rgba(16, 172, 132, 0.2);
+      color: #10ac84;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .edit-btn:hover {
+      background: rgba(16, 172, 132, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .logout-btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      background: rgba(255, 0, 0, 0.05);
+      color: #ff6b6b;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 0, 0, 0.1);
+      border-color: rgba(255, 0, 0, 0.4);
+    }
+
+    /* ===== MAIN ===== */
+    main {
+      display: flex;
+      gap: 30px;
+      max-width: 1400px;
+      margin: 25px auto;
+      padding: 0 25px;
+      flex: 1;
+    }
+
+    .dashboard-side {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dashboard-content {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    /* ===== WIDGETS ===== */
+    .widget {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 25px;
+    }
+
+    .widget h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(16, 172, 132, 0.2);
+    }
+
+    .widget h2 i {
+      color: #10ac84;
+      margin-right: 8px;
+    }
+
+    /* ===== OVERVIEW GRID ===== */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+    }
+
+    .overview-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 18px 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .overview-item:hover {
+      background: rgba(16, 172, 132, 0.05);
+      border-color: rgba(16, 172, 132, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .overview-item .number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .overview-item .label {
+      display: block;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 4px;
+    }
+
+    /* ===== INFO ROW ===== */
+    .info-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+
+    .card h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.3);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .card .value {
+      font-size: 1rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .card .value.email {
+      font-size: 0.85rem;
+    }
+
+    /* ===== CHART ===== */
+    .chart-container {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      padding: 15px;
+      position: relative;
+      height: 250px;
+    }
+
+    .chart-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* ===== PREDICTION ===== */
+    .probability-chance {
+      background: linear-gradient(135deg, rgba(16, 172, 132, 0.15), rgba(238, 121, 57, 0.05));
+      border: 1px solid rgba(16, 172, 132, 0.15);
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #10ac84;
+    }
+
+    .prediction-desc {
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 15px;
+      line-height: 1.6;
+      font-weight: 400;
+      font-size: 0.95rem;
+    }
+
+    /* ===== CALENDAR ===== */
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 600;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .calendar-day {
+      font-weight: 600;
+      color: rgba(16, 172, 132, 0.6);
+      text-align: center;
+      font-size: 0.8rem;
+      padding: 6px 0;
+    }
+
+    .calendar-date {
+      text-align: center;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+    }
+
+    .calendar-date:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .calendar-date.today {
+      background: rgba(16, 172, 132, 0.15);
+      color: #10ac84;
+      font-weight: 700;
+    }
+
+    /* ===== QUICK ACTIONS ===== */
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .quick-action-btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quick-action-btn:hover {
+      background: rgba(16, 172, 132, 0.1);
+      border-color: rgba(16, 172, 132, 0.2);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .quick-action-btn.primary {
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .quick-action-btn.primary:hover {
+      box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
+    }
+
+    /* ===== ACHIEVEMENTS ===== */
+    .achievements {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .achievement-badge {
+      padding: 10px 18px;
+      border-radius: 50px;
+      background: rgba(16, 172, 132, 0.1);
+      border: 1px solid rgba(16, 172, 132, 0.15);
+      color: #10ac84;
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+
+    /* ===== NOTES ===== */
+    .notes-box {
+      width: 100%;
+      min-height: 100px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      padding: 14px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      resize: vertical;
+      transition: all 0.3s ease;
+    }
+
+    .notes-box::placeholder {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .notes-box:focus {
+      outline: none;
+      border-color: #10ac84;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .notes-save-btn {
+      width: 100%;
+      margin-top: 12px;
+      justify-content: center;
+    }
+
+    /* ===== NOTIFICATION PANEL ===== */
+    .notification-panel {
+      flex: 0 0 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: sticky;
+      top: 90px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .notification-panel::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .notification-panel::-webkit-scrollbar-thumb {
+      background: #10ac84;
+      border-radius: 10px;
+    }
+
+    .notification-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 18px 20px;
+    }
+
+    .notification-box h2 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 10px;
+    }
+
+    .notification-box h2 i {
+      margin-right: 8px;
+      color: #10ac84;
+    }
+
+    .notification-box ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .notification-box ul li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .notification-box ul li:last-child {
+      border-bottom: none;
+    }
+
+    .notification-box ul li:hover {
+      color: #fff;
+    }
+
+    /* ===== POPUP ===== */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup {
+      background: rgba(20, 20, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 35px 30px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      animation: fadeInUp 0.4s ease;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .popup h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .popup input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .popup input[type="file"]::file-selector-button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background: #10ac84;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      margin-right: 10px;
+    }
+
+    .popup-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .popup-actions button {
+      padding: 10px 28px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .popup-actions .btn-primary {
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      color: #fff;
+    }
+
+    .popup-actions .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
+    }
+
+    .popup-actions .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .popup-actions .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: rgba(10, 10, 15, 0.95);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .toast.success { border-color: rgba(16, 172, 132, 0.3); }
+    .toast.success i { color: #10ac84; }
+    .toast.error { border-color: rgba(255, 0, 0, 0.3); }
+    .toast.error i { color: #ff6b6b; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.85rem;
+      margin-top: auto;
+    }
+
+    footer .heart {
+      color: #10ac84;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      main { flex-direction: column; }
+      .notification-panel {
+        flex: none;
+        position: relative;
+        top: 0;
+        max-height: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      .notification-box { flex: 1; min-width: 200px; }
+    }
+
+    @media (max-width: 768px) {
+      .sticky-bar {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .stud-name { font-size: 1.1rem; }
+      .header-actions { flex-wrap: wrap; }
+      .dashboard-side { padding: 0; }
+      .info-row { grid-template-columns: 1fr; }
+      .overview-grid { grid-template-columns: 1fr 1fr; }
+      .notification-panel { flex-direction: column; }
+      .notification-box { min-width: auto; }
+    }
+
+    @media (max-width: 480px) {
+      .overview-grid { grid-template-columns: 1fr; }
+      .quick-actions { flex-direction: column; }
+      .quick-action-btn { width: 100%; justify-content: center; }
+      .widget { padding: 18px; }
+      .popup { padding: 25px 20px; }
+    }
+  </style>
 </head>
 <body>
-<header class="sticky-bar">
-<div class="profile-area">
-<img src="https://ui-avatars.com/api/?name=Ritika+Mehta&background=10ac84&color=fff&size=128" alt="Profile Photo" id="profilePic" class="profile-pic" title="Change photo" />
-<div class="stud-details">
-<div class="stud-name" id="studentName">Ritika Mehta</div>
-<div class="college-row">
-<span class="college-name" id="collegeName">Government College of Engineering, Karad</span>
-</div>
-</div>
-</div>
-<button class="edit-btn" onclick="editProfile()">✏ Edit Profile</button>
-</header>
 
-<!-- Profile photo change popup -->
-<div class="popup-overlay" id="popupOverlay">
-<div class="popup">
-<h3>Change Profile Photo</h3>
-<input type="file" id="photoUpload" accept="image/*" />
-<div>
-<button onclick="handleProfileChange()">Upload</button>
-<button onclick="closePopup()">Cancel</button>
-</div>
-</div>
-</div>
+  <!-- ===== BACKGROUND EFFECTS ===== -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
 
-<main>
-<div class="dashboard-side">
-<div class="dashboard-content">
+  <!-- ===== HEADER ===== -->
+  <header class="sticky-bar">
+    <div class="profile-area">
+      <img src="https://ui-avatars.com/api/?name=Ritika+Mehta&background=10ac84&color=fff&size=128" alt="Profile Photo" id="profilePic" class="profile-pic" title="Change photo" />
+      <div class="stud-details">
+        <div class="stud-name" id="studentName">Ritika Mehta</div>
+        <div class="college-row" id="collegeName">Government College of Engineering, Karad</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="edit-btn" onclick="editProfile()"><i class="fas fa-edit" aria-hidden="true"></i> Edit Profile</button>
+      <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout</button>
+    </div>
+  </header>
 
-<!-- At a glance overview -->
-<div class="widget">
-<h2>Overview at a Glance</h2>
-<div class="overview-grid">
-<div class="overview-item">
-<div id="attendanceValue">93%</div>
-<span>Attendance</span>
-</div>
-<div class="overview-item">
-<div id="cgpaValue">9.4</div>
-<span>Current CGPA</span>
-</div>
-<div class="overview-item">
-<div id="assignmentsValue">15</div>
-<span>Assignments Submitted</span>
-</div>
-<div class="overview-item">
-<div id="achievementsCount">5</div>
-<span>Achievements</span>
-</div>
-</div>
-</div>
+  <!-- ===== MAIN ===== -->
+  <main>
 
-<!-- Student Details -->
-<div class="widget">
-<h2>Student Information</h2>
-<div class="info-row">
-<div class="card">
-<h3>Email</h3>
-<div class="value" id="studentEmail" style="font-size: 1rem; color: #333;">ritika.mehta@gcek.edu.in</div>
-</div>
-<div class="card">
-<h3>Department</h3>
-<div class="value" id="studentDepartment" style="font-size: 1.2rem;">Computer Science</div>
-</div>
-<div class="card">
-<h3>Year</h3>
-<div class="value" id="studentYear">3rd Year</div>
-</div>
-<div class="card">
-<h3>Roll Number</h3>
-<div class="value" id="studentRollNo" style="font-size: 1.2rem;">CS21045</div>
-</div>
-</div>
-</div>
+    <!-- DASHBOARD SIDE -->
+    <div class="dashboard-side">
+      <div class="dashboard-content">
 
-<!-- Attendance Chart -->
-<div class="widget">
-<h2>Subject-wise Attendance</h2>
-<div class="chart-container">
-<canvas id="attendanceChart"></canvas>
-</div>
-</div>
+        <!-- OVERVIEW -->
+        <div class="widget">
+          <h2><i class="fas fa-chart-simple" aria-hidden="true"></i> Overview at a Glance</h2>
+          <div class="overview-grid">
+            <div class="overview-item">
+              <div class="number" id="attendanceValue">93%</div>
+              <span class="label">Attendance</span>
+            </div>
+            <div class="overview-item">
+              <div class="number" id="cgpaValue">9.4</div>
+              <span class="label">Current CGPA</span>
+            </div>
+            <div class="overview-item">
+              <div class="number" id="assignmentsValue">15</div>
+              <span class="label">Assignments Submitted</span>
+            </div>
+            <div class="overview-item">
+              <div class="number" id="achievementsCount">5</div>
+              <span class="label">Achievements</span>
+            </div>
+          </div>
+        </div>
 
-<!-- CGPA Progress -->
-<div class="widget">
-<h2>Academic Progress (CGPA)</h2>
-<div class="chart-container">
-<canvas id="cgpaChart"></canvas>
-</div>
-</div>
+        <!-- STUDENT INFO -->
+        <div class="widget">
+          <h2><i class="fas fa-user-graduate" aria-hidden="true"></i> Student Information</h2>
+          <div class="info-row">
+            <div class="card">
+              <h3>Email</h3>
+              <div class="value email" id="studentEmail">ritika.mehta@gcek.edu.in</div>
+            </div>
+            <div class="card">
+              <h3>Department</h3>
+              <div class="value" id="studentDepartment">Computer Science</div>
+            </div>
+            <div class="card">
+              <h3>Year</h3>
+              <div class="value" id="studentYear">3rd Year</div>
+            </div>
+            <div class="card">
+              <h3>Roll Number</h3>
+              <div class="value" id="studentRollNo">CS21045</div>
+            </div>
+          </div>
+        </div>
 
-<!-- Prediction -->
-<div class="widget">
-<h2>Dropout Risk Assessment</h2>
-<div class="probability-chance" id="predictionResult">
-✅ Low Dropout Risk - Excellent Performance!
-</div>
-<p style="margin-top: 15px; color: #555; line-height: 1.6;">
-Based on your outstanding attendance (93%), exceptional CGPA (9.4), and consistent assignment submissions, 
-you demonstrate excellent academic standing. Keep up the great work!
-</p>
-</div>
+        <!-- ATTENDANCE CHART -->
+        <div class="widget">
+          <h2><i class="fas fa-chart-bar" aria-hidden="true"></i> Subject-wise Attendance</h2>
+          <div class="chart-container">
+            <canvas id="attendanceChart" role="img" aria-label="Attendance bar chart"></canvas>
+          </div>
+        </div>
 
-<!-- Calendar / Schedule -->
-<div class="widget calendar">
-<div class="calendar-header">
-<span id="calendarMonth">Oct 2025</span>
-<span id="calendarToday">Today: 14</span>
-</div>
-<div class="calendar-grid" id="calendarGrid">
-<div class="calendar-day">Sun</div>
-<div class="calendar-day">Mon</div>
-<div class="calendar-day">Tue</div>
-<div class="calendar-day">Wed</div>
-<div class="calendar-day">Thu</div>
-<div class="calendar-day">Fri</div>
-<div class="calendar-day">Sat</div>
-</div>
-</div>
+        <!-- CGPA CHART -->
+        <div class="widget">
+          <h2><i class="fas fa-chart-line" aria-hidden="true"></i> Academic Progress (CGPA)</h2>
+          <div class="chart-container">
+            <canvas id="cgpaChart" role="img" aria-label="CGPA line chart"></canvas>
+          </div>
+        </div>
 
-<!-- Quick actions -->
-<div class="widget">
-<h2>Quick Actions</h2>
-<div class="quick-actions">
-<button class="quick-action-btn" onclick="alert('Download Hall Ticket')">📄 Hall Ticket</button>
-<button class="quick-action-btn" onclick="alert('Register for Exam')">📝 Exam Registration</button>
-<button class="quick-action-btn" onclick="alert('View Results')">📊 View Results</button>
-<button class="quick-action-btn" onclick="editProfile()">✏ Edit Profile</button>
-</div>
-</div>
+        <!-- PREDICTION -->
+        <div class="widget">
+          <h2><i class="fas fa-robot" aria-hidden="true"></i> Dropout Risk Assessment</h2>
+          <div class="probability-chance" id="predictionResult">✅ Low Dropout Risk - Excellent Performance!</div>
+          <p class="prediction-desc">Based on your outstanding attendance (93%), exceptional CGPA (9.4), and consistent assignment submissions, you demonstrate excellent academic standing. Keep up the great work!</p>
+        </div>
 
-<!-- Achievements badges -->
-<div class="widget">
-<h2>Achievements & Rewards</h2>
-<div class="achievements" id="achievementsList">
-<div class="achievement-badge">🏆 Top Performer</div>
-<div class="achievement-badge">📅 100% Attendance</div>
-<div class="achievement-badge">🧮 Math Olympiad Winner</div>
-<div class="achievement-badge">💡 Best Project Award</div>
-<div class="achievement-badge">💻 Coding Competition Winner</div>
-</div>
-</div>
+        <!-- CALENDAR -->
+        <div class="widget">
+          <h2><i class="fas fa-calendar" aria-hidden="true"></i> Calendar</h2>
+          <div class="calendar-header">
+            <span id="calendarMonth">Oct 2025</span>
+            <span id="calendarToday">Today: 14</span>
+          </div>
+          <div class="calendar-grid" id="calendarGrid">
+            <div class="calendar-day">Sun</div>
+            <div class="calendar-day">Mon</div>
+            <div class="calendar-day">Tue</div>
+            <div class="calendar-day">Wed</div>
+            <div class="calendar-day">Thu</div>
+            <div class="calendar-day">Fri</div>
+            <div class="calendar-day">Sat</div>
+          </div>
+        </div>
 
-<!-- Notes / To-dos -->
-<div class="widget">
-<h2>Notes / To-dos</h2>
-<textarea class="notes-box" id="studentNotes" placeholder="Write your study goals or reminders here..."></textarea>
-<button class="quick-action-btn" onclick="saveNotes()" style="width: 100%; margin-top: 10px;">💾 Save Notes</button>
-</div>
+        <!-- QUICK ACTIONS -->
+        <div class="widget">
+          <h2><i class="fas fa-bolt" aria-hidden="true"></i> Quick Actions</h2>
+          <div class="quick-actions">
+            <button class="quick-action-btn" onclick="showToast('Hall Ticket downloaded!', 'success')"><i class="fas fa-file-pdf" aria-hidden="true"></i> Hall Ticket</button>
+            <button class="quick-action-btn" onclick="showToast('Exam registered successfully!', 'success')"><i class="fas fa-pen-to-square" aria-hidden="true"></i> Exam Registration</button>
+            <button class="quick-action-btn" onclick="showToast('Results loaded!', 'success')"><i class="fas fa-chart-simple" aria-hidden="true"></i> View Results</button>
+            <button class="quick-action-btn" onclick="editProfile()"><i class="fas fa-user-edit" aria-hidden="true"></i> Edit Profile</button>
+          </div>
+        </div>
 
-</div>
-</div>
+        <!-- ACHIEVEMENTS -->
+        <div class="widget">
+          <h2><i class="fas fa-trophy" aria-hidden="true"></i> Achievements & Rewards</h2>
+          <div class="achievements" id="achievementsList">
+            <span class="achievement-badge">🏆 Top Performer</span>
+            <span class="achievement-badge">📅 100% Attendance</span>
+            <span class="achievement-badge">🧮 Math Olympiad Winner</span>
+            <span class="achievement-badge">💡 Best Project Award</span>
+            <span class="achievement-badge">💻 Coding Competition Winner</span>
+          </div>
+        </div>
 
-<aside class="notification-panel" aria-label="College news and events">
-<div class="notification-box">
-<h2>📰 College News</h2>
-<ul id="collegeNews">
-<li>Orientation Day next Monday</li>
-<li>Seminar: AI & Education on Oct 18</li>
-<li>New Library Resources Available</li>
-<li>Campus WiFi Upgrade Completed</li>
-</ul>
-</div>
-<div class="notification-box">
-<h2>📅 Upcoming Events</h2>
-<ul id="upcomingEvents">
-<li>Cultural Fest - Oct 25-27</li>
-<li>Sports Week - Nov 3-7</li>
-<li>Tech Symposium - Nov 15</li>
-<li>Annual Day - Dec 10</li>
-</ul>
-</div>
-<div class="notification-box">
-<h2>⚠ Important Notices</h2>
-<ul id="importantNotices">
-<li>Exam forms due Oct 20</li>
-<li>Library closed on Sunday</li>
-<li>Fee payment deadline: Oct 30</li>
-<li>Scholarship forms available</li>
-</ul>
-</div>
-</aside>
-</main>
-<footer>
-&copy; 2025 EduPredict. All rights reserved.
-</footer>
+        <!-- NOTES -->
+        <div class="widget">
+          <h2><i class="fas fa-note-sticky" aria-hidden="true"></i> Notes / To-dos</h2>
+          <textarea class="notes-box" id="studentNotes" placeholder="Write your study goals or reminders here..."></textarea>
+          <button class="quick-action-btn primary notes-save-btn" onclick="saveNotes()">
+            <i class="fas fa-save" aria-hidden="true"></i> Save Notes
+          </button>
+        </div>
 
-<script>
-// ==============================
-// 🎯 STUDENT DATA
-// ==============================
-const sampleStudentData = {
-name: "Ritika Mehta",
-college: "Government College of Engineering, Karad",
-email: "ritika.mehta@gcek.edu.in",
-department: "Computer Science",
-year: "3rd Year",
-rollNo: "CS21045",
-attendance: "93%",
-cgpa: "9.4",
-assignmentsSubmitted: "15",
-achievementsCount: "5",
-prediction: "Low Dropout Risk - Excellent Performance!",
-achievements: [
-"Top Performer",
-"100% Attendance",
-"Math Olympiad Winner",
-"Best Project Award",
-"Coding Competition Winner"
-],
-collegeNews: [
-"Orientation Day next Monday",
-"Seminar: AI & Education on Oct 18",
-"New Library Resources Available",
-"Campus WiFi Upgrade Completed"
-],
-upcomingEvents: [
-"Cultural Fest - Oct 25-27",
-"Sports Week - Nov 3-7",
-"Tech Symposium - Nov 15",
-"Annual Day - Dec 10"
-],
-importantNotices: [
-"Exam forms due Oct 20",
-"Library closed on Sunday",
-"Fee payment deadline: Oct 30",
-"Scholarship forms available"
-]
-};
+      </div>
+    </div>
 
-// ==============================
-// 🔄 LOAD DATA ON PAGE LOAD
-// ==============================
-document.addEventListener('DOMContentLoaded', () => {
-loadStudentData();
-generateCalendar();
-loadNotes();
-createCharts();
-});
+    <!-- NOTIFICATION PANEL -->
+    <aside class="notification-panel" aria-label="College news and events">
+      <div class="notification-box">
+        <h2><i class="fas fa-newspaper" aria-hidden="true"></i> College News</h2>
+        <ul id="collegeNews">
+          <li>Orientation Day next Monday</li>
+          <li>Seminar: AI & Education on Oct 18</li>
+          <li>New Library Resources Available</li>
+          <li>Campus WiFi Upgrade Completed</li>
+        </ul>
+      </div>
+      <div class="notification-box">
+        <h2><i class="fas fa-calendar-days" aria-hidden="true"></i> Upcoming Events</h2>
+        <ul id="upcomingEvents">
+          <li>Cultural Fest - Oct 25-27</li>
+          <li>Sports Week - Nov 3-7</li>
+          <li>Tech Symposium - Nov 15</li>
+          <li>Annual Day - Dec 10</li>
+        </ul>
+      </div>
+      <div class="notification-box">
+        <h2><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Important Notices</h2>
+        <ul id="importantNotices">
+          <li>Exam forms due Oct 20</li>
+          <li>Library closed on Sunday</li>
+          <li>Fee payment deadline: Oct 30</li>
+          <li>Scholarship forms available</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
 
-// ==============================
-// 📊 POPULATE DASHBOARD
-// ==============================
-function loadStudentData() {
-let studentData = localStorage.getItem('studentData');
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart heart" aria-hidden="true"></i> for education.
+  </footer>
 
-if (studentData) {
-studentData = JSON.parse(studentData);
-} else {
-studentData = sampleStudentData;
-localStorage.setItem('studentData', JSON.stringify(studentData));
-}
+  <!-- ===== PROFILE POPUP ===== -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup">
+      <h3>Change Profile Photo</h3>
+      <input type="file" id="photoUpload" accept="image/*" />
+      <div class="popup-actions">
+        <button class="btn-primary" onclick="handleProfileChange()">Upload</button>
+        <button class="btn-secondary" onclick="closePopup()">Cancel</button>
+      </div>
+    </div>
+  </div>
 
-document.getElementById('studentName').textContent = studentData.name;
-document.getElementById('collegeName').textContent = studentData.college;
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="alert" aria-live="polite">
+    <i class="fas fa-check-circle" aria-hidden="true"></i>
+    <span id="toastMessage">Success!</span>
+  </div>
 
-const profilePic = document.getElementById('profilePic');
-if (studentData.profilePic) {
-profilePic.src = studentData.profilePic;
-}
+  <script>
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    })();
 
-document.getElementById('attendanceValue').textContent = studentData.attendance;
-document.getElementById('cgpaValue').textContent = studentData.cgpa;
-document.getElementById('assignmentsValue').textContent = studentData.assignmentsSubmitted;
-document.getElementById('achievementsCount').textContent = studentData.achievementsCount;
+    // ===== TOAST =====
+    function showToast(message, type) {
+      var toast = document.getElementById('toast');
+      var msg = document.getElementById('toastMessage');
+      toast.className = 'toast ' + (type || 'success');
+      msg.textContent = message;
+      toast.style.display = 'flex';
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(function() {
+        toast.style.display = 'none';
+      }, 3000);
+    }
 
-document.getElementById('studentEmail').textContent = studentData.email;
-document.getElementById('studentDepartment').textContent = studentData.department;
-document.getElementById('studentYear').textContent = studentData.year;
-document.getElementById('studentRollNo').textContent = studentData.rollNo;
+    // ===== LOGOUT =====
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('studentToken');
+        localStorage.removeItem('studentData');
+        window.location.href = '../login/student.html';
+      }
+    }
 
-document.getElementById('predictionResult').textContent = studentData.prediction;
-}
+    // ==============================
+    // 📊 STUDENT DATA
+    // ==============================
+    var sampleStudentData = {
+      name: "Ritika Mehta",
+      college: "Government College of Engineering, Karad",
+      email: "ritika.mehta@gcek.edu.in",
+      department: "Computer Science",
+      year: "3rd Year",
+      rollNo: "CS21045",
+      attendance: "93%",
+      cgpa: "9.4",
+      assignmentsSubmitted: "15",
+      achievementsCount: "5",
+      prediction: "✅ Low Dropout Risk - Excellent Performance!",
+      achievements: [
+        "Top Performer",
+        "100% Attendance",
+        "Math Olympiad Winner",
+        "Best Project Award",
+        "Coding Competition Winner"
+      ],
+      collegeNews: [
+        "Orientation Day next Monday",
+        "Seminar: AI & Education on Oct 18",
+        "New Library Resources Available",
+        "Campus WiFi Upgrade Completed"
+      ],
+      upcomingEvents: [
+        "Cultural Fest - Oct 25-27",
+        "Sports Week - Nov 3-7",
+        "Tech Symposium - Nov 15",
+        "Annual Day - Dec 10"
+      ],
+      importantNotices: [
+        "Exam forms due Oct 20",
+        "Library closed on Sunday",
+        "Fee payment deadline: Oct 30",
+        "Scholarship forms available"
+      ]
+    };
 
-// ==============================
-// 📊 CREATE CHARTS
-// ==============================
-function createCharts() {
-// Subject-wise Attendance Chart
-const subjects = ['Data Structures', 'Database Mgmt', 'Operating Systems', 'Computer Networks', 'Software Eng'];
-const attendance = [95, 92, 94, 91, 93];
+    // ==============================
+    // 🔄 LOAD DATA ON PAGE LOAD
+    // ==============================
+    document.addEventListener('DOMContentLoaded', function() {
+      loadStudentData();
+      generateCalendar();
+      loadNotes();
+      createCharts();
+    });
 
-new Chart(document.getElementById('attendanceChart'), {
-type: 'bar',
-data: {
-labels: subjects,
-datasets: [{
-label: 'Attendance %',
-data: attendance,
-backgroundColor: [
-'rgba(16, 172, 132, 0.8)',
-'rgba(29, 209, 161, 0.8)',
-'rgba(0, 184, 148, 0.8)',
-'rgba(0, 206, 201, 0.8)',
-'rgba(9, 132, 227, 0.8)'
-],
-borderColor: [
-'#10ac84',
-'#1dd1a1',
-'#00b894',
-'#00cec9',
-'#0984e3'
-],
-borderWidth: 2,
-borderRadius: 8
-}]
-},
-options: {
-responsive: true,
-maintainAspectRatio: true,
-scales: {
-y: {
-beginAtZero: true,
-max: 100,
-title: {
-display: true,
-text: 'Attendance Percentage (%)',
-font: { size: 12, weight: 'bold' }
-}
-}
-},
-plugins: {
-legend: { display: false },
-title: {
-display: true,
-text: 'Subject-wise Attendance Performance',
-font: { size: 14, weight: 'bold' }
-}
-}
-}
-});
+    // ==============================
+    // 📊 POPULATE DASHBOARD
+    // ==============================
+    function loadStudentData() {
+      var studentData = localStorage.getItem('studentData');
 
-// CGPA Progress Chart
-const cgpaData = [8.9, 9.1, 9.3, 9.4, 9.4];
-new Chart(document.getElementById('cgpaChart'), {
-type: 'line',
-data: {
-labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5'],
-datasets: [{
-label: 'CGPA',
-data: cgpaData,
-backgroundColor: 'rgba(16, 172, 132, 0.2)',
-borderColor: '#10ac84',
-borderWidth: 3,
-fill: true,
-tension: 0.4,
-pointRadius: 6,
-pointBackgroundColor: '#10ac84',
-pointBorderColor: '#fff',
-pointBorderWidth: 2,
-pointHoverRadius: 8
-}]
-},
-options: {
-responsive: true,
-maintainAspectRatio: true,
-scales: {
-y: {
-beginAtZero: false,
-min: 7,
-max: 10,
-title: {
-display: true,
-text: 'CGPA',
-font: { size: 12, weight: 'bold' }
-}
-}
-},
-plugins: {
-legend: { display: false },
-title: {
-display: true,
-text: 'Semester-wise CGPA Progression',
-font: { size: 14, weight: 'bold' }
-}
-}
-}
-});
-}
+      if (studentData) {
+        studentData = JSON.parse(studentData);
+      } else {
+        studentData = sampleStudentData;
+        localStorage.setItem('studentData', JSON.stringify(studentData));
+      }
 
-// ==============================
-// 📅 GENERATE CALENDAR
-// ==============================
-function generateCalendar() {
-const calendarGrid = document.getElementById('calendarGrid');
-const today = new Date();
-const currentDay = today.getDate();
-const currentMonth = today.getMonth();
-const currentYear = today.getFullYear();
+      document.getElementById('studentName').textContent = studentData.name;
+      document.getElementById('collegeName').textContent = studentData.college;
 
-const monthNames = ["January", "February", "March", "April", "May", "June",
-"July", "August", "September", "October", "November", "December"];
+      var profilePic = document.getElementById('profilePic');
+      if (studentData.profilePic) {
+        profilePic.src = studentData.profilePic;
+      }
 
-document.getElementById('calendarMonth').textContent = `${monthNames[currentMonth]} ${currentYear}`;
-document.getElementById('calendarToday').textContent = `Today: ${currentDay}`;
+      document.getElementById('attendanceValue').textContent = studentData.attendance;
+      document.getElementById('cgpaValue').textContent = studentData.cgpa;
+      document.getElementById('assignmentsValue').textContent = studentData.assignmentsSubmitted;
+      document.getElementById('achievementsCount').textContent = studentData.achievementsCount;
 
-const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      document.getElementById('studentEmail').textContent = studentData.email;
+      document.getElementById('studentDepartment').textContent = studentData.department;
+      document.getElementById('studentYear').textContent = studentData.year;
+      document.getElementById('studentRollNo').textContent = studentData.rollNo;
 
-while (calendarGrid.children.length > 7) {
-calendarGrid.removeChild(calendarGrid.lastChild);
-}
+      document.getElementById('predictionResult').textContent = studentData.prediction;
+    }
 
-for (let i = 0; i < firstDay; i++) {
-const emptyCell = document.createElement('div');
-emptyCell.className = 'calendar-date';
-calendarGrid.appendChild(emptyCell);
-}
+    // ==============================
+    // 📊 CREATE CHARTS
+    // ==============================
+    function createCharts() {
+      var subjects = ['Data Structures', 'Database Mgmt', 'Operating Systems', 'Computer Networks', 'Software Eng'];
+      var attendance = [95, 92, 94, 91, 93];
 
-for (let day = 1; day <= daysInMonth; day++) {
-const dateCell = document.createElement('div');
-dateCell.className = 'calendar-date';
-dateCell.textContent = day;
+      new Chart(document.getElementById('attendanceChart'), {
+        type: 'bar',
+        data: {
+          labels: subjects,
+          datasets: [{
+            label: 'Attendance %',
+            data: attendance,
+            backgroundColor: ['rgba(16, 172, 132, 0.8)', 'rgba(29, 209, 161, 0.8)', 'rgba(0, 184, 148, 0.8)', 'rgba(0, 206, 201, 0.8)', 'rgba(9, 132, 227, 0.8)'],
+            borderColor: ['#10ac84', '#1dd1a1', '#00b894', '#00cec9', '#0984e3'],
+            borderWidth: 2,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { color: 'rgba(255,255,255,0.5)' },
+              title: { display: true, text: 'Attendance Percentage (%)', color: 'rgba(255,255,255,0.3)' }
+            },
+            x: { ticks: { color: 'rgba(255,255,255,0.5)', maxRotation: 45 } }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
 
-if (day === currentDay) {
-dateCell.classList.add('today');
-}
+      var cgpaData = [8.9, 9.1, 9.3, 9.4, 9.4];
+      new Chart(document.getElementById('cgpaChart'), {
+        type: 'line',
+        data: {
+          labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5'],
+          datasets: [{
+            label: 'CGPA',
+            data: cgpaData,
+            backgroundColor: 'rgba(16, 172, 132, 0.2)',
+            borderColor: '#10ac84',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 6,
+            pointBackgroundColor: '#10ac84',
+            pointBorderColor: '#0a0a0f',
+            pointBorderWidth: 2,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: 7,
+              max: 10,
+              ticks: { color: 'rgba(255,255,255,0.5)' },
+              title: { display: true, text: 'CGPA', color: 'rgba(255,255,255,0.3)' }
+            },
+            x: { ticks: { color: 'rgba(255,255,255,0.5)' } }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
 
-calendarGrid.appendChild(dateCell);
-}
-}
+    // ==============================
+    // 📅 GENERATE CALENDAR
+    // ==============================
+    function generateCalendar() {
+      var calendarGrid = document.getElementById('calendarGrid');
+      var today = new Date();
+      var currentDay = today.getDate();
+      var currentMonth = today.getMonth();
+      var currentYear = today.getFullYear();
 
-// ==============================
-// 📝 NOTES FUNCTIONS
-// ==============================
-function loadNotes() {
-const savedNotes = localStorage.getItem('studentNotes');
-if (savedNotes) {
-document.getElementById('studentNotes').value = savedNotes;
-}
-}
+      var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-function saveNotes() {
-const notes = document.getElementById('studentNotes').value;
-localStorage.setItem('studentNotes', notes);
-alert('✅ Notes saved successfully!');
-}
+      document.getElementById('calendarMonth').textContent = monthNames[currentMonth] + ' ' + currentYear;
+      document.getElementById('calendarToday').textContent = 'Today: ' + currentDay;
 
-// ==============================
-// 👤 PROFILE FUNCTIONS
-// ==============================
-function editProfile() {
-alert('Edit Profile feature - Navigate to profile settings page');
-}
+      var firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      var daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-document.getElementById('profilePic').addEventListener('click', () => {
-document.getElementById('popupOverlay').style.display = 'flex';
-});
+      // Keep only day headers (first 7 children)
+      while (calendarGrid.children.length > 7) {
+        calendarGrid.removeChild(calendarGrid.lastChild);
+      }
 
-function closePopup() {
-document.getElementById('popupOverlay').style.display = 'none';
-document.getElementById('photoUpload').value = '';
-}
+      for (var i = 0; i < firstDay; i++) {
+        var emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-date';
+        calendarGrid.appendChild(emptyCell);
+      }
 
-function handleProfileChange() {
-const fileInput = document.getElementById('photoUpload');
-if (fileInput.files && fileInput.files[0]) {
-const reader = new FileReader();
-reader.onload = function(e) {
-document.getElementById('profilePic').src = e.target.result;
-let studentData = JSON.parse(localStorage.getItem('studentData')) || sampleStudentData;
-studentData.profilePic = e.target.result;
-localStorage.setItem('studentData', JSON.stringify(studentData));
-alert('✅ Profile picture updated successfully!');
-closePopup();
-};
-reader.readAsDataURL(fileInput.files[0]);
-} else {
-alert('⚠ Please select a photo first.');
-}
-}
+      for (var day = 1; day <= daysInMonth; day++) {
+        var dateCell = document.createElement('div');
+        dateCell.className = 'calendar-date';
+        dateCell.textContent = day;
+        if (day === currentDay) {
+          dateCell.classList.add('today');
+        }
+        calendarGrid.appendChild(dateCell);
+      }
+    }
 
-// Close popup when clicking outside
-document.getElementById('popupOverlay').addEventListener('click', (e) => {
-if (e.target.id === 'popupOverlay') {
-closePopup();
-}
-});
-</script>
+    // ==============================
+    // 📝 NOTES FUNCTIONS
+    // ==============================
+    function loadNotes() {
+      var savedNotes = localStorage.getItem('studentNotes');
+      if (savedNotes) {
+        document.getElementById('studentNotes').value = savedNotes;
+      }
+    }
+
+    function saveNotes() {
+      var notes = document.getElementById('studentNotes').value;
+      localStorage.setItem('studentNotes', notes);
+      showToast('Notes saved successfully! ✅', 'success');
+    }
+
+    // ==============================
+    // 👤 PROFILE FUNCTIONS
+    // ==============================
+    function editProfile() {
+      showToast('Edit Profile - Navigate to profile settings page', 'success');
+    }
+
+    document.getElementById('profilePic').addEventListener('click', function() {
+      document.getElementById('popupOverlay').style.display = 'flex';
+    });
+
+    function closePopup() {
+      document.getElementById('popupOverlay').style.display = 'none';
+      document.getElementById('photoUpload').value = '';
+    }
+
+    function handleProfileChange() {
+      var fileInput = document.getElementById('photoUpload');
+      if (fileInput.files && fileInput.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('profilePic').src = e.target.result;
+          var studentData = JSON.parse(localStorage.getItem('studentData')) || sampleStudentData;
+          studentData.profilePic = e.target.result;
+          localStorage.setItem('studentData', JSON.stringify(studentData));
+          showToast('Profile picture updated successfully! ✅', 'success');
+          closePopup();
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      } else {
+        showToast('Please select a photo first.', 'error');
+      }
+    }
+
+    document.getElementById('popupOverlay').addEventListener('click', function(e) {
+      if (e.target.id === 'popupOverlay') {
+        closePopup();
+      }
+    });
+  </script>
+
 </body>
 </html>

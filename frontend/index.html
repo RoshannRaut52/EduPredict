@@ -3,302 +3,975 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduPredict - SIH</title>
+  <title>EduPredict - Smart Education Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    /* Basic reset */
+    /* ===== RESET & BASE ===== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, #b3b4b5 100%);
-      color: #0a0808;
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      overflow-x: hidden;
+      perspective: 1000px;
     }
 
-    /* Header */
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
+
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
+
+    /* ===== FLOATING PARTICLES ===== */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ===== HEADER / NAVBAR ===== */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 50px;
-      background: #000;
+      padding: 18px 50px;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       position: sticky;
       top: 0;
       z-index: 100;
+      animation: slideDown 0.8s ease;
+    }
+
+    @keyframes slideDown {
+      0% { transform: translateY(-100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
     }
 
     .logo {
-      font-size: 2rem;
-      font-weight: bold;
-      letter-spacing: 2px;
-      color: #fff;
-    }
-
-    .top-right {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: transform 0.3s ease;
+      cursor: pointer;
     }
 
-    .top-right a {
-      text-decoration: none;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: 600;
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .logo i {
+      -webkit-text-fill-color: initial;
+      color: #10ac84;
+      font-size: 2rem;
+    }
+
+    /* ===== HAMBURGER MENU ===== */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 5px;
+      z-index: 101;
+    }
+
+    .nav-toggle span {
+      width: 28px;
+      height: 3px;
+      background: #fff;
+      border-radius: 2px;
       transition: all 0.3s ease;
     }
 
-    .top-right a:hover {
-      transform: scale(1.1);
-      background: rgba(255, 255, 255, 0.2);
+    .nav-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
     }
 
-    /* Main Section */
+    .nav-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* ===== NAVIGATION LINKS (Right Side) ===== */
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #10ac84, #ee7939);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-links a.active {
+      color: #fff;
+    }
+
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      padding: 10px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(16, 172, 132, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 30px rgba(16, 172, 132, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-glow {
+      position: relative;
+    }
+
+    .btn-glow::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #10ac84, #ee7939, #10ac84);
+      background-size: 200% 200%;
+      border-radius: 14px;
+      z-index: -1;
+      animation: glowRotate 3s linear infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes glowRotate {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .btn-large {
+      padding: 14px 36px;
+      font-size: 1.05rem;
+    }
+
+    /* ===== HERO SECTION ===== */
     main {
-      flex: 1;
       display: flex;
       align-items: center;
-      justify-content: space-around;
-      padding: 50px;
+      justify-content: space-between;
+      padding: 60px 50px 40px;
+      min-height: calc(100vh - 80px);
+      gap: 40px;
       flex-wrap: wrap;
     }
 
     .welcome-text {
-      max-width: 500px;
-      text-align: left;
+      flex: 1;
+      min-width: 320px;
+      max-width: 600px;
+      animation: fadeInUp 1s ease;
+    }
+
+    .welcome-text .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(16, 172, 132, 0.15);
+      border: 1px solid rgba(16, 172, 132, 0.2);
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #10ac84;
+      margin-bottom: 20px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
     }
 
     .welcome-text h1 {
-      font-size: 3rem;
+      font-size: 3.8rem;
+      font-weight: 900;
+      line-height: 1.1;
       margin-bottom: 20px;
-      animation: fadeInDown 1s ease forwards;
+      letter-spacing: -1px;
+    }
+
+    .welcome-text h1 .highlight {
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    .welcome-text h1 .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #10ac84, #ee7939);
+      border-radius: 2px;
+      opacity: 0.3;
     }
 
     .welcome-text p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      line-height: 1.5;
-      animation: fadeInUp 1.2s ease forwards;
+      font-size: 1.15rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.7;
+      margin-bottom: 35px;
     }
 
-    /* Buttons */
-    .btn {
-      display: inline-block;
-      text-decoration: none;
-      padding: 12px 25px;
-      border-radius: 8px;
-      font-weight: 600;
-      margin-right: 15px;
-      transition: all 0.3s ease;
-      color: #fff;
-      background: #000;
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 40px;
     }
 
-    .btn-login:hover { background: #10ac84; transform: scale(1.1); }
-    .btn-register:hover { background: #ee7939; transform: scale(1.1); }
-    .btn-registercollege:hover { background: #398730; transform: scale(1.1); }
+    /* ===== 3D HERO GRAPHICS ===== */
+    .graphics {
+      flex: 1;
+      min-width: 300px;
+      max-width: 550px;
+      animation: float3D 6s ease-in-out infinite;
+      transform-style: preserve-3d;
+      perspective: 800px;
+    }
 
-    /* Features */
+    @keyframes float3D {
+      0%, 100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
+      25% { transform: translateY(-15px) rotateX(2deg) rotateY(5deg); }
+      75% { transform: translateY(15px) rotateX(-2deg) rotateY(-5deg); }
+    }
+
+    .graphics-container {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      transform-style: preserve-3d;
+    }
+
+    .graphics-card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transform: rotateY(-10deg) rotateX(5deg);
+      transition: transform 0.5s ease;
+    }
+
+    .graphics-card:hover {
+      transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+    }
+
+    .graphics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .graphics-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 25px 20px;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transform: translateZ(20px);
+    }
+
+    .graphics-item:hover {
+      transform: translateZ(40px) scale(1.05);
+      background: rgba(16, 172, 132, 0.1);
+      border-color: rgba(16, 172, 132, 0.3);
+    }
+
+    .graphics-item i {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .graphics-item .number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .graphics-item .label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 4px;
+    }
+
+    /* ===== FEATURES SECTION ===== */
     .features {
       width: 100%;
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      padding: 50px;
-      background: rgba(0,0,0,0.1);
-      border-radius: 20px;
-      margin-top: 50px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      padding: 50px 0;
+      margin-top: 20px;
     }
 
     .feature-card {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.03);
+      -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
-      padding: 30px;
-      margin: 15px;
-      border-radius: 15px;
-      width: 250px;
+      padding: 30px 25px;
+      border-radius: 20px;
       text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+      transform: translateZ(0);
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(16, 172, 132, 0.1), rgba(238, 121, 57, 0.05));
+      opacity: 0;
+      transition: opacity 0.4s ease;
     }
 
     .feature-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0px 15px 25px rgba(0,0,0,0.2);
+      transform: translateY(-10px) scale(1.02);
+      border-color: rgba(16, 172, 132, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
 
-    .feature-card h3 { margin-bottom: 15px; font-size: 1.5rem; }
-    .feature-card p { font-size: 1rem; line-height: 1.4; }
+    .feature-card:hover::before {
+      opacity: 1;
+    }
 
-    .graphics { max-width: 600px; border-radius: 20px; overflow: hidden; }
+    .feature-card .icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      display: block;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+    }
 
-    @keyframes fadeInDown { 0% { opacity: 0; transform: translateY(-20px);} 100% { opacity: 1; transform: translateY(0);} }
-    @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(20px);} 100% { opacity: 1; transform: translateY(0);} }
+    .feature-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
 
+    .feature-card p {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== FOOTER ===== */
     footer {
       text-align: center;
-      padding: 20px;
-      font-size: 0.9rem;
-      color: #eee;
+      padding: 30px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.85rem;
     }
 
-    /* ===== Modal Styles ===== */
+    footer i {
+      color: #10ac84;
+    }
+
+    /* ===== MODAL ===== */
     .modal {
       display: none;
       position: fixed;
-      z-index: 999;
+      z-index: 1000;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
-      background: rgba(249, 247, 247, 0.7);
+      background: rgba(0, 0, 0, 0.7);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
       justify-content: center;
       align-items: center;
+      animation: modalFade 0.4s ease;
+    }
+
+    @keyframes modalFade {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
     .modal-content {
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(15px);
-      border-radius: 20px;
-      padding: 40px;
+      background: linear-gradient(135deg, rgba(20, 20, 30, 0.95), rgba(10, 10, 15, 0.98));
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 45px 40px;
       width: 90%;
-      max-width: 500px;
-      color: #fff;
-      animation: fadeIn 0.5s ease;
+      max-width: 480px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
       text-align: center;
+      box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+      transform: translateZ(50px);
     }
 
-    @keyframes fadeIn { 0% { transform: translateY(-20px); opacity: 0;} 100% { transform: translateY(0); opacity: 1;} }
+    .modal-content h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
 
-    .modal h2 { font-size: 1.8rem; margin-bottom: 25px; }
+    .modal-content .subtitle {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.9rem;
+      margin-bottom: 30px;
+    }
 
-    .login-btn {
-      display: inline-block;
-      width: 45%;
-      margin: 10px 2.5%;
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .modal-btn {
+      padding: 16px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.03);
+      color: #fff;
       text-decoration: none;
-      color: #fff;
-      background: #1dd1a1;
-      padding: 15px;
-      border-radius: 10px;
-      font-weight: 600;
-      transition: 0.3s;
-      text-align: center;
-    }
-
-    .login-btn:hover { background: #10ac84; transform: scale(1.05); }
-
-    .close-btn {
-      background: #000;
-      border: none;
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 10px;
-      margin-top: 20px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
       cursor: pointer;
-      font-weight: 600;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      transition: 0.3s;
     }
 
-    .close-btn:hover { background: #333; }
+    .modal-btn:hover {
+      background: rgba(16, 172, 132, 0.1);
+      border-color: rgba(16, 172, 132, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-btn .emoji {
+      font-size: 2rem;
+    }
+
+    .modal-btn .label {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .modal-close {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.5);
+      padding: 12px 30px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      header { padding: 15px 20px; }
+      
+      .nav-toggle {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        max-width: 300px;
+        height: 100vh;
+        background: rgba(10, 10, 15, 0.95);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        justify-content: center;
+        padding: 50px 30px;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 20px;
+        border-left: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .nav-links.open {
+        right: 0;
+      }
+
+      .nav-links a {
+        font-size: 1.1rem;
+        padding: 10px 0;
+      }
+
+      .welcome-text h1 { font-size: 2.5rem; }
+      main { padding: 30px 20px; flex-direction: column; text-align: center; }
+      .welcome-text { text-align: center; }
+      .btn-group { justify-content: center; }
+      .graphics-container { height: 300px; }
+      .modal-grid { grid-template-columns: 1fr 1fr; }
+      .modal-content { padding: 30px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .modal-grid { grid-template-columns: 1fr; }
+      .btn-group .btn { width: 100%; justify-content: center; }
+      .features { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- ===== BACKGROUND EFFECTS ===== -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+
+  <div class="particles" id="particles"></div>
+
+  <!-- ===== HEADER ===== -->
   <header>
-    <div class="logo">EduPredict</div>
-    <div class="top-right">
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="help.html">Help</a>
-      <a href="contact.html">Contact</a>
+    <div class="logo">
+      <i class="fas fa-graduation-cap"></i>
+      EduPredict
     </div>
+
+    <!-- Hamburger Menu Toggle -->
+    <div class="nav-toggle" id="navToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <!-- Navigation Links -->
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#" class="active">Home</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
   </header>
 
+  <!-- ===== MAIN ===== -->
   <main>
     <div class="welcome-text">
-      <h1>Welcome to EduPredict!</h1>
-      <p>EduPredict is a modern platform to help colleges reduce student dropout rates using predictive analytics and AI. Identify at-risk students early and provide timely interventions to ensure academic success.</p>
-
-      <a href="#" id="openLoginModal" class="btn btn-login">Login</a>
-      <a href="#" id="openRegisterModal" class="btn btn-register">Register</a>
-      <a href="register/college.html" class="btn btn-registercollege">College Registration</a>
+      <div class="badge">
+        <i class="fas fa-sparkles"></i> AI-Powered Education
+      </div>
+      <h1>Predict. Prevent.<br><span class="highlight">Empower.</span></h1>
+      <p>EduPredict uses predictive analytics and AI to identify at-risk students early, enabling timely interventions and reducing dropout rates.</p>
+      <div class="btn-group">
+        <a href="#" id="openLoginModalBtn" class="btn btn-primary btn-large">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+        <a href="#" id="openRegisterModalBtn" class="btn btn-outline btn-large">
+          <i class="fas fa-user-plus"></i> Register
+        </a>
+      </div>
     </div>
 
     <div class="graphics">
-      <img src="collegepic.png" alt="EduPredict Graphics" width="600">
+      <div class="graphics-container">
+        <div class="graphics-card">
+          <div class="graphics-grid">
+            <div class="graphics-item">
+              <i class="fas fa-robot"></i>
+              <div class="number">95%</div>
+              <div class="label">Prediction Accuracy</div>
+            </div>
+            <div class="graphics-item">
+              <i class="fas fa-users"></i>
+              <div class="number">10K+</div>
+              <div class="label">Students Supported</div>
+            </div>
+            <div class="graphics-item">
+              <i class="fas fa-school"></i>
+              <div class="number">500+</div>
+              <div class="label">Colleges Trust Us</div>
+            </div>
+            <div class="graphics-item">
+              <i class="fas fa-chart-line"></i>
+              <div class="number">78%</div>
+              <div class="label">Dropout Reduction</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 
-  <section class="features">
+  <!-- ===== FEATURES ===== -->
+  <section class="features" id="features">
     <div class="feature-card">
-      <h3>Predict Dropouts</h3>
-      <p>Identify students at risk of dropping out with AI-powered predictions.</p>
+      <span class="icon"><i class="fas fa-brain"></i></span>
+      <h3>AI Predictions</h3>
+      <p>Identify at-risk students with 95% accuracy using advanced machine learning algorithms.</p>
     </div>
     <div class="feature-card">
-      <h3>Monitor Attendance</h3>
-      <p>Track student attendance patterns and intervene early.</p>
+      <span class="icon"><i class="fas fa-chart-pie"></i></span>
+      <h3>Analytics Dashboard</h3>
+      <p>Real-time insights into student performance, attendance, and engagement metrics.</p>
     </div>
     <div class="feature-card">
-      <h3>Performance Analysis</h3>
-      <p>Analyze GPA, assignments, and engagement to improve outcomes.</p>
+      <span class="icon"><i class="fas fa-bell"></i></span>
+      <h3>Smart Alerts</h3>
+      <p>Automated notifications for teachers, parents, and students when intervention is needed.</p>
     </div>
     <div class="feature-card">
-      <h3>Notifications</h3>
-      <p>Send alerts to teachers, students, and parents for timely actions.</p>
+      <span class="icon"><i class="fas fa-clipboard-check"></i></span>
+      <h3>Attendance Tracking</h3>
+      <p>Monitor attendance patterns and identify students who need support.</p>
     </div>
   </section>
 
+  <!-- ===== FOOTER ===== -->
   <footer>
-    &copy; 2025 EduPredict. All rights reserved.
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart"></i> for education.
   </footer>
 
-  <!-- ===== Login Modal ===== -->
+  <!-- ===== LOGIN MODAL ===== -->
   <div class="modal" id="loginModal">
     <div class="modal-content">
-      <h2>Select Account Type</h2>
-      <a href="login/teacher.html" class="login-btn">👩‍🏫 Teacher</a>
-      <a href="login/student.html" class="login-btn">👨‍🎓 Student</a>
-      <a href="login/parent.html" class="login-btn">👪 Parent</a>
-      <a href="login/college.html" class="login-btn">🏫 College</a>
-      <button class="close-btn" id="closeLoginModal">Close</button>
+      <h2>👋 Welcome Back</h2>
+      <p class="subtitle">Choose your account type to continue</p>
+      <div class="modal-grid">
+        <a href="login/teacher.html" class="modal-btn">
+          <span class="emoji">👨‍🏫</span> Teacher
+          <span class="label">Monitor & intervene</span>
+        </a>
+        <a href="login/student.html" class="modal-btn">
+          <span class="emoji">🎓</span> Student
+          <span class="label">Track progress</span>
+        </a>
+        <a href="login/parent.html" class="modal-btn">
+          <span class="emoji">👨‍👩‍👧‍👦</span> Parent
+          <span class="label">Monitor child</span>
+        </a>
+      </div>
+      <button class="modal-close" id="closeLoginModal">Close</button>
     </div>
   </div>
 
-  <!-- ===== Register Modal ===== -->
+  <!-- ===== REGISTER MODAL ===== -->
   <div class="modal" id="registerModal">
     <div class="modal-content">
-      <h2>Select Registration Type</h2>
-      <a href="/register/student.html" class="login-btn">👨‍🎓 Student</a>
-      <a href="/register/parent.html" class="login-btn">👪 Parent</a>
-      <button class="close-btn" id="closeRegisterModal">Close</button>
+      <h2>🚀 Join EduPredict</h2>
+      <p class="subtitle">Create your account and start transforming education</p>
+      <div class="modal-grid">
+        <a href="register/student.html" class="modal-btn">
+          <span class="emoji">🎓</span> Student
+          <span class="label">Get academic support</span>
+        </a>
+        <a href="register/parent.html" class="modal-btn">
+          <span class="emoji">👨‍👩‍👧‍👦</span> Parent
+          <span class="label">Track your child</span>
+        </a>
+        <a href="register/teacher.html" class="modal-btn">
+          <span class="emoji">👨‍🏫</span> Teacher
+          <span class="label">Join as educator</span>
+        </a>
+      </div>
+      <button class="modal-close" id="closeRegisterModal">Close</button>
     </div>
   </div>
 
   <script>
-    // Login Modal
-    const loginModal = document.getElementById("loginModal");
-    const openLoginBtn = document.getElementById("openLoginModal");
-    const closeLoginBtn = document.getElementById("closeLoginModal");
-    openLoginBtn.onclick = () => loginModal.style.display = "flex";
-    closeLoginBtn.onclick = () => loginModal.style.display = "none";
-    window.onclick = (e) => { if (e.target == loginModal) loginModal.style.display = "none"; }
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    })();
 
-    // Register Modal
-    const registerModal = document.getElementById("registerModal");
-    const openRegisterBtn = document.getElementById("openRegisterModal");
-    const closeRegisterBtn = document.getElementById("closeRegisterModal");
-    openRegisterBtn.onclick = () => registerModal.style.display = "flex";
-    closeRegisterBtn.onclick = () => registerModal.style.display = "none";
-    window.onclick = (e) => { if (e.target == registerModal) registerModal.style.display = "none"; }
+    // ===== HAMBURGER MENU =====
+    var navToggle = document.getElementById('navToggle');
+    var navLinks = document.getElementById('navLinks');
+
+    navToggle.addEventListener('click', function() {
+      this.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    // Close menu when a link is clicked
+    navLinks.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        navToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    // ===== MODALS =====
+    var loginModal = document.getElementById('loginModal');
+    var registerModal = document.getElementById('registerModal');
+    
+    var openLoginBtn = document.getElementById('openLoginModalBtn');
+    var openRegisterBtn = document.getElementById('openRegisterModalBtn');
+    
+    var closeLogin = document.getElementById('closeLoginModal');
+    var closeRegister = document.getElementById('closeRegisterModal');
+
+    openLoginBtn.onclick = function(e) { 
+      e.preventDefault(); 
+      loginModal.style.display = 'flex'; 
+    };
+
+    openRegisterBtn.onclick = function(e) { 
+      e.preventDefault(); 
+      registerModal.style.display = 'flex'; 
+    };
+
+    closeLogin.onclick = function() { loginModal.style.display = 'none'; };
+    closeRegister.onclick = function() { registerModal.style.display = 'none'; };
+
+    window.onclick = function(e) {
+      if (e.target === loginModal) loginModal.style.display = 'none';
+      if (e.target === registerModal) registerModal.style.display = 'none';
+    };
+
+    // ===== 3D TILT ON GRAPHICS =====
+    var graphicsContainer = document.querySelector('.graphics-container');
+    if (graphicsContainer) {
+      graphicsContainer.addEventListener('mousemove', function(e) {
+        var rect = this.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        this.style.transform = 'perspective(800px) rotateY(' + (x * 10) + 'deg) rotateX(' + (-y * 10) + 'deg)';
+      });
+
+      graphicsContainer.addEventListener('mouseleave', function(e) {
+        this.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg)';
+      });
+    }
+
+    // ===== SCROLL ANIMATIONS =====
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    var featureCards = document.querySelectorAll('.feature-card');
+    featureCards.forEach(function(el, i) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'all 0.6s ease ' + (i * 0.1) + 's';
+      observer.observe(el);
+    });
+
+    // ===== SMOOTH SCROLL FOR NAV LINKS =====
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+      anchor.addEventListener('click', function(e) {
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
   </script>
 </body>
 </html>

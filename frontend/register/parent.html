@@ -4,256 +4,675 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Parent Registration | EduPredict</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
+    /* ===== SAME THEME AS INDEX ===== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, #b3b4b5 100%);
-      color: #0a0808;
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
+
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
+
+    /* ===== FLOATING PARTICLES ===== */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ===== HEADER ===== */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 50px;
-      background: #000;
+      padding: 18px 50px;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       position: sticky;
       top: 0;
       z-index: 100;
+      animation: slideDown 0.8s ease;
+    }
+
+    @keyframes slideDown {
+      0% { transform: translateY(-100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
     }
 
     .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .logo i {
+      -webkit-text-fill-color: initial;
+      color: #10ac84;
       font-size: 2rem;
-      font-weight: bold;
-      letter-spacing: 2px;
-      color: #fff;
     }
 
-    .top-right a {
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
       text-decoration: none;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: 600;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+      font-size: 0.95rem;
       transition: all 0.3s ease;
+      position: relative;
+      padding: 8px 0;
     }
 
-    .top-right a:hover {
-      transform: scale(1.1);
-      background: rgba(255, 255, 255, 0.2);
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #10ac84, #ee7939);
+      transition: width 0.3s ease;
     }
 
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* ===== MAIN ===== */
     main {
       flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 50px 20px;
+      padding: 40px 20px;
     }
 
+    /* ===== REGISTER CONTAINER ===== */
     .register-container {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      padding: 40px;
-      border-radius: 20px;
-      max-width: 500px;
+      background: rgba(255, 255, 255, 0.03);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 24px;
+      padding: 45px 40px;
+      max-width: 480px;
       width: 100%;
-      color: #000;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+      animation: fadeInUp 0.8s ease;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .register-header {
       text-align: center;
-      animation: fadeIn 0.8s ease forwards;
+      margin-bottom: 30px;
     }
 
-    .register-container h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      color: #000;
+    .register-header .icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 10px;
     }
 
-    .register-container form {
+    .register-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .register-header p {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    /* ===== FORM ===== */
+    .register-form {
       display: flex;
       flex-direction: column;
-      gap: 15px;
-      text-align: left;
+      gap: 16px;
     }
 
-    .register-container label {
-      font-weight: 600;
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
 
-    .register-container input,
-    .register-container select {
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      outline: none;
-      font-size: 1rem;
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .register-container input:focus,
-    .register-container select:focus {
-      border: 2px solid #000;
+    .form-group label i {
+      color: #10ac84;
+      width: 16px;
     }
 
-    .register-container button {
-      background: #000;
+    .form-group label .required {
+      color: #ff6b6b;
+      font-size: 0.8rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
       color: #fff;
-      padding: 12px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .form-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.3)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    .form-group input::placeholder {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #10ac84;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(16, 172, 132, 0.1);
+    }
+
+    .form-group select option {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    .form-hint {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.3);
+      margin-top: 2px;
+    }
+
+    /* ===== BUTTON ===== */
+    .btn-register {
+      padding: 14px;
+      border-radius: 12px;
       border: none;
-      border-radius: 8px;
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      color: #fff;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+      margin-top: 10px;
+      box-shadow: 0 4px 20px rgba(16, 172, 132, 0.2);
     }
 
-    .register-container button:hover {
-      background: #10ac84;
-      transform: scale(1.05);
+    .btn-register:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(16, 172, 132, 0.35);
     }
 
-    .message {
-      margin-top: 15px;
-      text-align: center;
-      font-weight: 600;
+    .btn-register:active {
+      transform: translateY(0);
+    }
+
+    .btn-register i {
       font-size: 1rem;
     }
 
-    .success { color: #007f00; }
-    .error { color: #b30000; }
-
+    /* ===== LINKS ===== */
     .register-links {
-      margin-top: 10px;
       text-align: center;
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
     }
 
     .register-links a {
-      color: #000;
+      color: rgba(255, 255, 255, 0.4);
       text-decoration: none;
-      font-weight: 500;
-      margin: 0 5px;
       transition: all 0.3s ease;
     }
 
     .register-links a:hover {
       color: #10ac84;
-      text-decoration: underline;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
+    .register-links .separator {
+      color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ===== MESSAGE ===== */
+    .message {
+      margin-top: 18px;
+      text-align: center;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      color: #10ac84;
+      background: rgba(16, 172, 132, 0.1);
+      border: 1px solid rgba(16, 172, 132, 0.15);
+    }
+
+    .message.error {
+      color: #ff6b6b;
+      background: rgba(255, 0, 0, 0.05);
+      border: 1px solid rgba(255, 0, 0, 0.1);
+    }
+
+    .message.loading {
+      color: #ee7939;
+      background: rgba(238, 121, 57, 0.05);
+      border: 1px solid rgba(238, 121, 57, 0.1);
+    }
+
+    /* ===== BACK TO HOME ===== */
+    .back-home {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .back-home a {
+      color: rgba(255, 255, 255, 0.3);
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+    }
+
+    .back-home a:hover {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .back-home a i {
+      margin-right: 6px;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.85rem;
+    }
+
+    footer i {
+      color: #10ac84;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 10px;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      .logo { font-size: 1.5rem; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 0.8rem; }
+      .register-container { padding: 30px 25px; margin: 0 15px; }
+      .register-header h2 { font-size: 1.5rem; }
     }
   </style>
 </head>
 <body>
+
+  <!-- ===== BACKGROUND EFFECTS ===== -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+
+  <!-- ===== HEADER ===== -->
   <header>
-    <div class="logo">EduPredict</div>
-    <div class="top-right">
-      <a href="index.html">Home</a>
+    <div class="logo">
+      <i class="fas fa-graduation-cap"></i>
+      EduPredict
     </div>
+    <ul class="nav-links">
+      <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../help.html">Help</a></li>
+      <li><a href="../contact.html">Contact</a></li>
+    </ul>
   </header>
 
+  <!-- ===== MAIN ===== -->
   <main>
     <div class="register-container">
-      <h2>👪 Parent Registration</h2>
-      <form id="parentRegisterForm">
-        <label>Parent Name</label>
-        <input type="text" name="name" id="name" placeholder="Enter parent's full name" required>
+      <div class="register-header">
+        <span class="icon">👨‍👩‍👧‍👦</span>
+        <h2>Parent Registration</h2>
+        <p>Create an account to monitor your child's progress</p>
+      </div>
 
-        <label>Parent Email</label>
-        <input type="email" name="email" id="email" placeholder="Enter parent's email" required>
+      <form class="register-form" id="parentRegisterForm" novalidate>
+        <div class="form-group">
+          <label for="name">
+            <i class="fas fa-user"></i> Parent Name <span class="required">*</span>
+          </label>
+          <input type="text" id="name" name="name" placeholder="Enter parent's full name" required aria-required="true" />
+        </div>
 
-        <label>Parent Phone Number</label>
-        <input type="text" name="phone" id="phone" placeholder="Enter parent's phone number" required>
+        <div class="form-group">
+          <label for="email">
+            <i class="fas fa-envelope"></i> Parent Email <span class="required">*</span>
+          </label>
+          <input type="email" id="email" name="email" placeholder="Enter parent's email" required aria-required="true" />
+        </div>
 
-        <label>Student Email (Registered)</label>
-        <input type="email" name="student_email" id="student_email" placeholder="Enter student's registered email" required>
+        <div class="form-group">
+          <label for="phone">
+            <i class="fas fa-phone"></i> Parent Phone <span class="required">*</span>
+          </label>
+          <input type="tel" id="phone" name="phone" placeholder="Enter parent's phone number" required aria-required="true" />
+        </div>
 
-        <label>Relationship to Student</label>
-        <select name="relationship" id="relationship" required>
-          <option value="">Select relationship</option>
-          <option value="Father">Father</option>
-          <option value="Mother">Mother</option>
-          <option value="Guardian">Guardian</option>
-          <option value="Other">Other</option>
-        </select>
+        <div class="form-group">
+          <label for="student_email">
+            <i class="fas fa-user-graduate"></i> Student Email <span class="required">*</span>
+          </label>
+          <input type="email" id="student_email" name="student_email" placeholder="Enter student's registered email" required aria-required="true" />
+          <span class="form-hint">Student must be registered first</span>
+        </div>
 
-        <label>Password</label>
-        <input type="password" name="password" id="password" placeholder="Create a password" required>
+        <div class="form-group">
+          <label for="relationship">
+            <i class="fas fa-users"></i> Relationship <span class="required">*</span>
+          </label>
+          <select id="relationship" name="relationship" required aria-required="true" title="Select your relationship to the student">
+            <option value="">Select relationship</option>
+            <option value="Father">Father</option>
+            <option value="Mother">Mother</option>
+            <option value="Guardian">Guardian</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
 
-        <label>Confirm Password</label>
-        <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm your password" required>
+        <div class="form-group">
+          <label for="password">
+            <i class="fas fa-lock"></i> Password <span class="required">*</span>
+          </label>
+          <input type="password" id="password" name="password" placeholder="Create a password (min 6 characters)" required aria-required="true" minlength="6" />
+        </div>
 
-        <button type="submit">Register</button>
+        <div class="form-group">
+          <label for="confirm_password">
+            <i class="fas fa-check-circle"></i> Confirm Password <span class="required">*</span>
+          </label>
+          <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required aria-required="true" minlength="6" />
+        </div>
+
+        <button type="submit" class="btn-register">
+          <i class="fas fa-user-plus"></i> Register
+        </button>
       </form>
 
       <div class="register-links">
-        <a href="parent.html">Already have an account? Login</a>
+        <a href="parent.html"><i class="fas fa-sign-in-alt"></i> Already have an account? Login</a>
       </div>
 
-      <div class="message" id="message"></div>
+      <div class="message" id="statusMsg" role="alert" aria-live="polite"></div>
+
+      <div class="back-home">
+        <a href="../index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+      </div>
     </div>
   </main>
 
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart"></i> for education.
+  </footer>
+
   <script>
-    const form = document.getElementById("parentRegisterForm");
-    const messageDiv = document.getElementById("message");
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    })();
 
-    form.addEventListener("submit", async (e) => {
+    // ===== REGISTRATION =====
+    var form = document.getElementById('parentRegisterForm');
+    var msg = document.getElementById('statusMsg');
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
+
+    function showMessage(text, type) {
+      msg.textContent = text;
+      msg.className = 'message show ' + type;
+    }
+
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      messageDiv.textContent = "";
-      messageDiv.className = "message";
+      
+      showMessage('⏳ Registering...', 'loading');
 
-      const formData = {
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        student_email: document.getElementById("student_email").value.trim(),
-        relationship: document.getElementById("relationship").value,
-        password: document.getElementById("password").value,
-        confirm_password: document.getElementById("confirm_password").value
+      var name = document.getElementById('name').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var phone = document.getElementById('phone').value.trim();
+      var student_email = document.getElementById('student_email').value.trim();
+      var relationship = document.getElementById('relationship').value;
+      var password = document.getElementById('password').value;
+      var confirm_password = document.getElementById('confirm_password').value;
+
+      // Validation
+      if (!name || !email || !phone || !student_email || !relationship || !password || !confirm_password) {
+        showMessage('❌ Please fill all fields', 'error');
+        return;
+      }
+
+      if (password.length < 6) {
+        showMessage('❌ Password must be at least 6 characters', 'error');
+        return;
+      }
+
+      if (password !== confirm_password) {
+        showMessage('❌ Passwords do not match', 'error');
+        return;
+      }
+
+      var formData = {
+        name: name,
+        email: email,
+        phone: phone,
+        student_email: student_email,
+        relationship: relationship,
+        password: password,
+        confirm_password: confirm_password
       };
 
       try {
-        const res = await fetch("https://edupredict-l9eg.onrender.com/register/parent", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        var res = await fetch(backendUrl + '/register/parent', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
           body: JSON.stringify(formData)
         });
 
-        const data = await res.json();
+        var contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          showMessage('❌ Server error: Invalid response', 'error');
+          return;
+        }
+
+        var data = await res.json();
 
         if (res.ok) {
-          messageDiv.textContent = data.message;
-          messageDiv.classList.add("success");
+          showMessage('✅ ' + (data.message || 'Registration successful!'), 'success');
           form.reset();
           
-          setTimeout(() => {
-            window.location.href = "parent.html";
+          setTimeout(function() {
+            window.location.href = 'parent.html';
           }, 2000);
         } else {
-          messageDiv.textContent = data.message;
-          messageDiv.classList.add("error");
+          showMessage(data.message || data.error || '❌ Registration failed', 'error');
         }
       } catch (err) {
-        messageDiv.textContent = "⚠️ Connection error. Please try again.";
-        messageDiv.classList.add("error");
+        console.error('❌ Registration error:', err);
+        showMessage('❌ Cannot connect to server: ' + err.message, 'error');
+      }
+    });
+
+    // Enter key support
+    form.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        form.dispatchEvent(new Event('submit'));
       }
     });
   </script>

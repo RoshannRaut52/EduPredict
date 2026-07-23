@@ -1,1323 +1,1022 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard | EduPredict</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif;}
-        body { background:#e0e0e0; color:#333; min-height:100vh; overflow-x:hidden; display:flex; transition: filter 0.3s ease; padding-top:80px; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Dashboard - EduPredict</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* ===== SAME THEME AS INDEX ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        /* Top Task Bar */
-        .top-bar {
-            position:fixed;
-            top:20px;
-            left:0;
-            width:100%;
-            height:50px;
-            background:#555;
-            display:flex;
-            align-items:center;
-            padding:0 20px;
-            box-shadow:0 4px 12px rgba(0,0,0,0.15);
-            z-index:2000;
-            border-radius:0 0 10px 10px;
-        }
-        .top-bar-brand {
-            font-weight:700;
-            font-size:1.2rem;
-            color:white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      padding-top: 80px;
+      overflow-x: hidden;
+    }
 
-        /* Sidebar */
-        .sidebar {
-            width:250px; 
-            background:#777; 
-            color:#fff; 
-            display:flex; 
-            flex-direction:column; 
-            align-items:center; 
-            padding:40px 0; 
-            box-shadow:2px 0 8px rgba(0,0,0,0.1); 
-            position:fixed; 
-            top:80px; 
-            bottom:0; 
-            left:0;
-            z-index:1601; 
-        }
-        .profile-pic {
-            width:140px;
-            height:140px;
-            border-radius:50%;
-            overflow:hidden;
-            border:3px solid #fff;
-            margin-bottom:15px;
-        }
-        .profile-pic img { width:100%; height:100%; object-fit:cover; }
-        .teacher-info { text-align:center; margin-bottom:20px; }
-        .teacher-info h3 { font-size:1.1rem; margin-bottom:3px; color:#fff; }
-        .teacher-info p { font-size:0.9rem; color:#fff; margin-bottom:2px; }
-        .teacher-info .dept { font-style:italic; color:#fff; }
-        .black-line { width:80%; height:2px; background:#555; margin-bottom:20px; }
-        .menu { width:100%; list-style:none; }
-        .menu li a { display:flex; align-items:center; gap:15px; padding:12px 25px; color:#fff; text-decoration:none; font-weight:500; transition:0.3s; font-size:0.95rem;}
-        .menu li a:hover { background: rgba(255,255,255,0.1); border-radius:8px; cursor:pointer; }
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
 
-        /* Main Content */
-        .content { flex:1; padding:30px 30px 30px 280px; transition: flex 0.3s ease, margin-right 0.3s ease; position:relative; z-index:1;}
-        .content.shrink { flex:0.65; } 
-        .content h1, .content h2 { color:#222; margin-bottom:20px; }
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
 
-        /* Search Bar */
-        .search-bar input { width:60%; padding:8px 12px; border-radius:6px; border:1px solid #ccc; font-size:0.9rem; outline:none; margin-bottom:20px;}
-        .search-bar input:focus { border-color:#555; box-shadow:0 0 5px rgba(0,0,0,0.2); }
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
 
-        /* Departments */
-        .departments { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:20px; }
-        .department-card {
-            border-radius:12px;
-            padding:60px 20px; 
-            min-height:220px;  
-            display:flex; 
-            flex-direction:column; 
-            align-items:center; 
-            justify-content:center;
-            gap:10px;
-            color:#333;
-            font-weight:600;
-            border:2px solid rgba(0,0,0,0.1);
-            cursor:pointer;
-            position: relative;
-            transition: transform 0.3s ease;
-        }
-        .department-card:hover {
-            transform: translateY(-5px);
-        }
-        .department-card span { font-size:28px; }
-        .department-card h3 { font-size:1rem; text-align:center; }
-        .student-count {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0,0,0,0.2);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #333;
-        }
-        .dept-it { background: linear-gradient(135deg,#b0b0b0,#d0d0d0);}
-        .dept-entc { background: linear-gradient(135deg,#c0c0c0,#e0e0e0);}
-        .dept-mech { background: linear-gradient(135deg,#d0d0d0,#f0f0f0);}
-        .dept-civil { background: linear-gradient(135deg,#a0a0a0,#c0c0c0); }
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
 
-        /* Floating Button */
-        .floating-btn { position:fixed; top:90px; right:20px; width:50px; height:50px; border-radius:50%; background:#555; color:white; font-size:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:1000; transition:all 0.3s;}
-        .floating-btn.active { width:40px; height:40px; font-size:18px; border-radius:6px; justify-content:center; align-items:center;}
-        .floating-btn:hover { background:#333; }
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
 
-        /* Right Panel */
-        .right-panel { position:fixed; top:80px; right:-350px; width:350px; height:calc(100% - 80px); background:#f0f0f0; box-shadow:-4px 0 12px rgba(0,0,0,0.2); padding:20px; overflow-y:auto; transition:right 0.3s ease; z-index:999;}
-        .right-panel.active { right:0; }
-        .top-options { display:flex; gap:15px; justify-content:center; margin-bottom:20px; }
-        .top-options div { flex:1; background:#d0d0d0; text-align:center; padding:10px 0; border-radius:10px; cursor:pointer; font-weight:600; color:#555; transition:0.3s; }
-        .top-options div:hover { background:#b0b0b0; }
-        .right-item { background:#e0e0e0; padding:12px 15px; border-radius:8px; margin-bottom:12px; cursor:pointer; color:#555; font-weight:600; transition:0.3s;}
-        .right-item:hover { background:#c0c0c0; }
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
 
-        /* Modal Background */
-        .modal-bg {
-            display:none;
-            position:fixed;
-            top:0; left:0; width:100%; height:100%;
-            background:rgba(0,0,0,0.3);
-            backdrop-filter:blur(3px);
-            z-index:1500;
-            justify-content:center;
-            align-items:center;
-            overflow-y:auto;
-            pointer-events:none;
-        }
+    /* ===== FLOATING PARTICLES ===== */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
 
-        /* Show Modal */
-        .modal-bg.show { display:flex; pointer-events:all; }
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
 
-        /* Modal Box */
-        .modal {
-            background:#f2f2f2;  
-            padding:25px 30px;
-            border-radius:12px;
-            max-width:800px;
-            width:90%;
-            max-height:80%;
-            overflow-y:auto;
-            z-index:1600;
-            box-shadow:0 6px 20px rgba(0,0,0,0.25);
-            border:4px solid #555; 
-        }
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
 
-        /* Year selection container */
-        .year-selection { display:flex; flex-direction:column; gap:15px; margin-top:10px;}
-        .year-card { padding:15px; background:#d0d0d0; border-radius:10px; cursor:pointer; font-weight:600; text-align:center; transition:0.3s; color:#555; }
-        .year-card:hover { background:#b0b0b0; }
+    /* ===== TOP BAR ===== */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: rgba(10, 10, 15, 0.85);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      z-index: 2000;
+    }
 
-        /* Calendar */
-        .calendarTable { width:100%; border-collapse:collapse; margin-top:15px;}
-        .calendarTable th, .calendarTable td { border:1px solid #ccc; padding:8px; text-align:center;}
-        .calendarTable th { background:#555; color:white;}
-        .today { background:#555; color:white; border-radius:50%; }
-        .event-day { background:#f87171; color:white; border-radius:50%; }
+    .top-bar-brand {
+      font-size: 1.4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-        /* Help Modal */
-        .help-container h2 { margin-bottom:10px; }
-        .help-container p { margin-bottom:8px; }
+    .top-bar-brand i {
+      -webkit-text-fill-color: initial;
+      color: #10ac84;
+      margin-right: 10px;
+    }
 
-        /* Blur effect */
-        .blur { filter: blur(4px); transition: filter 0.3s ease; }
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 260px;
+      background: rgba(255, 255, 255, 0.03);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      position: fixed;
+      top: 60px;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
 
-        /* Table Styles */
-        .data-table { width:100%; border-collapse:collapse; margin-top:15px;}
-        .data-table th, .data-table td { border:1px solid #ccc; padding:10px; text-align:left;}
-        .data-table th { background:#555; color:white;}
-        .data-table tr:nth-child(even) { background:#e8e8e8; }
-        .data-table tr:hover { background:#d8d8d8; }
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
 
-        /* Progress Bar */
-        .progress-bar { width:100%; height:20px; background:#ddd; border-radius:10px; overflow:hidden; margin:5px 0; }
-        .progress-fill { height:100%; background:#555; border-radius:10px; }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: #10ac84;
+      border-radius: 10px;
+    }
 
-        /* Form Styles */
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
-        .form-group input, .form-group select, .form-group textarea { 
-            width: 100%; 
-            padding: 8px 12px; 
-            border-radius: 6px; 
-            border: 1px solid #ccc; 
-            font-size: 0.9rem; 
-            outline: none; 
-        }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
-            border-color:#555; 
-            box-shadow:0 0 5px rgba(0,0,0,0.2); 
-        }
-        .btn { 
-            padding: 10px 20px; 
-            background: #555; 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            transition: 0.3s; 
-        }
-        .btn:hover { background: #333; }
-        .btn-secondary { 
-            background: #777; 
-        }
-        .btn-secondary:hover { background: #555; }
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
 
-        /* Action buttons */
-        .action-buttons { display: flex; gap: 10px; margin-top: 20px; }
-        .action-buttons .btn { flex: 1; }
+    .profile-pic:hover {
+      border-color: #10ac84;
+      box-shadow: 0 0 30px rgba(16, 172, 132, 0.2);
+    }
 
-        /* Attendance table */
-        .attendance-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .attendance-table th, .attendance-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-        .attendance-table th { background: #555; color: white; }
-        .attendance-table tr:nth-child(even) { background: #e8e8e8; }
-        .attendance-checkbox { width: 20px; height: 20px; cursor: pointer; }
+    .profile-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-        /* Edit buttons */
-        .edit-btn { 
-            background: #777; 
-            color: white; 
-            border: none; 
-            border-radius: 4px; 
-            padding: 5px 10px; 
-            cursor: pointer; 
-            font-size: 0.8rem; 
-            margin-left: 5px; 
-        }
-        .edit-btn:hover { background: #555; }
+    .teacher-info {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-        /* Risk Indicators */
-        .risk-indicator {
-            display: inline-block;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-        .risk-high { background-color: #ff4d4d; }
-        .risk-medium { background-color: #ffcc00; }
-        .risk-low { background-color: #4CAF50; }
+    .teacher-info h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #10ac84;
+      margin-bottom: 3px;
+    }
 
-        /* Student Detail Modal */
-        .student-detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .student-detail-card {
-            background: #e8e8e8;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .student-detail-card h3 {
-            margin-bottom: 10px;
-            color: #333;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-        }
-        .prediction-details {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .prediction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            background: #f5f5f5;
-            border-radius: 5px;
-        }
-        .probability-bar {
-            width: 100%;
-            height: 10px;
-            background: #ddd;
-            border-radius: 5px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        .probability-fill {
-            height: 100%;
-            border-radius: 5px;
-        }
-        .probability-high { background: #ff4d4d; }
-        .probability-medium { background: #ffcc00; }
-        .probability-low { background: #4CAF50; }
+    .teacher-info .email {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 2px;
+    }
 
-        /* Guidance Section */
-        .guidance-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e8e8e8;
-            border-radius: 8px;
-        }
-        .guidance-section h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .recommendation-box {
-            background: #f5f5f5;
-            padding: 12px;
-            border-radius: 5px;
-            border-left: 4px solid #555;
-        }
+    .teacher-info .dept {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
 
-        /* Responsive */
-        @media(max-width:768px){
-            body { flex-direction:column; padding-top:150px; }
-            .sidebar { width:100%; flex-direction:row; overflow-x:auto; padding:15px 10px; top:auto; position:relative;}
-            .sidebar .menu { display:flex; flex-direction:row; }
-            .menu li a { padding:10px 15px; font-size:14px; }
-            .teacher-info { display:none; }
-            .departments { grid-template-columns:1fr 1fr; }
-            .search-bar input { width:80%; }
-            .right-panel { width:100%; height:auto; top:auto; position:relative; }
-            .floating-btn { top:auto; bottom:20px; }
-            .student-detail-grid { grid-template-columns: 1fr; }
-        }
-        .color-dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:5px; }
-    </style>
+    .sidebar-divider {
+      width: 80%;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .menu {
+      width: 100%;
+      list-style: none;
+    }
+
+    .menu li {
+      margin-bottom: 2px;
+    }
+
+    .menu li a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+    }
+
+    .menu li a:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .menu li a i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .content {
+      flex: 1;
+      padding: 30px 30px 30px 290px;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .content.shrink {
+      flex: 0.65;
+    }
+
+    .content h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .content h1 span {
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .content .subtitle {
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 25px;
+    }
+
+    .content h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 15px;
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .search-bar input {
+      width: 60%;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 25px;
+    }
+
+    .search-bar input::placeholder {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .search-bar input:focus {
+      border-color: #10ac84;
+      box-shadow: 0 0 0 4px rgba(16, 172, 132, 0.1);
+    }
+
+    /* ===== DEPARTMENTS ===== */
+    .departments {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .department-card {
+      border-radius: 14px;
+      padding: 30px 20px;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.03);
+      position: relative;
+    }
+
+    .department-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(16, 172, 132, 0.2);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .department-card .icon {
+      font-size: 2.5rem;
+    }
+
+    .department-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.8);
+      text-align: center;
+    }
+
+    .department-card .student-count {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(16, 172, 132, 0.1);
+      border: 1px solid rgba(16, 172, 132, 0.15);
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      color: #10ac84;
+      font-weight: 500;
+    }
+
+    /* ===== FLOATING BUTTON ===== */
+    .floating-btn {
+      position: fixed;
+      top: 75px;
+      right: 20px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(16, 172, 132, 0.15);
+      border: 1px solid rgba(16, 172, 132, 0.2);
+      color: #10ac84;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .floating-btn:hover {
+      background: rgba(16, 172, 132, 0.25);
+      transform: scale(1.05);
+    }
+
+    /* ===== RIGHT PANEL ===== */
+    .right-panel {
+      position: fixed;
+      top: 60px;
+      right: -380px;
+      width: 380px;
+      height: calc(100% - 60px);
+      background: rgba(20, 20, 30, 0.95);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 25px;
+      overflow-y: auto;
+      transition: right 0.3s ease;
+      z-index: 999;
+    }
+
+    .right-panel::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .right-panel::-webkit-scrollbar-thumb {
+      background: #10ac84;
+      border-radius: 10px;
+    }
+
+    .right-panel.active {
+      right: 0;
+    }
+
+    .top-options {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .top-options div {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+      padding: 10px 0;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.6);
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+    }
+
+    .top-options div:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .right-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 12px 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .right-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    /* ===== MODAL ===== */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      z-index: 1500;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+    }
+
+    .modal-bg.show {
+      display: flex;
+    }
+
+    .modal {
+      background: rgba(20, 20, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 850px;
+      width: 92%;
+      max-height: 85vh;
+      overflow-y: auto;
+      z-index: 1600;
+      box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+      animation: fadeInUp 0.4s ease;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .modal::-webkit-scrollbar-thumb {
+      background: #10ac84;
+      border-radius: 10px;
+    }
+
+    .modal h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(16, 172, 132, 0.2);
+    }
+
+    .modal h2 i {
+      color: #10ac84;
+      margin-right: 10px;
+    }
+
+    /* ===== MODAL CONTENT ===== */
+    .modal ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .modal ul li {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+    }
+
+    .modal ul li:last-child {
+      border-bottom: none;
+    }
+
+    .modal ul li:hover {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+    }
+
+    /* ===== CALENDAR TABLE ===== */
+    .calendar-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .calendar-table th,
+    .calendar-table td {
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 10px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .calendar-table th {
+      background: rgba(16, 172, 132, 0.1);
+      color: #10ac84;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .calendar-table .today {
+      background: rgba(16, 172, 132, 0.15);
+      color: #10ac84;
+      font-weight: 700;
+      border-radius: 50%;
+    }
+
+    .calendar-table .event-day {
+      background: rgba(238, 121, 57, 0.1);
+      color: #ee7939;
+      font-weight: 600;
+    }
+
+    /* ===== DATA TABLE ===== */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .data-table th,
+    .data-table td {
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 10px 14px;
+      text-align: left;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+    }
+
+    .data-table th {
+      background: rgba(16, 172, 132, 0.1);
+      color: #10ac84;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 3px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10ac84, #1dd1a1);
+      border-radius: 10px;
+      transition: width 0.6s ease;
+    }
+
+    .progress-fill-high {
+      background: #ff6b6b;
+    }
+
+    .progress-fill-medium {
+      background: #ee7939;
+    }
+
+    .progress-fill-low {
+      background: #10ac84;
+    }
+
+    /* ===== FORM ===== */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #10ac84;
+      box-shadow: 0 0 0 4px rgba(16, 172, 132, 0.1);
+    }
+
+    .form-group select option {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      padding: 10px 24px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .action-buttons .btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    /* ===== RISK INDICATORS ===== */
+    .risk-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .risk-high {
+      background: #ff6b6b;
+    }
+
+    .risk-medium {
+      background: #ee7939;
+    }
+
+    .risk-low {
+      background: #10ac84;
+    }
+
+    /* ===== STUDENT DETAIL ===== */
+    .student-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .student-detail-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .student-detail-card h3 {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .student-detail-card p {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .student-detail-card p strong {
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 500;
+    }
+
+    /* ===== GUIDANCE SECTION ===== */
+    .guidance-section {
+      margin-top: 20px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+    }
+
+    .guidance-section h3 {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .recommendation-box {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border-left: 3px solid #10ac84;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+
+    /* ===== YEAR SELECTION ===== */
+    .year-selection {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .year-card {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .year-card:hover {
+      background: rgba(16, 172, 132, 0.05);
+      border-color: rgba(16, 172, 132, 0.2);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: rgba(10, 10, 15, 0.95);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 3000;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .toast.success { border-color: rgba(16, 172, 132, 0.3); }
+    .toast.success i { color: #10ac84; }
+    .toast.error { border-color: rgba(255, 0, 0, 0.3); }
+    .toast.error i { color: #ff6b6b; }
+
+    /* ===== TEXT COLORS ===== */
+    .text-muted {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .text-muted-light {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .text-muted-dark {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ===== SECTION TITLE ===== */
+    .section-title {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    /* ===== EVENTS LIST ===== */
+    .events-list {
+      margin-top: 15px;
+    }
+
+    .events-list h3 {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .events-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .events-list ul li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+    }
+
+    .events-list ul li:last-child {
+      border-bottom: none;
+    }
+
+    /* ===== ADD STUDENT SECTION ===== */
+    .add-student-section {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+      margin: 15px 0 10px;
+    }
+
+    /* ===== HELP TEXT ===== */
+    .help-text {
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 8px;
+    }
+
+    .help-text:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .content { padding: 25px 20px 25px 280px; }
+    }
+
+    @media (max-width: 768px) {
+      body { padding-top: 70px; flex-direction: column; }
+      .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 15px 20px; top: 60px; position: relative; height: auto; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .sidebar .profile-pic { width: 60px; height: 60px; flex-shrink: 0; }
+      .sidebar .teacher-info { display: none; }
+      .sidebar .menu { display: flex; flex-direction: row; gap: 5px; }
+      .menu li a { padding: 8px 14px; font-size: 0.8rem; white-space: nowrap; }
+      .sidebar-divider { display: none; }
+      .content { padding: 20px; }
+      .search-bar input { width: 100%; }
+      .departments { grid-template-columns: 1fr 1fr; }
+      .right-panel { width: 100%; right: -100%; }
+      .floating-btn { top: auto; bottom: 20px; }
+      .student-detail-grid { grid-template-columns: 1fr; }
+      .modal { padding: 20px; max-width: 95%; }
+    }
+
+    @media (max-width: 480px) {
+      .departments { grid-template-columns: 1fr; }
+      .top-options { flex-direction: column; }
+      .action-buttons { flex-direction: column; }
+      .action-buttons .btn { flex: none; width: 100%; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- Top Task Bar -->
-<div class="top-bar">
-    <div class="top-bar-brand">EduPredict</div>
-</div>
+  <!-- ===== BACKGROUND EFFECTS ===== -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
 
-<!-- Sidebar -->
-<div class="sidebar">
+  <!-- ===== TOP BAR ===== -->
+  <header class="top-bar">
+    <div class="top-bar-brand">
+      <i class="fas fa-graduation-cap" aria-hidden="true"></i> EduPredict
+    </div>
+  </header>
+
+  <!-- ===== SIDEBAR ===== -->
+  <nav class="sidebar" role="navigation" aria-label="Teacher Navigation">
     <div class="profile-pic">
-        <img src="https://img.freepik.com/free-photo/portrait-teacher_23-2150766552.jpg" alt="Teacher Profile">
+      <img src="https://ui-avatars.com/api/?name=Vaishnavi+Sakunde&background=10ac84&color=fff&size=128" alt="Teacher Profile" />
     </div>
     <div class="teacher-info">
-        <h3>Prof. Vaishnavi Sakunde</h3>
-        <p>vaishnavi.sakunde@edupredict.in</p>
-        <p class="dept">Department: Computer Science</p>
+      <h3>Prof. Vaishnavi Sakunde</h3>
+      <div class="email">vaishnavi.sakunde@edupredict.in</div>
+      <div class="dept">Department: Computer Science</div>
     </div>
-    <div class="black-line"></div>
+    <div class="sidebar-divider"></div>
     <ul class="menu">
-        <li><a href="#" id="examMenu">📝 Exam</a></li>
-        <li><a href="#" id="coursesMenu">📚 Courses</a></li>
-        <li><a href="#" id="studentsMenu">👩‍🎓 Students</a></li>
-        <li><a href="#" id="homeworkMenu">📄 Homework</a></li>
-        <li><a href="#" id="attendanceMenu">✅ Attendance</a></li>
-        <li><a href="#" id="dutiesMenu">🛠 Duties</a></li>
+      <li><a href="#" id="examMenu"><i class="fas fa-pen-to-square" aria-hidden="true"></i> Exam</a></li>
+      <li><a href="#" id="coursesMenu"><i class="fas fa-book" aria-hidden="true"></i> Courses</a></li>
+      <li><a href="#" id="studentsMenu"><i class="fas fa-user-graduate" aria-hidden="true"></i> Students</a></li>
+      <li><a href="#" id="homeworkMenu"><i class="fas fa-file-pen" aria-hidden="true"></i> Homework</a></li>
+      <li><a href="#" id="attendanceMenu"><i class="fas fa-calendar-check" aria-hidden="true"></i> Attendance</a></li>
+      <li><a href="#" id="dutiesMenu"><i class="fas fa-clipboard-list" aria-hidden="true"></i> Duties</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout</a></li>
     </ul>
-</div>
+  </nav>
 
-<!-- Main Content -->
-<div class="content" id="mainContent">
-    <h1>Welcome, Prof. Vaishnavi Sakunde</h1>
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="content" id="mainContent">
+    <h1>Welcome, <span>Prof. Vaishnavi Sakunde</span></h1>
+    <p class="subtitle">Manage your departments, students, and academic activities</p>
+
     <div class="search-bar">
-        <input type="text" placeholder="Search Departments...">
+      <input type="text" placeholder="Search Departments..." aria-label="Search departments" />
     </div>
+
     <h2>Departments Teaching In</h2>
-    <div class="departments">
-        <div class="department-card dept-it" data-dept="IT">
-            <span>💻</span>
-            <h3>IT</h3>
-            <div class="student-count">120 Students</div>
-        </div>
-        <div class="department-card dept-entc" data-dept="ENTC">
-            <span>📡</span>
-            <h3>ENTC</h3>
-            <div class="student-count">95 Students</div>
-        </div>
-        <div class="department-card dept-mech" data-dept="Mechanical">
-            <span>⚙</span>
-            <h3>Mechanical</h3>
-            <div class="student-count">110 Students</div>
-        </div>
-        <div class="department-card dept-civil" data-dept="Civil">
-            <span>🏗</span>
-            <h3>Civil</h3>
-            <div class="student-count">85 Students</div>
-        </div>
-    </div>
-</div>
-
-<!-- Floating Button -->
-<div class="floating-btn" id="toggleBtn">☰</div>
-
-<!-- Right Panel -->
-<div class="right-panel" id="rightPanel">
-    <div class="top-options">
-        <div id="notifBtn">🔔 Notifications</div>
-        <div id="helpBtn">❓ Help</div>
-    </div>
-    <div class="right-item" id="academicBtn">🎓 Academic Year</div>
-    <div class="right-item" id="eventsBtn">📅 Events</div>
-</div>
-
-<!-- Modal Background -->
-<div class="modal-bg" id="modalBg">
-    <div class="modal" id="notifModal">
-        <h2>Notifications</h2>
-        <ul>
-            <li>📝 Exam schedule for IT department released.</li>
-            <li>📚 New course materials uploaded for ENTC.</li>
-            <li>⚙ Mechanical lab maintenance on 15th Oct.</li>
-            <li>🏗 Civil department seminar on 20th Oct.</li>
-            <li>💻 IT department workshop registration open.</li>
-        </ul>
-    </div>
-
-    <div class="modal" id="academicModal" style="display:none;">
-        <h2>Academic Year - Current Month</h2>
-        <table class="calendarTable" id="academicCalendar"></table>
-    </div>
-
-    <div class="modal" id="eventsModal" style="display:none;">
-        <h2>Events Calendar</h2>
-        <table class="calendarTable" id="eventsCalendar"></table>
-        <div id="eventsList" style="margin-top:10px;"></div>
-    </div>
-
-    <div class="modal" id="yearModal" style="display:none;">
-        <h2 id="deptTitle">Select Year</h2>
-        <div class="year-selection" id="yearSelectionContainer"></div>
-    </div>
-
-    <div class="modal" id="helpModal" style="display:none;">
-        <div class="help-container">
-            <h2>Contact HOD</h2>
-            <p>Email: hod@edupredict.in</p>
-            <p>Phone: +91 9876543210</p>
-            <p>Office: Room 101, Admin Block</p>
-        </div>
-    </div>
-
-    <div class="modal" id="examModal" style="display:none;"></div>
-    <div class="modal" id="coursesModal" style="display:none;"></div>
-    <div class="modal" id="studentsModalDynamic" style="display:none;"></div>
-    <div class="modal" id="homeworkModal" style="display:none;"></div>
-    <div class="modal" id="attendanceModal" style="display:none;"></div>
-    <div class="modal" id="dutiesModal" style="display:none;"></div>
-    <div class="modal" id="studentDetailModal" style="display:none;"></div>
-</div>
-
-<script>
-// DOM Elements
-const toggleBtn = document.getElementById('toggleBtn');
-const rightPanel = document.getElementById('rightPanel');
-const mainContent = document.getElementById('mainContent');
-const modalBg = document.getElementById('modalBg');
-const notifBtn = document.getElementById('notifBtn');
-const helpBtn = document.getElementById('helpBtn');
-const eventsBtn = document.getElementById('eventsBtn');
-const academicBtn = document.getElementById('academicBtn');
-const notifModal = document.getElementById('notifModal');
-const academicModal = document.getElementById('academicModal');
-const eventsModal = document.getElementById('eventsModal');
-const yearModal = document.getElementById('yearModal');
-const helpModal = document.getElementById('helpModal');
-const deptTitle = document.getElementById('deptTitle');
-const yearSelectionContainer = document.getElementById('yearSelectionContainer');
-const departmentCards = document.querySelectorAll('.department-card');
-
-// Sidebar menu items
-const examMenu = document.getElementById('examMenu');
-const coursesMenu = document.getElementById('coursesMenu');
-const studentsMenu = document.getElementById('studentsMenu');
-const homeworkMenu = document.getElementById('homeworkMenu');
-const attendanceMenu = document.getElementById('attendanceMenu');
-const dutiesMenu = document.getElementById('dutiesMenu');
-
-// Dynamic modals
-const dynamicModals = {
-    exam: document.getElementById('examModal'),
-    courses: document.getElementById('coursesModal'),
-    students: document.getElementById('studentsModalDynamic'),
-    homework: document.getElementById('homeworkModal'),
-    attendance: document.getElementById('attendanceModal'),
-    duties: document.getElementById('dutiesModal'),
-    studentDetail: document.getElementById('studentDetailModal')
-};
-
-// Toggle right panel
-toggleBtn.addEventListener('click', () => {
-    rightPanel.classList.toggle('active');
-    mainContent.classList.toggle('shrink');
-    toggleBtn.textContent = rightPanel.classList.contains('active') ? '⋮' : '☰';
-});
-
-// Modal functions
-function showModalUnified(modal){
-    hideAllModals();
-    modal.style.display='block';
-    modalBg.classList.add('show');
-    mainContent.classList.add('blur');
-}
-
-function hideAllModals(){
-    modalBg.classList.remove('show');
-    mainContent.classList.remove('blur');
-    [notifModal, academicModal, eventsModal, yearModal, helpModal,
-        dynamicModals.exam, dynamicModals.courses, dynamicModals.students,
-        dynamicModals.homework, dynamicModals.attendance, dynamicModals.duties,
-        dynamicModals.studentDetail].forEach(m=>m.style.display='none');
-}
-
-// Event listeners for right panel buttons
-notifBtn.onclick = () => showModalUnified(notifModal);
-helpBtn.onclick = () => showModalUnified(helpModal);
-academicBtn.onclick = () => { showModalUnified(academicModal); renderCalendar('academicCalendar'); };
-eventsBtn.onclick = () => { showModalUnified(eventsModal); renderCalendar('eventsCalendar', true); };
-
-modalBg.onclick = (e) => { 
-    if(e.target === modalBg) hideAllModals(); 
-};
-
-// Calendar rendering function
-function renderCalendar(calendarId, isEvents = false) {
-    const calendar = document.getElementById(calendarId);
-    const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
-    
-    // Get first day of month and number of days
-    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    
-    // Month names
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
-    
-    // Create calendar header
-    let calendarHTML = `<thead><tr><th colspan="7">${monthNames[currentMonth]} ${currentYear}</th></tr>`;
-    calendarHTML += '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr></thead><tbody><tr>';
-    
-    // Add empty cells for days before the first day of the month
-    for (let i = 0; i < firstDay; i++) {
-        calendarHTML += '<td></td>';
-    }
-    
-    // Add days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-        const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-        const isEventDay = isEvents && (day === 5 || day === 12 || day === 19 || day === 26);
-        
-        let cellClass = '';
-        if (isToday) cellClass = 'today';
-        if (isEventDay) cellClass = 'event-day';
-        
-        calendarHTML += `<td class="${cellClass}">${day}</td>`;
-        
-        // Start new row after Saturday
-        if ((firstDay + day) % 7 === 0 && day !== daysInMonth) {
-            calendarHTML += '</tr><tr>';
-        }
-    }
-    
-    calendarHTML += '</tr></tbody>';
-    calendar.innerHTML = calendarHTML;
-    
-    // Add events list if it's the events calendar
-    if (isEvents) {
-        const eventsList = document.getElementById('eventsList');
-        eventsList.innerHTML = `
-            <h3>Upcoming Events</h3>
-            <ul>
-                <li>📅 5th ${monthNames[currentMonth]}: Faculty Meeting</li>
-                <li>📅 12th ${monthNames[currentMonth]}: Mid-term Exams Begin</li>
-                <li>📅 19th ${monthNames[currentMonth]}: Parent-Teacher Meeting</li>
-                <li>📅 26th ${monthNames[currentMonth]}: Workshop on AI in Education</li>
-            </ul>
-        `;
-    }
-}
-
-// Data for all sections (keeping original functionality)
-const examData = {
-    "IT": {
-        "1": [
-            { subject: "Data Structures", date: "2023-10-15", time: "10:00 AM", venue: "Lab 101" },
-            { subject: "Database Management", date: "2023-10-17", time: "2:00 PM", venue: "Room 205" }
-        ],
-        "2": [
-            { subject: "Operating Systems", date: "2023-10-20", time: "10:00 AM", venue: "Lab 102" },
-            { subject: "Computer Networks", date: "2023-10-22", time: "2:00 PM", venue: "Room 210" }
-        ]
-    },
-    "ENTC": {
-        "1": [
-            { subject: "Digital Electronics", date: "2023-10-16", time: "10:00 AM", venue: "Lab 201" }
-        ]
-    }
-};
-
-const coursesData = {
-    "IT": {
-        "1": [
-            { name: "Data Structures", code: "CS201", credits: 4, students: 60 },
-            { name: "Database Management", code: "CS202", credits: 3, students: 55 }
-        ],
-        "2": [
-            { name: "Operating Systems", code: "CS301", credits: 4, students: 58 },
-            { name: "Computer Networks", code: "CS302", credits: 3, students: 52 }
-        ]
-    }
-};
-
-// Enhanced Students Data with Dropout Prediction
-const studentsData = {
-    "IT": {
-        "1": [
-            { 
-                id: "IT001", 
-                name: "Rahul Sharma", 
-                email: "rahul@edupredict.in", 
-                performance: "85%",
-                prediction: "Low",
-                confidence: 92.5,
-                probability_high: 2.3,
-                probability_medium: 5.2,
-                probability_low: 92.5,
-                recommendation: "Continue current support - Maintain regular monitoring, encourage continued good performance"
-            },
-            { 
-                id: "IT002", 
-                name: "Priya Patel", 
-                email: "priya@edupredict.in", 
-                performance: "92%",
-                prediction: "Low",
-                confidence: 96.8,
-                probability_high: 1.1,
-                probability_medium: 2.1,
-                probability_low: 96.8,
-                recommendation: "Continue current support - Maintain regular monitoring, encourage continued good performance"
-            },
-            { 
-                id: "IT003", 
-                name: "Amit Kumar", 
-                email: "amit@edupredict.in", 
-                performance: "78%",
-                prediction: "Medium",
-                confidence: 87.3,
-                probability_high: 12.5,
-                probability_medium: 87.3,
-                probability_low: 0.2,
-                recommendation: "Monitor and provide support - Regular check-ins, encourage support programs, address issues early"
-            }
-        ],
-        "2": [
-            { 
-                id: "IT101", 
-                name: "Neha Singh", 
-                email: "neha@edupredict.in", 
-                performance: "88%",
-                prediction: "Low",
-                confidence: 94.2,
-                probability_high: 3.2,
-                probability_medium: 2.6,
-                probability_low: 94.2,
-                recommendation: "Continue current support - Maintain regular monitoring, encourage continued good performance"
-            },
-            { 
-                id: "IT102", 
-                name: "Vikram Joshi", 
-                email: "vikram@edupredict.in", 
-                performance: "75%",
-                prediction: "High",
-                confidence: 95.6,
-                probability_high: 95.6,
-                probability_medium: 3.7,
-                probability_low: 0.7,
-                recommendation: "Immediate intervention required - Schedule meeting with parents, provide counseling, monitor daily"
-            }
-        ]
-    },
-    "ENTC": {
-        "1": [
-            { 
-                id: "ENTC001", 
-                name: "Rajesh Verma", 
-                email: "rajesh@edupredict.in", 
-                performance: "82%",
-                prediction: "Medium",
-                confidence: 83.4,
-                probability_high: 15.2,
-                probability_medium: 83.4,
-                probability_low: 1.4,
-                recommendation: "Monitor and provide support - Regular check-ins, encourage support programs, address issues early"
-            }
-        ]
-    }
-};
-
-const homeworkData = {
-    "IT": {
-        "1": [
-            { subject: "Data Structures", title: "Linked List Implementation", dueDate: "2023-10-18", submissions: 45, total: 60 },
-            { subject: "Database Management", title: "SQL Queries", dueDate: "2023-10-20", submissions: 38, total: 55 }
-        ]
-    }
-};
-
-const attendanceData = {
-    "IT": { "1": "70%", "2": "68%", "3": "75%", "4": "72%" },
-    "ENTC": { "1": "60%", "2": "65%", "3": "63%", "4": "67%" },
-    "Mechanical": { "1": "73%", "2": "70%", "3": "69%", "4": "71%" }
-};
-
-const dutiesData = {
-    "IT": [
-        { duty: "Lab Supervision", day: "Monday", time: "10:00 AM - 12:00 PM", venue: "Lab 101" },
-        { duty: "Exam Invigilation", day: "Wednesday", time: "2:00 PM - 4:00 PM", venue: "Room 205" }
-    ],
-    "ENTC": [
-        { duty: "Project Evaluation", day: "Tuesday", time: "11:00 AM - 1:00 PM", venue: "Lab 201" }
-    ]
-};
-
-// Department card click handler
-departmentCards.forEach(card => {
-    card.addEventListener('click', () => {
-        const dept = card.getAttribute('data-dept');
-        deptTitle.textContent = `${dept} Department - Select Year`;
-        yearSelectionContainer.innerHTML = '';
-        
-        // Create year selection cards
-        for (let year = 1; year <= 4; year++) {
-            const yearCard = document.createElement('div');
-            yearCard.className = 'year-card';
-            yearCard.textContent = `Year ${year}`;
-            yearCard.setAttribute('data-year', year);
-            yearCard.setAttribute('data-dept', dept);
-            yearSelectionContainer.appendChild(yearCard);
-        }
-        
-        showModalUnified(yearModal);
-    });
-});
-
-// Year selection handler
-yearSelectionContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('year-card')) {
-        const year = e.target.getAttribute('data-year');
-        const dept = e.target.getAttribute('data-dept');
-        
-        // Store the selected department and year for use in other modals
-        document.body.setAttribute('data-selected-dept', dept);
-        document.body.setAttribute('data-selected-year', year);
-        
-        hideAllModals();
-    }
-});
-
-// Exam menu handler (original functionality)
-examMenu.addEventListener('click', () => {
-    const selectedDept = document.body.getAttribute('data-selected-dept');
-    const selectedYear = document.body.getAttribute('data-selected-year');
-    
-    if (!selectedDept || !selectedYear) {
-        alert('Please select a department and year first by clicking on a department card.');
-        return;
-    }
-    
-    const modal = dynamicModals.exam;
-    modal.innerHTML = `<h2>Exam Schedule - ${selectedDept} Year ${selectedYear}</h2>`;
-    
-    if (examData[selectedDept] && examData[selectedDept][selectedYear]) {
-        const exams = examData[selectedDept][selectedYear];
-        
-        let tableHTML = `
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Subject</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Venue</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        
-        exams.forEach(exam => {
-            tableHTML += `
-                <tr>
-                    <td>${exam.subject}</td>
-                    <td>${exam.date}</td>
-                    <td>${exam.time}</td>
-                    <td>${exam.venue}</td>
-                </tr>
-            `;
-        });
-        
-        tableHTML += '</tbody></table>';
-        modal.innerHTML += tableHTML;
-    } else {
-        modal.innerHTML += '<p>No exam data available for this department and year.</p>';
-    }
-    
-    showModalUnified(modal);
-});
-
-// Courses menu handler (original functionality)
-coursesMenu.addEventListener('click', () => {
-    const selectedDept = document.body.getAttribute('data-selected-dept');
-    const selectedYear = document.body.getAttribute('data-selected-year');
-    
-    if (!selectedDept || !selectedYear) {
-        alert('Please select a department and year first by clicking on a department card.');
-        return;
-    }
-    
-    const modal = dynamicModals.courses;
-    modal.innerHTML = `<h2>Courses - ${selectedDept} Year ${selectedYear}</h2>`;
-    
-    if (coursesData[selectedDept] && coursesData[selectedDept][selectedYear]) {
-        const courses = coursesData[selectedDept][selectedYear];
-        
-        let tableHTML = `
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Course Name</th>
-                        <th>Course Code</th>
-                        <th>Credits</th>
-                        <th>Students</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        
-        courses.forEach(course => {
-            tableHTML += `
-                <tr>
-                    <td>${course.name}</td>
-                    <td>${course.code}</td>
-                    <td>${course.credits}</td>
-                    <td>${course.students}</td>
-                </tr>
-            `;
-        });
-        
-        tableHTML += '</tbody></table>';
-        modal.innerHTML += tableHTML;
-    } else {
-        modal.innerHTML += '<p>No course data available for this department and year.</p>';
-    }
-    
-    showModalUnified(modal);
-});
-
-// Students menu handler with enhanced features
-studentsMenu.addEventListener('click', () => {
-    const selectedDept = document.body.getAttribute('data-selected-dept');
-    const selectedYear = document.body.getAttribute('data-selected-year');
-    
-    if (!selectedDept || !selectedYear) {
-        alert('Please select a department and year first by clicking on a department card.');
-        return;
-    }
-    
-    const modal = dynamicModals.students;
-    modal.innerHTML = `<h2>Students - ${selectedDept} Year ${selectedYear}</h2>`;
-    
-    if (studentsData[selectedDept] && studentsData[selectedDept][selectedYear]) {
-        const students = studentsData[selectedDept][selectedYear];
-        
-        let tableHTML = `
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Performance</th>
-                        <th>Dropout Risk</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        
-        students.forEach((student, index) => {
-            const riskClass = `risk-${student.prediction.toLowerCase()}`;
-            tableHTML += `
-                <tr>
-                    <td>${student.id}</td>
-                    <td>${student.name}</td>
-                    <td>${student.email}</td>
-                    <td>${student.performance}</td>
-                    <td><span class="risk-indicator ${riskClass}"></span>${student.prediction} Risk</td>
-                    <td>
-                        <button class="edit-btn" onclick="viewStudentDetails('${selectedDept}', '${selectedYear}', ${index})">View Details</button>
-                    </td>
-                </tr>
-            `;
-        });
-        
-        tableHTML += '</tbody></table>';
-        modal.innerHTML += tableHTML;
-    } else {
-        modal.innerHTML += '<p>No student data available for this department and year.</p>';
-    }
-    
-    modal.innerHTML += `
-        <div class="action-buttons">
-            <button class="btn" id="addStudentBtn">Add New Student</button>
-            <button class="btn" id="guidanceBtn">Guidance</button>
-        </div>
-    `;
-    
-    showModalUnified(modal);
-    
-    document.getElementById('addStudentBtn').addEventListener('click', () => {
-        addNewStudent(selectedDept, selectedYear);
-    });
-    
-    document.getElementById('guidanceBtn').addEventListener('click', () => {
-        showGuidanceInfo();
-    });
-});
-
-// View Student Details with Prediction Information
-function viewStudentDetails(dept, year, index) {
-    const student = studentsData[dept][year][index];
-    const modal = dynamicModals.studentDetail;
-    
-    modal.innerHTML = `
-        <h2>Student Details - ${student.name}</h2>
-        <div class="student-detail-grid">
-            <div class="student-detail-card">
-                <h3>Basic Information</h3>
-                <p><strong>Student ID:</strong> ${student.id}</p>
-                <p><strong>Name:</strong> ${student.name}</p>
-                <p><strong>Email:</strong> ${student.email}</p>
-                <p><strong>Department:</strong> ${dept}</p>
-                <p><strong>Year:</strong> ${year}</p>
-                <p><strong>Final Grade:</strong> ${student.performance}</p>
-            </div>
-            
-            <div class="student-detail-card">
-                <h3>Dropout Prediction</h3>
-                <div class="prediction-details">
-                    <div class="prediction-item">
-                        <span><strong>Prediction:</strong></span>
-                        <span><span class="risk-indicator risk-${student.prediction.toLowerCase()}"></span>${student.prediction} Risk</span>
-                    </div>
-                    <div class="prediction-item">
-                        <span><strong>Confidence:</strong></span>
-                        <span>${student.confidence}%</span>
-                    </div>
-                    <div class="prediction-item">
-                        <span><strong>Probability - High Risk:</strong></span>
-                        <span>${student.probability_high}%</span>
-                    </div>
-                    <div class="probability-bar">
-                        <div class="probability-fill probability-high" style="width: ${student.probability_high}%"></div>
-                    </div>
-                    <div class="prediction-item">
-                        <span><strong>Probability - Medium Risk:</strong></span>
-                        <span>${student.probability_medium}%</span>
-                    </div>
-                    <div class="probability-bar">
-                        <div class="probability-fill probability-medium" style="width: ${student.probability_medium}%"></div>
-                    </div>
-                    <div class="prediction-item">
-                        <span><strong>Probability - Low Risk:</strong></span>
-                        <span>${student.probability_low}%</span>
-                    </div>
-                    <div class="probability-bar">
-                        <div class="probability-fill probability-low" style="width: ${student.probability_low}%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="guidance-section">
-            <h3>Recommendations</h3>
-            <div class="recommendation-box">
-                <p>${student.recommendation}</p>
-            </div>
-        </div>
-        
-        <div class="action-buttons">
-            <button class="btn" onclick="hideAllModals()">Close</button>
-        </div>
-    `;
-    
-    showModalUnified(modal);
-}
-
-// Add New Student with Prediction Fields
-function addNewStudent(dept, year) {
-    const modal = dynamicModals.students;
-    
-    modal.innerHTML = `
-        <h2>Add New Student - ${dept} Year ${year}</h2>
-        <div class="form-group">
-            <label for="newStudentId">Student ID</label>
-            <input type="text" id="newStudentId">
-        </div>
-        <div class="form-group">
-            <label for="newStudentName">Name</label>
-            <input type="text" id="newStudentName">
-        </div>
-        <div class="form-group">
-            <label for="newStudentEmail">Email</label>
-            <input type="email" id="newStudentEmail">
-        </div>
-        <div class="form-group">
-            <label for="newStudentPerformance">Performance (%)</label>
-            <input type="number" id="newStudentPerformance" min="0" max="100">
-        </div>
-        
-        <h3>Dropout Prediction Parameters</h3>
-        <div class="form-group">
-            <label for="newStudentPrediction">Prediction</label>
-            <select id="newStudentPrediction">
-                <option value="Low">Low Risk</option>
-                <option value="Medium">Medium Risk</option>
-                <option value="High">High Risk</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="newStudentConfidence">Confidence (%)</label>
-            <input type="number" id="newStudentConfidence" min="0" max="100" step="0.01">
-        </div>
-        <div class="form-group">
-            <label for="newStudentProbHigh">Probability - High Risk (%)</label>
-            <input type="number" id="newStudentProbHigh" min="0" max="100" step="0.01">
-        </div>
-        <div class="form-group">
-            <label for="newStudentProbMedium">Probability - Medium Risk (%)</label>
-            <input type="number" id="newStudentProbMedium" min="0" max="100" step="0.01">
-        </div>
-        <div class="form-group">
-            <label for="newStudentProbLow">Probability - Low Risk (%)</label>
-            <input type="number" id="newStudentProbLow" min="0" max="100" step="0.01">
-        </div>
-        <div class="form-group">
-            <label for="newStudentRecommendation">Recommendation</label>
-            <textarea id="newStudentRecommendation" rows="3"></textarea>
-        </div>
-        
-        <div class="action-buttons">
-            <button class="btn" onclick="saveNewStudent('${dept}', '${year}')">Save</button>
-            <button class="btn btn-secondary" onclick="hideAllModals()">Cancel</button>
-        </div>
-    `;
-    
-    showModalUnified(modal);
-}
-
-// Save New Student with Prediction Data
-function saveNewStudent(dept, year) {
-    const id = document.getElementById('newStudentId').value;
-    const name = document.getElementById('newStudentName').value;
-    const email = document.getElementById('newStudentEmail').value;
-    const performance = document.getElementById('newStudentPerformance').value + '%';
-    const prediction = document.getElementById('newStudentPrediction').value;
-    const confidence = parseFloat(document.getElementById('newStudentConfidence').value);
-    const probability_high = parseFloat(document.getElementById('newStudentProbHigh').value);
-    const probability_medium = parseFloat(document.getElementById('newStudentProbMedium').value);
-    const probability_low = parseFloat(document.getElementById('newStudentProbLow').value);
-    const recommendation = document.getElementById('newStudentRecommendation').value;
-    
-    if (!studentsData[dept][year]) {
-        studentsData[dept][year] = [];
-    }
-    
-    studentsData[dept][year].push({ 
-        id, 
-        name, 
-        email, 
-        performance,
-        prediction,
-        confidence,
-        probability_high,
-        probability_medium,
-        probability_low,
-        recommendation
-    });
-    
-    hideAllModals();
-    studentsMenu.click(); // Refresh the students view
-    
-    // Update student count in department card
-    updateStudentCount(dept);
-}
-
-// Update Student Count
-function updateStudentCount(dept) {
-    let totalStudents = 0;
-    
-    // Calculate total students across all years for the department
-    if (studentsData[dept]) {
-        for (const year in studentsData[dept]) {
-            totalStudents += studentsData[dept][year].length;
-        }
-    }
-    
-    // Update the department card
-    const deptCard = document.querySelector(`.department-card[data-dept="${dept}"]`);
-    const studentCountElement = deptCard.querySelector('.student-count');
-    studentCountElement.textContent = `${totalStudents} Students`;
-}
-
-// Show Guidance Information
-function showGuidanceInfo() {
-    const modal = dynamicModals.students;
-    
-    modal.innerHTML = `
-        <h2>Guidance - Dropout Prediction System</h2>
-        <div class="guidance-section">
-            <h3>Understanding Dropout Risk Levels</h3>
-            <p><span class="risk-indicator risk-low"></span> <strong>Low Risk:</strong> Students performing well with minimal risk factors</p>
-            <p><span class="risk-indicator risk-medium"></span> <strong>Medium Risk:</strong> Students showing some concerning indicators</p>
-            <p><span class="risk-indicator risk-high"></span> <strong>High Risk:</strong> Students requiring immediate intervention</p>
-        </div>
-        
-        <div class="guidance-section">
-            <h3>Recommended Actions</h3>
-            <div class="recommendation-box">
-                <p><strong>For High Risk Students:</strong> Immediate intervention required - Schedule meeting with parents, provide counseling, monitor daily attendance and performance closely.</p>
-            </div>
-            <div class="recommendation-box">
-                <p><strong>For Medium Risk Students:</strong> Monitor and provide support - Regular check-ins, encourage participation in support programs, address academic issues early.</p>
-            </div>
-            <div class="recommendation-box">
-                <p><strong>For Low Risk Students:</strong> Continue current support - Maintain regular monitoring, encourage continued good performance, provide enrichment opportunities.</p>
-            </div>
-        </div>
-        
-        <div class="action-buttons">
-            <button class="btn" onclick="studentsMenu.click()">Back to Students</button>
-        </div>
-    `;
-    
-    showModalUnified(modal);
-}
-
-// Other menu handlers (keeping original functionality)
-homeworkMenu.addEventListener('click', () => {
-    const selectedDept = document.body.getAttribute('data-selected-dept');
-    const selectedYear = document.body.getAttribute('data-selected-year');
-    
-    if (!selectedDept || !selectedYear) {
-        alert('Please select a department and year first by clicking on a department card.');
-        return;
-    }
-    
-    const modal = dynamicModals.homework;
-    modal.innerHTML = `<h2>Homework - ${selectedDept} Year ${selectedYear}</h2>`;
-    
-    if (homeworkData[selectedDept] && homeworkData[selectedDept][selectedYear]) {
-        const homeworks = homeworkData[selectedDept][selectedYear];
-        
-        let tableHTML = `
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Subject</th>
-                        <th>Title</th>
-                        <th>Due Date</th>
-                        <th>Submissions</th>
-                        <th>Progress</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        
-        homeworks.forEach(hw => {
-            const progressPercent = (hw.submissions / hw.total) * 100;
-            tableHTML += `
-                <tr>
-                    <td>${hw.subject}</td>
-                    <td>${hw.title}</td>
-                    <td>${hw.dueDate}</td>
-                    <td>${hw.submissions}/${hw.total}</td>
-                    <td>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
-                        </div>
-                        ${Math.round(progressPercent)}%
-                    </td>
-                </tr>
-            `;
-        });
-        
-        tableHTML += '</tbody></table>';
-        modal.innerHTML += tableHTML;
-    } else {
-        modal.innerHTML += '<p>No homework data available for this department and year.</p>';
-    }
-    
-    showModalUnified(modal);
-});
-
-attendanceMenu.addEventListener('click', () => {
-    const selectedDept = document.body.getAttribute('data-selected-dept');
-    const selectedYear = document.body.getAttribute('data-selected-year');
-    
-    if (!selectedDept || !selectedYear) {
-        alert('Please select a department and year first by clicking on a department card.');
-        return;
-    }
-    
-    const modal = dynamicModals.attendance;
-    modal.innerHTML = `<h2>Attendance - ${selectedDept} Year ${selectedYear}</h2>`;
-    
-    if (attendanceData[selectedDept] && attendanceData[selectedDept][selectedYear]) {
-        const attendance = attendanceData[selectedDept][selectedYear];
-        
-        let tableHTML = `
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Month</th>
-                        <th>Attendance %</th>
-                        <th>Progress</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        
-        Object.entries(attendance).forEach(([month, percent]) => {
-            const percentValue = parseInt(percent);
-            tableHTML += `
-                <tr>
-                    <td>Month ${month}</td>
-                    <td>${percent}</td>
-                    <td>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${percentValue}%"></div>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        });
-        
-        tableHTML += '</tbody></table>';
-        modal.innerHTML += tableHTML;
-    } else {
-        modal.innerHTML += '<p>No attendance data available for this department and year.</p>';
-    }
-    
-    showModalUnified(modal);
-});
-
-dutiesMenu.addEventListener('click', () => {
-    const selectedDept = document.body.getAttribute('data-selected-dept');
-    
-    if (!selectedDept) {
-        alert('Please select a department first by clicking on a department card.');
-        return;
-    }
-    
-    const modal = dynamicModals.duties;
-    modal.innerHTML = `<h2>Duties - ${selectedDept}</h2>`;
-    
-    if (dutiesData[selectedDept]) {
-        const duties = dutiesData[selectedDept];
-        
-        let tableHTML = `
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Duty</th>
-                        <th>Day</th>
-                        <th>Time</th>
-                        <th>Venue</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        
-        duties.forEach(duty => {
-            tableHTML += `
-                <tr>
-                    <td>${duty.duty}</td>
-                    <td>${duty.day}</td>
-                    <td>${duty.time}</td>
-                    <td>${duty.venue}</td>
-                </tr>
-            `;
-        });
-        
-        tableHTML += '</tbody></table>';
-        modal.innerHTML += tableHTML;
-    } else {
-        modal.innerHTML += '<p>No duty data available for this department.</p>';
-    }
-    
-    showModalUnified(modal);
-});
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-    renderCalendar('academicCalendar');
-    renderCalendar('eventsCalendar', true);
-    
-    // Initialize student counts
-    updateStudentCount('IT');
-    updateStudentCount('ENTC');
-    updateStudentCount('Mechanical');
-    updateStudentCount('Civil');
-});
-</script>
-</body>
-</html>
+    <div class="departments" id="departmentsContainer">
+      <div class="department-card" data-dept="IT">
+        <span class="icon">💻</span>
+        <h3>IT</h3>
+        <span class="student-count">120 Students</span>
+      </div>
+      <div class="department-card" data-dept="ENTC">
+        <span class="icon">📡</span>
+        <h3

@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - EduPredict</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 50px;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      cursor: pointer;
+    }
+
+    .logo i {
+      -webkit-text-fill-color: initial;
+      color: #10ac84;
+      font-size: 2rem;
+    }
+
+    .admin-badge {
+      padding: 6px 16px;
+      background: rgba(238, 121, 57, 0.15);
+      border: 1px solid rgba(238, 121, 57, 0.3);
+      border-radius: 50px;
+      font-size: 0.8rem;
+      color: #ee7939;
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+      transition: all 0.3s ease;
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .logout-btn {
+      padding: 8px 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      background: rgba(255, 0, 0, 0.05);
+      color: #ff6b6b;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 0, 0, 0.1);
+      border-color: rgba(255, 0, 0, 0.4);
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .admin-container {
+      display: flex;
+      padding: 30px 50px;
+      gap: 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 25px 20px;
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+    }
+
+    .sidebar-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.2);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 4px;
+      border: none;
+      background: transparent;
+      width: 100%;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .sidebar-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .sidebar-item.active {
+      background: rgba(16, 172, 132, 0.1);
+      color: #10ac84;
+      border: 1px solid rgba(16, 172, 132, 0.2);
+    }
+
+    .sidebar-item i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    .sidebar-item .badge {
+      margin-left: auto;
+      background: rgba(16, 172, 132, 0.15);
+      color: #10ac84;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.7rem;
+    }
+
+    /* ===== CONTENT ===== */
+    .content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .page-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .page-header p {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    /* ===== STATS CARDS ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 20px 24px;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .stat-card .number {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-card .label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 4px;
+    }
+
+    /* ===== FORM ===== */
+    .form-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    .form-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+
+    .form-card .subtitle {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .form-group label .required {
+      color: #ff6b6b;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      width: 100%;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #10ac84;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(16, 172, 132, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .form-group select option {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      color: #ff6b6b;
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 0, 0, 0.2);
+    }
+
+    /* ===== COLLEGE CODE DISPLAY ===== */
+    .code-display {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 20px;
+      background: rgba(16, 172, 132, 0.05);
+      border: 1px solid rgba(16, 172, 132, 0.15);
+      border-radius: 12px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .code-display .code {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-family: 'Courier New', monospace;
+    }
+
+    .code-display .copy-btn {
+      padding: 6px 16px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(16, 172, 132, 0.15);
+      color: #10ac84;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+    }
+
+    .code-display .copy-btn:hover {
+      background: rgba(16, 172, 132, 0.25);
+    }
+
+    .code-display .copy-btn.generate {
+      background: rgba(238, 121, 57, 0.15);
+      color: #ee7939;
+    }
+
+    .code-display .copy-btn.generate:hover {
+      background: rgba(238, 121, 57, 0.25);
+    }
+
+    /* ===== TABLE ===== */
+    .table-container {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .table-header h3 {
+      font-size: 1rem;
+    }
+
+    .table-header .search-box {
+      display: flex;
+      gap: 10px;
+    }
+
+    .table-header .search-box input {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      width: 200px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .table-header .search-box input:focus {
+      outline: none;
+      border-color: #10ac84;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    th {
+      text-align: left;
+      padding: 14px 20px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.3);
+      font-weight: 600;
+    }
+
+    td {
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+
+    .status-badge.active {
+      background: rgba(16, 172, 132, 0.15);
+      color: #10ac84;
+    }
+
+    .status-badge.pending {
+      background: rgba(238, 121, 57, 0.15);
+      color: #ee7939;
+    }
+
+    .status-badge.inactive {
+      background: rgba(255, 0, 0, 0.1);
+      color: #ff6b6b;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .action-btn.edit {
+      background: rgba(16, 172, 132, 0.1);
+      color: #10ac84;
+    }
+
+    .action-btn.edit:hover {
+      background: rgba(16, 172, 132, 0.2);
+    }
+
+    .action-btn.delete {
+      background: rgba(255, 0, 0, 0.1);
+      color: #ff6b6b;
+    }
+
+    .action-btn.delete:hover {
+      background: rgba(255, 0, 0, 0.2);
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.3);
+      padding: 40px;
+    }
+
+    .empty-state i {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    /* ===== DANGER ZONE ===== */
+    .danger-zone {
+      border-color: rgba(255, 0, 0, 0.1);
+    }
+
+    .danger-zone h3 {
+      color: #ff6b6b;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: rgba(10, 10, 15, 0.95);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .toast.success {
+      border-color: rgba(16, 172, 132, 0.3);
+    }
+
+    .toast.success i {
+      color: #10ac84;
+    }
+
+    .toast.error {
+      border-color: rgba(255, 0, 0, 0.3);
+    }
+
+    .toast.error i {
+      color: #ff6b6b;
+    }
+
+    /* ===== TAB CONTENT ===== */
+    .tab-content {
+      display: block;
+    }
+
+    .tab-content.hidden {
+      display: none;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .admin-container {
+        flex-direction: column;
+        padding: 20px;
+      }
+      .sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 15px;
+      }
+      .sidebar-title {
+        display: none;
+      }
+      .sidebar-item {
+        width: auto;
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        margin: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .nav-links {
+        gap: 10px;
+      }
+      .nav-links a {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .table-container {
+        overflow-x: auto;
+      }
+      .page-header h2 {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .code-display {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .code-display .code {
+        font-size: 1.2rem;
+      }
+      .code-display .copy-btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="logo">
+      <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+      EduPredict
+    </div>
+    <span class="admin-badge"><i class="fas fa-shield-alt" aria-hidden="true"></i> Admin Panel</span>
+    <ul class="nav-links">
+      <li><a href="index.html"><i class="fas fa-home" aria-hidden="true"></i> Home</a></li>
+      <li><a href="#" class="active"><i class="fas fa-university" aria-hidden="true"></i> Admin</a></li>
+      <li><button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Logout</button></li>
+    </ul>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="admin-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" role="tablist" aria-label="Admin Navigation">
+      <div class="sidebar-title">Navigation</div>
+      <button class="sidebar-item active" data-tab="dashboard" role="tab" aria-selected="true" aria-label="Dashboard">
+        <i class="fas fa-chart-pie" aria-hidden="true"></i> Dashboard
+      </button>
+      <button class="sidebar-item" data-tab="colleges" role="tab" aria-selected="false" aria-label="Colleges">
+        <i class="fas fa-university" aria-hidden="true"></i> Colleges
+        <span class="badge" id="collegeCount">0</span>
+      </button>
+      <button class="sidebar-item" data-tab="register" role="tab" aria-selected="false" aria-label="Register College">
+        <i class="fas fa-plus-circle" aria-hidden="true"></i> Register College
+      </button>
+      <button class="sidebar-item" data-tab="settings" role="tab" aria-selected="false" aria-label="Settings">
+        <i class="fas fa-cog" aria-hidden="true"></i> Settings
+      </button>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+      <!-- ===== DASHBOARD TAB ===== -->
+      <section id="tab-dashboard" class="tab-content" role="tabpanel" aria-labelledby="dashboard-tab">
+        <div class="page-header">
+          <div>
+            <h2 id="dashboard-tab">Dashboard</h2>
+            <p>Overview of all registered colleges</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="number" id="totalColleges">0</div>
+            <div class="label">Total Colleges</div>
+          </div>
+          <div class="stat-card">
+            <div class="number" id="activeColleges">0</div>
+            <div class="label">Active Colleges</div>
+          </div>
+          <div class="stat-card">
+            <div class="number" id="pendingColleges">0</div>
+            <div class="label">Pending Registrations</div>
+          </div>
+          <div class="stat-card">
+            <div class="number" id="totalStudents">0</div>
+            <div class="label">Total Students</div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header">
+            <h3>Recent Colleges</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>College Code</th>
+                <th>College Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Registered</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recentCollegesTable">
+              <tr>
+                <td colspan="6">
+                  <div class="empty-state">
+                    <i class="fas fa-inbox" aria-hidden="true"></i>
+                    No colleges registered yet
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== COLLEGES TAB ===== -->
+      <section id="tab-colleges" class="tab-content hidden" role="tabpanel" aria-labelledby="colleges-tab">
+        <div class="page-header">
+          <div>
+            <h2 id="colleges-tab">All Colleges</h2>
+            <p>Manage all registered colleges</p>
+          </div>
+          <button class="btn btn-primary" onclick="switchTab('register')">
+            <i class="fas fa-plus" aria-hidden="true"></i> Add College
+          </button>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header">
+            <h3>College List</h3>
+            <div class="search-box">
+              <input type="text" id="searchCollege" placeholder="Search colleges..." oninput="filterColleges()" aria-label="Search colleges" />
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>College Code</th>
+                <th>College Name</th>
+                <th>Email</th>
+                <th>City</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="allCollegesTable">
+              <tr>
+                <td colspan="6">
+                  <div class="empty-state">
+                    <i class="fas fa-inbox" aria-hidden="true"></i>
+                    No colleges registered yet
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== REGISTER COLLEGE TAB ===== -->
+      <section id="tab-register" class="tab-content hidden" role="tabpanel" aria-labelledby="register-tab">
+        <div class="page-header">
+          <div>
+            <h2 id="register-tab">Register New College</h2>
+            <p>Generate a unique college code and register a new institution</p>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h3>College Details</h3>
+          <p class="subtitle">Fill in all the details to register a new college</p>
+
+          <form id="collegeForm" novalidate>
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="collegeName">College Name <span class="required">*</span></label>
+                <input type="text" id="collegeName" placeholder="Enter full college name" required aria-required="true" />
+              </div>
+
+              <div class="form-group">
+                <label for="collegeType">College Type <span class="required">*</span></label>
+                <select id="collegeType" required aria-required="true" title="Select college type">
+                  <option value="">Select Type</option>
+                  <option value="Autonomous">Autonomous</option>
+                  <option value="Non-Autonomous">Non-Autonomous</option>
+                  <option value="Deemed">Deemed</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="category">Category <span class="required">*</span></label>
+                <select id="category" required aria-required="true" title="Select category">
+                  <option value="">Select Category</option>
+                  <option value="Institute">Institute</option>
+                  <option value="University">University</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="aided">Aided Status <span class="required">*</span></label>
+                <select id="aided" required aria-required="true" title="Select aided status">
+                  <option value="">Select Status</option>
+                  <option value="true">Aided</option>
+                  <option value="false">Non-Aided</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="principalName">Principal Name <span class="required">*</span></label>
+                <input type="text" id="principalName" placeholder="Enter principal name" required aria-required="true" />
+              </div>
+
+              <div class="form-group">
+                <label for="collegeEmail">Email <span class="required">*</span></label>
+                <input type="email" id="collegeEmail" placeholder="Enter official email" required aria-required="true" />
+              </div>
+
+              <div class="form-group">
+                <label for="collegePhone">Phone <span class="required">*</span></label>
+                <input type="tel" id="collegePhone" placeholder="Enter 10-digit phone number" required aria-required="true" />
+              </div>
+
+              <div class="form-group">
+                <label for="collegeCity">City <span class="required">*</span></label>
+                <input type="text" id="collegeCity" placeholder="Enter city" required aria-required="true" />
+              </div>
+
+              <div class="form-group">
+                <label for="collegeState">State <span class="required">*</span></label>
+                <input type="text" id="collegeState" placeholder="Enter state" required aria-required="true" />
+              </div>
+
+              <div class="form-group">
+                <label for="collegePincode">Pincode <span class="required">*</span></label>
+                <input type="text" id="collegePincode" placeholder="Enter 6-digit pincode" required aria-required="true" />
+              </div>
+
+              <div class="form-group full-width">
+                <label for="collegeAddress">Address <span class="required">*</span></label>
+                <textarea id="collegeAddress" placeholder="Enter complete address" required aria-required="true"></textarea>
+              </div>
+
+              <div class="form-group full-width">
+                <label>College Code (Auto-generated)</label>
+                <div class="code-display">
+                  <span class="code" id="generatedCode">EDU-XXXXX</span>
+                  <button type="button" class="copy-btn" onclick="copyCode()" aria-label="Copy college code">
+                    <i class="fas fa-copy" aria-hidden="true"></i> Copy
+                  </button>
+                  <button type="button" class="copy-btn generate" onclick="generateCode()" aria-label="Generate new college code">
+                    <i class="fas fa-sync" aria-hidden="true"></i> Generate New
+                  </button>
+                </div>
+                <input type="hidden" id="collegeCode" value="EDU-XXXXX" />
+              </div>
+
+              <div class="form-group">
+                <label for="collegePassword">Password <span class="required">*</span></label>
+                <input type="password" id="collegePassword" placeholder="Create a password" required aria-required="true" minlength="6" />
+              </div>
+
+              <div class="form-group">
+                <label for="collegeConfirmPassword">Confirm Password <span class="required">*</span></label>
+                <input type="password" id="collegeConfirmPassword" placeholder="Confirm password" required aria-required="true" minlength="6" />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i> Register College
+              </button>
+              <button type="reset" class="btn btn-outline">
+                <i class="fas fa-undo" aria-hidden="true"></i> Reset
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ===== SETTINGS TAB ===== -->
+      <section id="tab-settings" class="tab-content hidden" role="tabpanel" aria-labelledby="settings-tab">
+        <div class="page-header">
+          <div>
+            <h2 id="settings-tab">Settings</h2>
+            <p>Admin preferences and configuration</p>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h3>Admin Profile</h3>
+          <p class="subtitle">Update your admin account settings</p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="adminName">Admin Name</label>
+              <input type="text" id="adminName" value="Super Admin" />
+            </div>
+            <div class="form-group">
+              <label for="adminEmail">Admin Email</label>
+              <input type="email" id="adminEmail" value="admin@edupredict.com" />
+            </div>
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <input type="password" id="newPassword" placeholder="Enter new password" />
+            </div>
+            <div class="form-group">
+              <label for="confirmNewPassword">Confirm Password</label>
+              <input type="password" id="confirmNewPassword" placeholder="Confirm new password" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary"><i class="fas fa-save" aria-hidden="true"></i> Update Settings</button>
+          </div>
+        </div>
+
+        <div class="form-card danger-zone">
+          <h3>Danger Zone</h3>
+          <p class="subtitle">Permanently delete all college data</p>
+          <button class="btn btn-danger" onclick="confirmDeleteAll()">
+            <i class="fas fa-trash" aria-hidden="true"></i> Delete All Colleges
+          </button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="alert" aria-live="polite">
+    <i class="fas fa-check-circle" aria-hidden="true"></i>
+    <span id="toastMessage">Success!</span>
+  </div>
+
+  <script>
+    // ===== DATA STORE =====
+    var colleges = [];
+    var editIndex = -1;
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+      loadColleges();
+      generateCode();
+      updateUI();
+      setupTabs();
+    });
+
+    // ===== LOCAL STORAGE =====
+    function loadColleges() {
+      var data = localStorage.getItem('edupredict_colleges');
+      if (data) {
+        colleges = JSON.parse(data);
+      }
+    }
+
+    function saveColleges() {
+      localStorage.setItem('edupredict_colleges', JSON.stringify(colleges));
+    }
+
+    // ===== GENERATE COLLEGE CODE =====
+    function generateCode() {
+      var prefix = 'EDU';
+      var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      var suffix = '';
+      for (var i = 0; i < 5; i++) {
+        suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      var code = prefix + '-' + suffix;
+      document.getElementById('generatedCode').textContent = code;
+      document.getElementById('collegeCode').value = code;
+      return code;
+    }
+
+    function copyCode() {
+      var code = document.getElementById('collegeCode').value;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code);
+        showToast('College code copied to clipboard!', 'success');
+      } else {
+        var temp = document.createElement('input');
+        temp.value = code;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        showToast('College code copied to clipboard!', 'success');
+      }
+    }
+
+    // ===== REGISTER COLLEGE =====
+    document.getElementById('collegeForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      var name = document.getElementById('collegeName').value.trim();
+      var type = document.getElementById('collegeType').value;
+      var category = document.getElementById('category').value;
+      var aided = document.getElementById('aided').value;
+      var principal = document.getElementById('principalName').value.trim();
+      var email = document.getElementById('collegeEmail').value.trim();
+      var phone = document.getElementById('collegePhone').value.trim();
+      var city = document.getElementById('collegeCity').value.trim();
+      var state = document.getElementById('collegeState').value.trim();
+      var pincode = document.getElementById('collegePincode').value.trim();
+      var address = document.getElementById('collegeAddress').value.trim();
+      var code = document.getElementById('collegeCode').value;
+      var password = document.getElementById('collegePassword').value;
+      var confirm = document.getElementById('collegeConfirmPassword').value;
+
+      if (!name || !type || !category || !aided || !principal || !email || !phone || !city || !state || !pincode || !address || !password) {
+        showToast('Please fill all required fields', 'error');
+        return;
+      }
+
+      if (password !== confirm) {
+        showToast('Passwords do not match', 'error');
+        return;
+      }
+
+      if (password.length < 6) {
+        showToast('Password must be at least 6 characters', 'error');
+        return;
+      }
+
+      if (colleges.some(function(c) { return c.code === code; })) {
+        generateCode();
+        showToast('Code already exists, new code generated', 'error');
+        return;
+      }
+
+      if (colleges.some(function(c) { return c.email === email; })) {
+        showToast('Email already registered', 'error');
+        return;
+      }
+
+      var newCollege = {
+        id: Date.now(),
+        name: name,
+        type: type,
+        category: category,
+        aided: aided === 'true',
+        principal: principal,
+        email: email,
+        phone: phone,
+        city: city,
+        state: state,
+        pincode: pincode,
+        address: address,
+        code: code,
+        password: password,
+        status: 'active',
+        registeredAt: new Date().toISOString(),
+        students: 0
+      };
+
+      colleges.push(newCollege);
+      saveColleges();
+      updateUI();
+
+      this.reset();
+      generateCode();
+
+      showToast('College registered successfully! Code: ' + code, 'success');
+    });
+
+    // ===== UPDATE UI =====
+    function updateUI() {
+      document.getElementById('totalColleges').textContent = colleges.length;
+      document.getElementById('activeColleges').textContent = colleges.filter(function(c) { return c.status === 'active'; }).length;
+      document.getElementById('pendingColleges').textContent = colleges.filter(function(c) { return c.status === 'pending'; }).length;
+      document.getElementById('collegeCount').textContent = colleges.length;
+
+      var totalStudents = colleges.reduce(function(sum, c) { return sum + (c.students || 0); }, 0);
+      document.getElementById('totalStudents').textContent = totalStudents;
+
+      renderRecentColleges();
+      renderAllColleges();
+    }
+
+    function renderRecentColleges() {
+      var tbody = document.getElementById('recentCollegesTable');
+      var recent = colleges.slice(-5).reverse();
+
+      if (recent.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox" aria-hidden="true"></i>No colleges registered yet</div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = recent.map(function(c) {
+        return '<tr>' +
+          '<td><span class="college-code">' + c.code + '</span></td>' +
+          '<td>' + c.name + '</td>' +
+          '<td>' + c.email + '</td>' +
+          '<td><span class="status-badge ' + c.status + '">' + c.status.charAt(0).toUpperCase() + c.status.slice(1) + '</span></td>' +
+          '<td>' + new Date(c.registeredAt).toLocaleDateString() + '</td>' +
+          '<td><div class="action-btns">' +
+          '<button class="action-btn edit" onclick="editCollege(\'' + c.id + '\')" aria-label="Edit college"><i class="fas fa-edit" aria-hidden="true"></i></button>' +
+          '<button class="action-btn delete" onclick="deleteCollege(\'' + c.id + '\')" aria-label="Delete college"><i class="fas fa-trash" aria-hidden="true"></i></button>' +
+          '</div></td></tr>';
+      }).join('');
+    }
+
+    function renderAllColleges() {
+      var tbody = document.getElementById('allCollegesTable');
+
+      if (colleges.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox" aria-hidden="true"></i>No colleges registered yet</div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = colleges.map(function(c) {
+        return '<tr>' +
+          '<td><span class="college-code">' + c.code + '</span></td>' +
+          '<td>' + c.name + '</td>' +
+          '<td>' + c.email + '</td>' +
+          '<td>' + c.city + '</td>' +
+          '<td><span class="status-badge ' + c.status + '">' + c.status.charAt(0).toUpperCase() + c.status.slice(1) + '</span></td>' +
+          '<td><div class="action-btns">' +
+          '<button class="action-btn edit" onclick="editCollege(\'' + c.id + '\')" aria-label="Edit college"><i class="fas fa-edit" aria-hidden="true"></i></button>' +
+          '<button class="action-btn delete" onclick="deleteCollege(\'' + c.id + '\')" aria-label="Delete college"><i class="fas fa-trash" aria-hidden="true"></i></button>' +
+          '</div></td></tr>';
+      }).join('');
+    }
+
+    function filterColleges() {
+      var search = document.getElementById('searchCollege').value.toLowerCase();
+      var tbody = document.getElementById('allCollegesTable');
+      
+      var filtered = colleges.filter(function(c) {
+        return c.name.toLowerCase().includes(search) ||
+          c.code.toLowerCase().includes(search) ||
+          c.email.toLowerCase().includes(search) ||
+          c.city.toLowerCase().includes(search);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-search" aria-hidden="true"></i>No colleges found</div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(function(c) {
+        return '<tr>' +
+          '<td><span class="college-code">' + c.code + '</span></td>' +
+          '<td>' + c.name + '</td>' +
+          '<td>' + c.email + '</td>' +
+          '<td>' + c.city + '</td>' +
+          '<td><span class="status-badge ' + c.status + '">' + c.status.charAt(0).toUpperCase() + c.status.slice(1) + '</span></td>' +
+          '<td><div class="action-btns">' +
+          '<button class="action-btn edit" onclick="editCollege(\'' + c.id + '\')" aria-label="Edit college"><i class="fas fa-edit" aria-hidden="true"></i></button>' +
+          '<button class="action-btn delete" onclick="deleteCollege(\'' + c.id + '\')" aria-label="Delete college"><i class="fas fa-trash" aria-hidden="true"></i></button>' +
+          '</div></td></tr>';
+      }).join('');
+    }
+
+    // ===== DELETE COLLEGE =====
+    function deleteCollege(id) {
+      if (confirm('Are you sure you want to delete this college?')) {
+        colleges = colleges.filter(function(c) { return c.id != id; });
+        saveColleges();
+        updateUI();
+        showToast('College deleted successfully', 'success');
+      }
+    }
+
+    function confirmDeleteAll() {
+      if (confirm('⚠️ Are you sure? This will delete ALL colleges permanently!')) {
+        if (confirm('Final confirmation: Delete all colleges?')) {
+          colleges = [];
+          saveColleges();
+          updateUI();
+          showToast('All colleges deleted', 'success');
+        }
+      }
+    }
+
+    // ===== EDIT COLLEGE =====
+    function editCollege(id) {
+      var college = colleges.find(function(c) { return c.id == id; });
+      if (!college) return;
+
+      document.getElementById('collegeName').value = college.name;
+      document.getElementById('collegeType').value = college.type;
+      document.getElementById('category').value = college.category;
+      document.getElementById('aided').value = college.aided ? 'true' : 'false';
+      document.getElementById('principalName').value = college.principal;
+      document.getElementById('collegeEmail').value = college.email;
+      document.getElementById('collegePhone').value = college.phone;
+      document.getElementById('collegeCity').value = college.city;
+      document.getElementById('collegeState').value = college.state;
+      document.getElementById('collegePincode').value = college.pincode;
+      document.getElementById('collegeAddress').value = college.address;
+      document.getElementById('collegeCode').value = college.code;
+      document.getElementById('generatedCode').textContent = college.code;
+
+      var index = colleges.findIndex(function(c) { return c.id == id; });
+      if (index > -1) {
+        colleges.splice(index, 1);
+        saveColleges();
+        updateUI();
+        switchTab('register');
+        showToast('Edit mode: Update the details and submit', 'success');
+      }
+    }
+
+    // ===== TAB SYSTEM =====
+    function setupTabs() {
+      var tabs = document.querySelectorAll('.sidebar-item[role="tab"]');
+      var panels = document.querySelectorAll('.tab-content');
+
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          var tabId = this.dataset.tab;
+          switchTab(tabId);
+        });
+      });
+    }
+
+    function switchTab(tabId) {
+      // Update tabs
+      var tabs = document.querySelectorAll('.sidebar-item[role="tab"]');
+      tabs.forEach(function(tab) {
+        var isActive = tab.dataset.tab === tabId;
+        tab.setAttribute('aria-selected', isActive);
+        tab.classList.toggle('active', isActive);
+      });
+
+      // Update panels
+      var panels = document.querySelectorAll('.tab-content');
+      panels.forEach(function(panel) {
+        var isActive = panel.id === 'tab-' + tabId;
+        panel.classList.toggle('hidden', !isActive);
+      });
+
+      if (tabId === 'register') {
+        generateCode();
+      }
+    }
+
+    // ===== TOAST =====
+    function showToast(message, type) {
+      var toast = document.getElementById('toast');
+      var toastMsg = document.getElementById('toastMessage');
+      toast.className = 'toast ' + (type || 'success');
+      toastMsg.textContent = message;
+      toast.style.display = 'flex';
+
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(function() {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // ===== LOGOUT =====
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        window.location.href = 'index.html';
+      }
+    }
+
+    // ===== KEYBOARD SHORTCUT =====
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.key === 'g') {
+        e.preventDefault();
+        var registerTab = document.getElementById('tab-register');
+        if (registerTab && !registerTab.classList.contains('hidden')) {
+          generateCode();
+          showToast('New code generated!', 'success');
+        }
+      }
+    });
+
+    // ===== COLLEGE CODE STYLING =====
+    // Add CSS for college-code class
+    var style = document.createElement('style');
+    style.textContent = '.college-code { color: #10ac84; font-weight: 600; }';
+    document.head.appendChild(style);
+  </script>
+
+</body>
+</html>

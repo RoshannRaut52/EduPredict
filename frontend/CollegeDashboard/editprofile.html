@@ -4,208 +4,529 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>College Profile Management - EduPredict</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    /* Root & base */
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background: linear-gradient(135deg, #b3b4b5 100%);
-      color: #0a0808;
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
       min-height: 100vh;
       padding: 1rem 2rem;
     }
+
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
+
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
+
+    /* ===== FLOATING PARTICLES ===== */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ===== HEADER ===== */
     header {
-      background: #000;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       color: #fff;
       padding: 1rem 2rem;
       font-weight: 600;
       font-size: 1.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 0 0 12px 12px;
+      margin: -1rem -2rem 0;
+      padding: 1rem 2rem;
     }
+
+    header .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    header .logo i {
+      -webkit-text-fill-color: initial;
+      color: #10ac84;
+      font-size: 1.8rem;
+    }
+
+    header .header-actions {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    header .header-actions .btn {
+      padding: 8px 20px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    header .header-actions .btn-back {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    header .header-actions .btn-back:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    header .header-actions .btn-logout {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      color: #ff6b6b;
+    }
+
+    header .header-actions .btn-logout:hover {
+      background: rgba(255, 0, 0, 0.2);
+    }
+
+    /* ===== MAIN ===== */
     main {
       max-width: 1200px;
       margin: 1.5rem auto;
-      background: rgba(255,255,255,0.03);
-      border-radius: 1rem;
-      box-shadow: 0 0 9px rgba(0,0,0,0.15);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
       padding: 2rem 3rem;
     }
+
     h1, h2 {
       margin-bottom: 1rem;
-      color: #141313;
+      color: rgba(255, 255, 255, 0.9);
     }
+
+    h1 i, h2 i {
+      color: #10ac84;
+      margin-right: 10px;
+    }
+
     section {
       margin-bottom: 2.5rem;
     }
-    /* Form styling */
+
+    /* ===== FORM ===== */
     form {
       display: grid;
       grid-template-columns: 180px 1fr;
       row-gap: 1rem;
       column-gap: 1.6rem;
       align-items: center;
-      color: #141313;
+      color: rgba(255, 255, 255, 0.8);
     }
+
     label {
       font-weight: 600;
+      font-size: 0.9rem;
     }
-    input[type=text],
-    input[type=email],
-    input[type=password],
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
     select {
-      padding: 0.4rem 0.8rem;
-      border: 1px solid #ccc;
-      border-radius: 0.4rem;
-      font-size: 1rem;
+      padding: 0.5rem 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      font-size: 0.95rem;
       width: 100%;
-      background: #fff;
-      transition: border-color 0.25s ease;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
     }
-    input[type=text]:focus,
-    input[type=email]:focus,
-    input[type=password]:focus,
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
     select:focus {
       outline: none;
       border-color: #10ac84;
-      box-shadow: 0 0 8px #10ac8477;
+      box-shadow: 0 0 0 4px rgba(16, 172, 132, 0.1);
     }
-    /* Buttons */
-    button {
-      grid-column: 2 / 3;
-      width: 130px;
-      margin-top: 1rem;
-      background: #10ac84;
+
+    select option {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      padding: 10px 24px;
+      border-radius: 10px;
       border: none;
-      border-radius: 0.5rem;
-      color: white;
-      font-weight: 700;
-      font-size: 1.1rem;
-      padding: 0.55rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
-    button:hover {
-      background: #0d8b6b;
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      color: #fff;
     }
-    /* Table styling */
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      color: #ff6b6b;
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 0, 0, 0.2);
+    }
+
+    .btn-small {
+      padding: 0.3rem 0.8rem;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-small-success {
+      background: rgba(16, 172, 132, 0.15);
+      border: 1px solid rgba(16, 172, 132, 0.2);
+      color: #10ac84;
+    }
+
+    .btn-small-success:hover {
+      background: rgba(16, 172, 132, 0.25);
+    }
+
+    .btn-small-danger {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      color: #ff6b6b;
+    }
+
+    .btn-small-danger:hover {
+      background: rgba(255, 0, 0, 0.2);
+    }
+
+    .btn-small-primary {
+      background: rgba(16, 172, 132, 0.1);
+      border: 1px solid rgba(16, 172, 132, 0.15);
+      color: #10ac84;
+    }
+
+    .btn-small-primary:hover {
+      background: rgba(16, 172, 132, 0.2);
+    }
+
+    form .btn-submit {
+      grid-column: 2 / 3;
+      width: 150px;
+      margin-top: 0.5rem;
+    }
+
+    /* ===== TABLE ===== */
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-      border-radius: 0.8rem;
+      border-radius: 12px;
       overflow: hidden;
-      background: #fff;
     }
-    th, td {
+
+    th {
+      background: rgba(16, 172, 132, 0.1);
+      color: #10ac84;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       padding: 0.7rem 1rem;
       text-align: left;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
-    th {
-      background: #10ac84;
-      color: white;
-      font-weight: 700;
-      font-size: 1rem;
-    }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    /* Inline action buttons */
-    .btn-small {
-      background: #ee5253;
-      border: none;
-      color: white;
-      padding: 0.25rem 0.6rem;
-      border-radius: 0.3rem;
-      cursor: pointer;
-      font-weight: 600;
+
+    td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: rgba(255, 255, 255, 0.7);
       font-size: 0.9rem;
-      margin-left: 0.5rem;
-      transition: background 0.2s ease;
     }
-    .btn-small:hover {
-      background: #c3311f;
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
     }
-    /* Responsive */
-    @media (max-width: 720px) {
+
+    .table-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: rgba(10, 10, 15, 0.95);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 3000;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .toast.success { border-color: rgba(16, 172, 132, 0.3); }
+    .toast.success i { color: #10ac84; }
+    .toast.error { border-color: rgba(255, 0, 0, 0.3); }
+    .toast.error i { color: #ff6b6b; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      body { padding: 1rem; }
+      header { margin: -1rem -1rem 0; padding: 1rem; flex-wrap: wrap; gap: 10px; }
+      header .logo { font-size: 1.2rem; }
+      main { padding: 1.5rem; }
       form {
         grid-template-columns: 1fr;
       }
-      label, button {
+      label, form .btn-submit {
         grid-column: 1;
       }
-      button {
+      form .btn-submit {
         width: 100%;
         margin-top: 1.5rem;
       }
+      table { font-size: 0.85rem; }
+      th, td { padding: 0.5rem 0.7rem; }
+    }
+
+    @media (max-width: 480px) {
+      header .header-actions .btn span { display: none; }
+      table { font-size: 0.75rem; }
+      th, td { padding: 0.4rem 0.5rem; }
+      .table-actions { flex-direction: column; gap: 4px; }
+      .btn-small { font-size: 0.7rem; padding: 0.2rem 0.6rem; }
     }
   </style>
 </head>
 <body>
 
-  <header>EduPredict - College Profile Management</header>
+  <!-- ===== BACKGROUND EFFECTS ===== -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
 
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="logo">
+      <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+      EduPredict
+    </div>
+    <div class="header-actions">
+      <a href="college.html" class="btn btn-back"><i class="fas fa-arrow-left" aria-hidden="true"></i> <span>Dashboard</span></a>
+      <button class="btn btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> <span>Logout</span></button>
+    </div>
+  </header>
+
+  <!-- ===== MAIN ===== -->
   <main>
 
     <!-- College Profile Section -->
     <section aria-labelledby="profile-title">
-      <h1 id="profile-title">Edit College Profile</h1>
+      <h1 id="profile-title"><i class="fas fa-university" aria-hidden="true"></i> Edit College Profile</h1>
       <form id="collegeProfileForm">
         <label for="collegeName">College Name</label>
-        <input type="text" id="collegeName" name="name" required />
+        <input type="text" id="collegeName" name="name" required aria-required="true" />
 
         <label for="collegeCode">College Code</label>
-        <input type="text" id="collegeCode" name="code" required />
+        <input type="text" id="collegeCode" name="code" required aria-required="true" />
 
         <label for="collegeAddress">Address</label>
-        <input type="text" id="collegeAddress" name="address" required />
+        <input type="text" id="collegeAddress" name="address" required aria-required="true" />
 
         <label for="collegeCity">City</label>
-        <input type="text" id="collegeCity" name="city" required />
+        <input type="text" id="collegeCity" name="city" required aria-required="true" />
 
         <label for="collegeState">State</label>
-        <input type="text" id="collegeState" name="state" required />
+        <input type="text" id="collegeState" name="state" required aria-required="true" />
 
         <label for="collegePincode">Pincode</label>
-        <input type="text" id="collegePincode" name="pincode" required />
+        <input type="text" id="collegePincode" name="pincode" required aria-required="true" />
 
         <label for="collegeEmail">Email</label>
-        <input type="email" id="collegeEmail" name="email" required />
+        <input type="email" id="collegeEmail" name="email" required aria-required="true" />
 
         <label for="collegePhone">Phone</label>
-        <input type="text" id="collegePhone" name="phone" required />
+        <input type="text" id="collegePhone" name="phone" required aria-required="true" />
 
         <label for="principalName">Principal Name</label>
-        <input type="text" id="principalName" name="principal_name" required />
+        <input type="text" id="principalName" name="principal_name" required aria-required="true" />
 
         <label for="collegeType">College Type</label>
-        <select id="collegeType" name="college_type" required>
+        <select id="collegeType" name="college_type" required aria-required="true">
           <option value="">Select Type</option>
           <option value="autonomous">Autonomous</option>
           <option value="non-autonomous">Non-Autonomous</option>
         </select>
 
         <label for="collegeCategory">Category</label>
-        <select id="collegeCategory" name="category" required>
+        <select id="collegeCategory" name="category" required aria-required="true">
           <option value="">Select Category</option>
           <option value="institute">Institute</option>
           <option value="university">University</option>
         </select>
 
         <label for="collegeAided">Aided</label>
-        <select id="collegeAided" name="aided" required>
+        <select id="collegeAided" name="aided" required aria-required="true">
           <option value="">Select</option>
           <option value="aided">Aided</option>
           <option value="non-aided">Non-Aided</option>
         </select>
 
-        <button type="submit">Save Profile</button>
+        <button type="submit" class="btn btn-primary btn-submit">
+          <i class="fas fa-save" aria-hidden="true"></i> Save Profile
+        </button>
       </form>
     </section>
 
     <!-- Department Management Section -->
     <section aria-labelledby="dept-title">
-      <h2 id="dept-title">Manage Departments</h2>
-      <button id="addDeptBtn" class="btn-small">+ Add Department</button>
+      <h2 id="dept-title"><i class="fas fa-building" aria-hidden="true"></i> Manage Departments</h2>
+      <button class="btn btn-small btn-small-primary" id="addDeptBtn">
+        <i class="fas fa-plus" aria-hidden="true"></i> Add Department
+      </button>
       <table id="departmentsTable" aria-label="Departments list">
         <thead>
           <tr>
@@ -213,7 +534,7 @@
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="departmentsBody">
           <!-- Dynamic rows here -->
         </tbody>
       </table>
@@ -221,8 +542,10 @@
 
     <!-- Teachers Management Section -->
     <section aria-labelledby="teachers-title">
-      <h2 id="teachers-title">Manage Teachers</h2>
-      <button id="addTeacherBtn" class="btn-small">+ Add Teacher</button>
+      <h2 id="teachers-title"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Manage Teachers</h2>
+      <button class="btn btn-small btn-small-primary" id="addTeacherBtn">
+        <i class="fas fa-plus" aria-hidden="true"></i> Add Teacher
+      </button>
       <table id="teachersTable" aria-label="Teachers list">
         <thead>
           <tr>
@@ -232,7 +555,7 @@
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="teachersBody">
           <!-- Dynamic rows here -->
         </tbody>
       </table>
@@ -240,8 +563,10 @@
 
     <!-- Students Management Section -->
     <section aria-labelledby="students-title">
-      <h2 id="students-title">Manage Students</h2>
-      <button id="addStudentBtn" class="btn-small">+ Add Student</button>
+      <h2 id="students-title"><i class="fas fa-user-graduate" aria-hidden="true"></i> Manage Students</h2>
+      <button class="btn btn-small btn-small-primary" id="addStudentBtn">
+        <i class="fas fa-plus" aria-hidden="true"></i> Add Student
+      </button>
       <table id="studentsTable" aria-label="Students list">
         <thead>
           <tr>
@@ -252,13 +577,245 @@
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="studentsBody">
           <!-- Dynamic rows here -->
         </tbody>
       </table>
     </section>
 
   </main>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="alert" aria-live="polite">
+    <i class="fas fa-check-circle" aria-hidden="true"></i>
+    <span id="toastMessage">Success!</span>
+  </div>
+
+  <script>
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    })();
+
+    // ===== TOAST =====
+    function showToast(message, type) {
+      var toast = document.getElementById('toast');
+      var msg = document.getElementById('toastMessage');
+      toast.className = 'toast ' + (type || 'success');
+      msg.textContent = message;
+      toast.style.display = 'flex';
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(function() {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // ===== LOGOUT =====
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('collegeToken');
+        localStorage.removeItem('collegeData');
+        window.location.href = '../login/college.html';
+      }
+    }
+
+    // ===== SAMPLE DATA =====
+    var departments = [
+      { id: 1, name: 'Computer Science' },
+      { id: 2, name: 'Information Technology' },
+      { id: 3, name: 'Mechanical Engineering' }
+    ];
+
+    var teachers = [
+      { id: 1, name: 'Dr. Rajesh Kumar', username: 'rajesh.k', department: 'Computer Science' },
+      { id: 2, name: 'Prof. Priya Sharma', username: 'priya.s', department: 'Information Technology' }
+    ];
+
+    var students = [
+      { id: 1, name: 'Amit Patel', rollNo: 'CS21001', department: 'Computer Science', year: '3rd' },
+      { id: 2, name: 'Sneha Reddy', rollNo: 'IT21015', department: 'Information Technology', year: '2nd' }
+    ];
+
+    // ===== RENDER FUNCTIONS =====
+    function renderDepartments() {
+      var tbody = document.getElementById('departmentsBody');
+      if (departments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;">No departments found</td></tr>';
+        return;
+      }
+      tbody.innerHTML = departments.map(function(d) {
+        return '<tr>' +
+          '<td>' + d.name + '</td>' +
+          '<td><div class="table-actions"><button class="btn-small btn-small-danger" onclick="deleteDepartment(' + d.id + ')"><i class="fas fa-trash" aria-hidden="true"></i></button></div></td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    function renderTeachers() {
+      var tbody = document.getElementById('teachersBody');
+      if (teachers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;">No teachers found</td></tr>';
+        return;
+      }
+      tbody.innerHTML = teachers.map(function(t) {
+        return '<tr>' +
+          '<td>' + t.name + '</td>' +
+          '<td>' + t.username + '</td>' +
+          '<td>' + t.department + '</td>' +
+          '<td><div class="table-actions"><button class="btn-small btn-small-danger" onclick="deleteTeacher(' + t.id + ')"><i class="fas fa-trash" aria-hidden="true"></i></button></div></td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    function renderStudents() {
+      var tbody = document.getElementById('studentsBody');
+      if (students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;">No students found</td></tr>';
+        return;
+      }
+      tbody.innerHTML = students.map(function(s) {
+        return '<tr>' +
+          '<td>' + s.name + '</td>' +
+          '<td>' + s.rollNo + '</td>' +
+          '<td>' + s.department + '</td>' +
+          '<td>' + s.year + '</td>' +
+          '<td><div class="table-actions"><button class="btn-small btn-small-danger" onclick="deleteStudent(' + s.id + ')"><i class="fas fa-trash" aria-hidden="true"></i></button></div></td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    // ===== CRUD OPERATIONS =====
+    function deleteDepartment(id) {
+      if (confirm('Are you sure you want to delete this department?')) {
+        departments = departments.filter(function(d) { return d.id !== id; });
+        renderDepartments();
+        showToast('Department deleted successfully!', 'success');
+      }
+    }
+
+    function deleteTeacher(id) {
+      if (confirm('Are you sure you want to delete this teacher?')) {
+        teachers = teachers.filter(function(t) { return t.id !== id; });
+        renderTeachers();
+        showToast('Teacher deleted successfully!', 'success');
+      }
+    }
+
+    function deleteStudent(id) {
+      if (confirm('Are you sure you want to delete this student?')) {
+        students = students.filter(function(s) { return s.id !== id; });
+        renderStudents();
+        showToast('Student deleted successfully!', 'success');
+      }
+    }
+
+    // ===== ADD FUNCTIONS =====
+    document.getElementById('addDeptBtn').addEventListener('click', function() {
+      var name = prompt('Enter department name:');
+      if (name && name.trim()) {
+        var newDept = { id: Date.now(), name: name.trim() };
+        departments.push(newDept);
+        renderDepartments();
+        showToast('Department added successfully!', 'success');
+      }
+    });
+
+    document.getElementById('addTeacherBtn').addEventListener('click', function() {
+      var name = prompt('Enter teacher name:');
+      if (name && name.trim()) {
+        var username = prompt('Enter username:');
+        if (username && username.trim()) {
+          var dept = prompt('Enter department:');
+          if (dept && dept.trim()) {
+            var newTeacher = {
+              id: Date.now(),
+              name: name.trim(),
+              username: username.trim(),
+              department: dept.trim()
+            };
+            teachers.push(newTeacher);
+            renderTeachers();
+            showToast('Teacher added successfully!', 'success');
+          }
+        }
+      }
+    });
+
+    document.getElementById('addStudentBtn').addEventListener('click', function() {
+      var name = prompt('Enter student name:');
+      if (name && name.trim()) {
+        var rollNo = prompt('Enter roll number:');
+        if (rollNo && rollNo.trim()) {
+          var dept = prompt('Enter department:');
+          if (dept && dept.trim()) {
+            var year = prompt('Enter year (1st, 2nd, 3rd, 4th):');
+            if (year && year.trim()) {
+              var newStudent = {
+                id: Date.now(),
+                name: name.trim(),
+                rollNo: rollNo.trim(),
+                department: dept.trim(),
+                year: year.trim()
+              };
+              students.push(newStudent);
+              renderStudents();
+              showToast('Student added successfully!', 'success');
+            }
+          }
+        }
+      }
+    });
+
+    // ===== FORM SUBMISSION =====
+    document.getElementById('collegeProfileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      showToast('College profile updated successfully!', 'success');
+    });
+
+    // ===== LOAD COLLEGE DATA =====
+    function loadCollegeData() {
+      var storedData = localStorage.getItem('collegeData');
+      if (storedData) {
+        try {
+          var data = JSON.parse(storedData);
+          document.getElementById('collegeName').value = data.name || '';
+          document.getElementById('collegeCode').value = data.code || '';
+          document.getElementById('collegeAddress').value = data.address || '';
+          document.getElementById('collegeCity').value = data.city || '';
+          document.getElementById('collegeState').value = data.state || '';
+          document.getElementById('collegePincode').value = data.pincode || '';
+          document.getElementById('collegeEmail').value = data.email || '';
+          document.getElementById('collegePhone').value = data.phone || '';
+          document.getElementById('principalName').value = data.principal_name || '';
+          document.getElementById('collegeType').value = data.college_type || '';
+          document.getElementById('collegeCategory').value = data.category || '';
+          document.getElementById('collegeAided').value = data.aided ? 'aided' : 'non-aided';
+        } catch (e) {
+          console.error('Error loading college data:', e);
+        }
+      }
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+      loadCollegeData();
+      renderDepartments();
+      renderTeachers();
+      renderStudents();
+    });
+  </script>
 
 </body>
 </html>

@@ -4,114 +4,319 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Requests - EduPredict</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
+    /* ===== RESET & BASE ===== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
     }
-    
+
     body {
-      background: linear-gradient(135deg, #b3b4b5 100%);
-      color: #0a0808;
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-    
+
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 15s ease-in-out infinite alternate;
+    }
+
+    .bg-animation .orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 172, 132, 0.3), transparent);
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation .orb:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(238, 121, 57, 0.2), transparent);
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+
+    .bg-animation .orb:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(57, 135, 48, 0.2), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: -10s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(50px, -30px) scale(1.05); }
+    }
+
+    /* ===== FLOATING PARTICLES ===== */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ===== HEADER ===== */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 15px 50px;
-      background: #000;
+      background: rgba(10, 10, 15, 0.7);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
-    
+
     .college-brand {
       display: flex;
       align-items: center;
       gap: 15px;
     }
-    
-    .college-brand img {
+
+    .college-brand .logo-icon {
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      border: 2px solid #fff;
-      object-fit: cover;
-    }
-    
-    .college-brand h1 {
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
       color: #fff;
-      font-size: 1.6rem;
-      font-weight: 600;
+      border: 2px solid rgba(255, 255, 255, 0.1);
     }
-    
-    .back-btn {
-      background: #10ac84;
-      border: none;
+
+    .college-brand h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10ac84, #ee7939);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
       padding: 10px 20px;
-      border-radius: 8px;
-      color: white;
+      border-radius: 10px;
+      border: none;
       font-weight: 600;
       cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       text-decoration: none;
-      transition: 0.3s;
     }
-    
-    .back-btn:hover {
-      background: #1dd1a1;
+
+    .btn-back {
+      background: rgba(16, 172, 132, 0.15);
+      border: 1px solid rgba(16, 172, 132, 0.2);
+      color: #10ac84;
+    }
+
+    .btn-back:hover {
+      background: rgba(16, 172, 132, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .btn-logout {
+      background: rgba(255, 0, 0, 0.05);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      color: #ff6b6b;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 0, 0, 0.1);
+      border-color: rgba(255, 0, 0, 0.4);
+    }
+
+    .btn-approve {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      background: #10ac84;
+      color: #fff;
+    }
+
+    .btn-approve:hover {
+      background: #0e8a6d;
       transform: scale(1.05);
     }
-    
+
+    .btn-reject {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      background: #ee5253;
+      color: #fff;
+    }
+
+    .btn-reject:hover {
+      background: #c23616;
+      transform: scale(1.05);
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      color: #ff6b6b;
+    }
+
+    .btn-cancel:hover {
+      background: rgba(255, 0, 0, 0.2);
+    }
+
+    .btn-confirm {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      background: linear-gradient(135deg, #10ac84, #0d8c6b);
+      color: #fff;
+    }
+
+    .btn-confirm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 172, 132, 0.3);
+    }
+
+    /* ===== CONTAINER ===== */
     .container {
       max-width: 1200px;
       margin: 30px auto;
       padding: 0 20px;
       flex: 1;
+      width: 100%;
     }
-    
+
+    /* ===== PAGE HEADER ===== */
     .page-header {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
       padding: 25px 30px;
       border-radius: 15px;
       margin-bottom: 30px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    
+
     .page-header h2 {
       font-size: 2rem;
-      color: #000;
+      color: rgba(255, 255, 255, 0.9);
       margin-bottom: 5px;
     }
-    
+
+    .page-header h2 i {
+      color: #10ac84;
+      margin-right: 10px;
+    }
+
     .page-header p {
-      color: #333;
-      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 1rem;
     }
-    
+
+    /* ===== REQUESTS CONTAINER ===== */
     .requests-container {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
       padding: 30px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
     }
-    
+
+    /* ===== REQUEST CARD ===== */
     .request-card {
-      background: rgba(255,255,255,0.9);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       padding: 20px;
       border-radius: 12px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
     }
-    
+
+    .request-card:hover {
+      border-color: rgba(16, 172, 132, 0.2);
+    }
+
+    .request-card:last-child {
+      margin-bottom: 0;
+    }
+
     .request-header {
       display: flex;
       justify-content: space-between;
@@ -120,96 +325,96 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-    
+
     .request-header h3 {
-      font-size: 1.3rem;
-      color: #000;
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
     }
-    
+
     .request-date {
-      color: #666;
-      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.85rem;
     }
-    
+
     .request-details {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 15px;
       margin-bottom: 15px;
     }
-    
+
     .detail-item {
       display: flex;
       flex-direction: column;
     }
-    
+
     .detail-label {
       font-weight: 600;
-      color: #333;
-      font-size: 0.9rem;
-      margin-bottom: 5px;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
     }
-    
+
     .detail-value {
-      color: #000;
-      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.95rem;
     }
-    
+
     .request-actions {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      margin-top: 5px;
     }
-    
-    .approve-btn, .reject-btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    
-    .approve-btn {
-      background: #10ac84;
-      color: #fff;
-    }
-    
-    .approve-btn:hover {
-      background: #0e8a6d;
-      transform: scale(1.05);
-    }
-    
-    .reject-btn {
-      background: #ee5253;
-      color: #fff;
-    }
-    
-    .reject-btn:hover {
-      background: #c23616;
-      transform: scale(1.05);
-    }
-    
-    .empty-state, .loading {
+
+    /* ===== EMPTY / LOADING STATES ===== */
+    .empty-state,
+    .loading {
       text-align: center;
       padding: 60px 20px;
-      color: #333;
+      color: rgba(255, 255, 255, 0.3);
     }
-    
+
+    .empty-state .empty-icon,
+    .loading .loading-icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 15px;
+      color: rgba(16, 172, 132, 0.3);
+    }
+
+    .empty-state h3 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .empty-state p {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
     .loading {
-      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.4);
     }
-    
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 0.9rem;
-      color: #eee;
-      background: #000;
-      margin-top: auto;
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.05);
+      border-top: 3px solid #10ac84;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
     }
-    
-    /* Modal Styles */
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ===== MODAL ===== */
     .modal {
       display: none;
       position: fixed;
@@ -217,74 +422,82 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.7);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
       z-index: 2000;
       justify-content: center;
       align-items: center;
     }
-    
+
     .modal.active {
       display: flex;
     }
-    
+
     .modal-content {
-      background: rgba(255,255,255,0.95);
+      background: rgba(20, 20, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       padding: 30px;
-      border-radius: 15px;
+      border-radius: 16px;
       max-width: 400px;
       width: 90%;
     }
-    
+
     .modal-content h3 {
       margin-bottom: 20px;
-      color: #000;
-      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.4rem;
     }
-    
+
+    .modal-content h3 i {
+      color: #10ac84;
+      margin-right: 10px;
+    }
+
     .modal-content label {
       display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #000;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
     }
-    
-    .modal-content input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      border: 2px solid #ccc;
-      font-size: 1rem;
-      box-sizing: border-box;
+
+    .modal-content label .required {
+      color: #ff6b6b;
     }
-    
-    .modal-content input[type="text"]:focus {
-      outline: none;
-      border-color: #10ac84;
-      box-shadow: 0 0 0 3px rgba(16,172,132,0.2);
-    }
-    
+
+    .modal-content input[type="text"],
     .modal-content select {
       width: 100%;
-      padding: 12px;
+      padding: 10px 14px;
       margin-bottom: 15px;
-      border-radius: 8px;
-      border: 2px solid #ccc;
-      font-size: 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
     }
-    
+
+    .modal-content input[type="text"]:focus,
     .modal-content select:focus {
       outline: none;
       border-color: #10ac84;
-      box-shadow: 0 0 0 3px rgba(16,172,132,0.2);
+      box-shadow: 0 0 0 4px rgba(16, 172, 132, 0.1);
     }
-    
+
+    .modal-content select option {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
     .modal-actions {
       display: flex;
       gap: 10px;
       margin-top: 20px;
     }
-    
+
     .modal-actions button {
       flex: 1;
       padding: 12px;
@@ -294,64 +507,199 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    
+
+    /* ===== HIDDEN UTILITY ===== */
+    .hidden {
+      display: none !important;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: rgba(10, 10, 15, 0.95);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 3000;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .toast.success {
+      border-color: rgba(16, 172, 132, 0.3);
+    }
+    .toast.success i {
+      color: #10ac84;
+    }
+    .toast.error {
+      border-color: rgba(255, 0, 0, 0.3);
+    }
+    .toast.error i {
+      color: #ff6b6b;
+    }
+
+    /* ===== REQUIRED INDICATOR ===== */
+    .required-text {
+      color: #ff6b6b;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.85rem;
+      margin-top: auto;
+    }
+
+    footer .heart {
+      color: #10ac84;
+    }
+
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       header {
         padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 10px;
       }
-      
+
       .college-brand h1 {
+        font-size: 1.2rem;
+      }
+
+      .college-brand .logo-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+
+      .container {
+        padding: 0 15px;
+      }
+
+      .page-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .requests-container {
+        padding: 15px;
+      }
+
+      .request-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .request-details {
+        grid-template-columns: 1fr;
+      }
+
+      .request-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .request-actions button {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .header-actions .btn span {
+        display: none;
+      }
+
+      .modal-content {
+        padding: 25px 20px;
+        max-width: 95%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-header {
+        padding: 20px;
+      }
+
+      .page-header h2 {
         font-size: 1.2rem;
       }
     }
   </style>
 </head>
 <body>
+
+  <!-- ===== BACKGROUND EFFECTS ===== -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  <div class="particles" id="particles"></div>
+
+  <!-- ===== HEADER ===== -->
   <header>
     <div class="college-brand">
-      <img src="collegelogo.png" alt="College Logo" />
-      <h1 id="collegeName">College Name</h1>
+      <div class="logo-icon"><i class="fas fa-university" aria-hidden="true"></i></div>
+      <h1 id="collegeName">EduPredict</h1>
     </div>
-    <a href="college.html" class="back-btn">← Back to Dashboard</a>
+    <div class="header-actions">
+      <a href="college.html" class="btn btn-back">
+        <i class="fas fa-arrow-left" aria-hidden="true"></i> <span>Dashboard</span>
+      </a>
+      <button class="btn btn-logout" onclick="logout()">
+        <i class="fas fa-sign-out-alt" aria-hidden="true"></i> <span>Logout</span>
+      </button>
+    </div>
   </header>
 
+  <!-- ===== CONTAINER ===== -->
   <div class="container">
     <div class="page-header">
-      <h2>📬 Student Registration Requests</h2>
+      <h2><i class="fas fa-inbox" aria-hidden="true"></i> Student Registration Requests</h2>
       <p>Review and approve student registration requests</p>
     </div>
 
     <div class="requests-container">
       <div id="loadingState" class="loading">
-        Loading requests...
+        <div class="spinner"></div>
+        <p>Loading requests...</p>
       </div>
 
-      <div id="requestsList" style="display: none;">
+      <div id="requestsList" class="hidden">
         <!-- Requests will be dynamically inserted here -->
       </div>
 
-      <div id="emptyState" class="empty-state" style="display: none;">
-        <h3>📭 No pending requests</h3>
+      <div id="emptyState" class="empty-state hidden">
+        <i class="fas fa-check-circle empty-icon" aria-hidden="true"></i>
+        <h3>No pending requests</h3>
         <p>All student registration requests have been processed.</p>
       </div>
     </div>
   </div>
 
-  <!-- Approval Modal -->
+  <!-- ===== APPROVAL MODAL ===== -->
   <div id="approvalModal" class="modal">
     <div class="modal-content">
-      <h3>Approve Student</h3>
-      
-      <label>Assign Roll Number *</label>
-      <input 
-        type="text" 
-        id="rollNoInput" 
-        placeholder="Enter roll number (e.g., CS2025001)" 
-        required
-      />
+      <h3><i class="fas fa-user-check" aria-hidden="true"></i> Approve Student</h3>
 
-      <label>Select Year *</label>
-      <select id="yearSelect" required>
+      <label for="rollNoInput">Assign Roll Number <span class="required-text">*</span></label>
+      <input type="text" id="rollNoInput" placeholder="Enter roll number (e.g., CS2025001)" required aria-required="true" />
+
+      <label for="yearSelect">Select Year <span class="required-text">*</span></label>
+      <select id="yearSelect" required aria-required="true">
         <option value="">-- Select Year --</option>
         <option value="1st Year">1st Year</option>
         <option value="2nd Year">2nd Year</option>
@@ -360,71 +708,122 @@
       </select>
 
       <div class="modal-actions">
-        <button class="approve-btn" onclick="confirmApproval()">Approve</button>
-        <button class="reject-btn" onclick="closeModal()">Cancel</button>
+        <button class="btn-confirm" onclick="confirmApproval()"><i class="fas fa-check" aria-hidden="true"></i> Approve</button>
+        <button class="btn-cancel" onclick="closeModal()"><i class="fas fa-times" aria-hidden="true"></i> Cancel</button>
       </div>
     </div>
   </div>
 
+  <!-- ===== FOOTER ===== -->
   <footer>
-    © Edupredict 2025. All rights reserved.
+    &copy; 2025 EduPredict. All rights reserved. Built with <i class="fas fa-heart heart" aria-hidden="true"></i> for education.
   </footer>
 
-  <script>
-    const backendUrl = 'https://edupredict-l9eg.onrender.com';
-    let authToken = null;
-    let collegeCode = null;
-    let currentRequestId = null;
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="alert" aria-live="polite">
+    <i class="fas fa-check-circle" aria-hidden="true"></i>
+    <span id="toastMessage">Success!</span>
+  </div>
 
-    // Check Authentication
+  <script>
+    // ===== PARTICLES =====
+    (function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 50; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        var size = (Math.random() * 4 + 2);
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        particle.style.animationDelay = (Math.random() * 20) + 's';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        container.appendChild(particle);
+      }
+    })();
+
+    // ===== TOAST =====
+    function showToast(message, type) {
+      var toast = document.getElementById('toast');
+      var msg = document.getElementById('toastMessage');
+      toast.className = 'toast ' + (type || 'success');
+      msg.textContent = message;
+      toast.style.display = 'flex';
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(function() {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // ===== LOGOUT =====
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('collegeToken');
+        localStorage.removeItem('collegeData');
+        window.location.href = '../login/college.html';
+      }
+    }
+
+    // ===== CONFIGURATION =====
+    var backendUrl = 'https://edupredict-l9eg.onrender.com';
+    var authToken = null;
+    var collegeCode = null;
+    var currentRequestId = null;
+
+    // ===== CHECK AUTHENTICATION =====
     function checkAuth() {
       authToken = localStorage.getItem('collegeToken');
-      const collegeDataStr = localStorage.getItem('collegeData');
-      
+      var collegeDataStr = localStorage.getItem('collegeData');
+
       if (!authToken || !collegeDataStr) {
-        alert('Please login first');
-        window.location.href = '../login/college.html';
+        showToast('Please login first', 'error');
+        setTimeout(function() {
+          window.location.href = '../login/college.html';
+        }, 1500);
         return false;
       }
-      
+
       try {
-        const collegeData = JSON.parse(collegeDataStr);
+        var collegeData = JSON.parse(collegeDataStr);
         collegeCode = collegeData.code;
-        
+
         if (!collegeCode) {
-          alert('Invalid session data');
+          showToast('Invalid session data', 'error');
           localStorage.clear();
-          window.location.href = '../login/college.html';
+          setTimeout(function() {
+            window.location.href = '../login/college.html';
+          }, 1500);
           return false;
         }
-        
-        document.getElementById('collegeName').textContent = collegeData.name || 'College';
+
+        document.getElementById('collegeName').textContent = collegeData.name || 'EduPredict';
         return true;
       } catch (error) {
         console.error('Error parsing college data:', error);
-        alert('Session error. Please login again.');
+        showToast('Session error. Please login again.', 'error');
         localStorage.clear();
-        window.location.href = '../login/college.html';
+        setTimeout(function() {
+          window.location.href = '../login/college.html';
+        }, 1500);
         return false;
       }
     }
 
-    // Load Pending Requests
+    // ===== LOAD REQUESTS =====
     async function loadRequests() {
       try {
-        const response = await fetch(
-          `${backendUrl}/api/student-requests/${collegeCode}/pending`,
-          {
+        var response = await fetch(
+          backendUrl + '/api/student-requests/' + collegeCode + '/pending', {
             headers: {
-              'Authorization': `Bearer ${authToken}`
+              'Authorization': 'Bearer ' + authToken
             }
           }
         );
 
         if (!response.ok) throw new Error('Failed to load requests');
 
-        const data = await response.json();
-        console.log('✅ Requests loaded:', data);
+        var data = await response.json();
 
         if (data.requests.length === 0) {
           showEmptyState();
@@ -433,57 +832,57 @@
         }
 
       } catch (error) {
-        console.error('❌ Error loading requests:', error);
+        console.error('Error loading requests:', error);
         showEmptyState();
       } finally {
-        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('loadingState').classList.add('hidden');
       }
     }
 
-    // Render Requests
+    // ===== RENDER REQUESTS =====
     function renderRequests(requests) {
-      const container = document.getElementById('requestsList');
+      var container = document.getElementById('requestsList');
       container.innerHTML = '';
-      container.style.display = 'block';
+      container.classList.remove('hidden');
 
-      requests.forEach(req => {
-        const card = document.createElement('div');
+      requests.forEach(function(req) {
+        var card = document.createElement('div');
         card.className = 'request-card';
-        card.innerHTML = `
-          <div class="request-header">
-            <h3>${req.name}</h3>
-            <span class="request-date">${new Date(req.requested_at).toLocaleDateString()}</span>
-          </div>
-          <div class="request-details">
-            <div class="detail-item">
-              <span class="detail-label">Email</span>
-              <span class="detail-value">${req.email}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Contact</span>
-              <span class="detail-value">${req.contact || 'N/A'}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Department</span>
-              <span class="detail-value">${req.department_name}</span>
-            </div>
-          </div>
-          <div class="request-actions">
-            <button class="approve-btn" onclick="openApprovalModal(${req.id})">✓ Approve</button>
-            <button class="reject-btn" onclick="rejectRequest(${req.id})">✗ Reject</button>
-          </div>
-        `;
+        card.innerHTML =
+          '<div class="request-header">' +
+          '<h3>' + req.name + '</h3>' +
+          '<span class="request-date"><i class="fas fa-calendar" aria-hidden="true"></i> ' + new Date(req.requested_at)
+          .toLocaleDateString() + '</span>' +
+          '</div>' +
+          '<div class="request-details">' +
+          '<div class="detail-item">' +
+          '<span class="detail-label">Email</span>' +
+          '<span class="detail-value">' + req.email + '</span>' +
+          '</div>' +
+          '<div class="detail-item">' +
+          '<span class="detail-label">Contact</span>' +
+          '<span class="detail-value">' + (req.contact || 'N/A') + '</span>' +
+          '</div>' +
+          '<div class="detail-item">' +
+          '<span class="detail-label">Department</span>' +
+          '<span class="detail-value">' + req.department_name + '</span>' +
+          '</div>' +
+          '</div>' +
+          '<div class="request-actions">' +
+          '<button class="btn-approve" onclick="openApprovalModal(' + req.id + ')"><i class="fas fa-check" aria-hidden="true"></i> Approve</button>' +
+          '<button class="btn-reject" onclick="rejectRequest(' + req.id + ')"><i class="fas fa-times" aria-hidden="true"></i> Reject</button>' +
+          '</div>';
         container.appendChild(card);
       });
     }
 
-    // Show Empty State
+    // ===== SHOW EMPTY STATE =====
     function showEmptyState() {
-      document.getElementById('requestsList').style.display = 'none';
-      document.getElementById('emptyState').style.display = 'block';
+      document.getElementById('requestsList').classList.add('hidden');
+      document.getElementById('emptyState').classList.remove('hidden');
     }
 
-    // Open Approval Modal
+    // ===== OPEN APPROVAL MODAL =====
     function openApprovalModal(requestId) {
       currentRequestId = requestId;
       document.getElementById('rollNoInput').value = '';
@@ -491,82 +890,94 @@
       document.getElementById('approvalModal').classList.add('active');
     }
 
-    // Close Modal
+    // ===== CLOSE MODAL =====
     function closeModal() {
       document.getElementById('approvalModal').classList.remove('active');
       currentRequestId = null;
     }
 
-    // Confirm Approval
+    // ===== CONFIRM APPROVAL =====
     async function confirmApproval() {
-      const roll_no = document.getElementById('rollNoInput').value.trim();
-      const year = document.getElementById('yearSelect').value;
+      var roll_no = document.getElementById('rollNoInput').value.trim();
+      var year = document.getElementById('yearSelect').value;
 
       if (!roll_no || !year) {
-        alert('❌ Please enter roll number and select year');
+        showToast('Please enter roll number and select year', 'error');
         return;
       }
 
       try {
-        const response = await fetch(
-          `${backendUrl}/api/student-requests/${collegeCode}/approve/${currentRequestId}`,
-          {
+        var response = await fetch(
+          backendUrl + '/api/student-requests/' + collegeCode + '/approve/' + currentRequestId, {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${authToken}`,
+              'Authorization': 'Bearer ' + authToken,
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ roll_no, year })
+            body: JSON.stringify({ roll_no: roll_no, year: year })
           }
         );
 
-        const result = await response.json();
+        var result = await response.json();
 
         if (response.ok) {
-          alert(`✅ Student approved successfully!\nRoll Number: ${roll_no}\nYear: ${year}`);
+          showToast('Student approved successfully! Roll No: ' + roll_no, 'success');
           closeModal();
           loadRequests();
         } else {
-          alert('❌ ' + (result.error || 'Failed to approve student'));
+          showToast(result.error || 'Failed to approve student', 'error');
         }
       } catch (error) {
         console.error('Error approving student:', error);
-        alert('❌ Failed to approve student. Please try again.');
+        showToast('Failed to approve student. Please try again.', 'error');
       }
     }
 
-    // Reject Request
+    // ===== REJECT REQUEST =====
     async function rejectRequest(requestId) {
       if (!confirm('Are you sure you want to reject this request?')) return;
 
       try {
-        const response = await fetch(
-          `${backendUrl}/api/student-requests/${collegeCode}/reject/${requestId}`,
-          {
+        var response = await fetch(
+          backendUrl + '/api/student-requests/' + collegeCode + '/reject/' + requestId, {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${authToken}`,
+              'Authorization': 'Bearer ' + authToken,
               'Content-Type': 'application/json'
             }
           }
         );
 
-        const result = await response.json();
+        var result = await response.json();
 
         if (response.ok) {
-          alert('✅ Student request rejected');
+          showToast('Student request rejected', 'success');
           loadRequests();
         } else {
-          alert('❌ ' + (result.error || 'Failed to reject request'));
+          showToast(result.error || 'Failed to reject request', 'error');
         }
       } catch (error) {
         console.error('Error rejecting student:', error);
-        alert('❌ Failed to reject request');
+        showToast('Failed to reject request', 'error');
       }
     }
 
-    // Initialize
-    window.addEventListener('DOMContentLoaded', () => {
+    // ===== CLOSE MODAL ON OVERLAY CLICK =====
+    document.getElementById('approvalModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // ===== ESCAPE KEY TO CLOSE MODAL =====
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    // ===== INITIALIZE =====
+    window.addEventListener('DOMContentLoaded', function() {
       if (checkAuth()) {
         loadRequests();
       }
