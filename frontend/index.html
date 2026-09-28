@@ -390,6 +390,13 @@
       75% { transform: translateY(15px) rotateX(-2deg) rotateY(-5deg); }
     }
 
+    /* Disable floating animation on touch devices */
+    @media (pointer: coarse) {
+      .graphics {
+        animation: none;
+      }
+    }
+
     .graphics-container {
       position: relative;
       width: 100%;
@@ -411,12 +418,15 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      transform: rotateY(-10deg) rotateX(5deg);
-      transition: transform 0.5s ease;
+      transform: rotateY(0deg) rotateX(0deg);
+      transition: transform 0.5s ease, box-shadow 0.3s ease;
     }
 
-    .graphics-card:hover {
-      transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+    @media (hover: hover) and (pointer: fine) {
+      .graphics-card:hover {
+        border-color: rgba(16, 172, 132, 0.3);
+        transform: scale(1.03);
+      }
     }
 
     .graphics-grid {
@@ -935,17 +945,29 @@
 
     // ===== 3D TILT ON GRAPHICS =====
     var graphicsContainer = document.querySelector('.graphics-container');
-    if (graphicsContainer) {
-      graphicsContainer.addEventListener('mousemove', function(e) {
-        var rect = this.getBoundingClientRect();
-        var x = (e.clientX - rect.left) / rect.width - 0.5;
-        var y = (e.clientY - rect.top) / rect.height - 0.5;
-        this.style.transform = 'perspective(800px) rotateY(' + (x * 10) + 'deg) rotateX(' + (-y * 10) + 'deg)';
-      });
+    var graphicsCard = document.querySelector('.graphics-card');
+    if (graphicsContainer && graphicsCard) {
+      // Only enable tilt on non-touch (mouse) devices
+      var isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-      graphicsContainer.addEventListener('mouseleave', function(e) {
-        this.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg)';
-      });
+      if (!isTouchDevice) {
+        graphicsCard.style.transition = 'transform 0.1s ease';
+
+        graphicsContainer.addEventListener('mousemove', function(e) {
+          var rect = this.getBoundingClientRect();
+          var x = (e.clientX - rect.left) / rect.width - 0.5;
+          var y = (e.clientY - rect.top) / rect.height - 0.5;
+          graphicsCard.style.transform = 'perspective(600px) rotateY(' + (x * 20) + 'deg) rotateX(' + (-y * 20) + 'deg)';
+        });
+
+        graphicsContainer.addEventListener('mouseleave', function() {
+          graphicsCard.style.transition = 'transform 0.4s ease';
+          graphicsCard.style.transform = 'perspective(600px) rotateY(0deg) rotateX(0deg)';
+        });
+      } else {
+        // On touch: keep flat, no tilt
+        graphicsCard.style.transform = 'none';
+      }
     }
 
     // ===== SCROLL ANIMATIONS =====
